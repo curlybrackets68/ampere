@@ -5,12 +5,9 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>@yield('title') | Dashboard</title><!--begin::Primary Meta Tags-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="title" content="AdminLTE v4 | Dashboard">
+    <meta name="title" content="Ampere | Dashboard">
     <meta name="author" content="ColorlibHQ">
-    <meta name="description"
-        content="AdminLTE is a Free Bootstrap 5 Admin Dashboard, 30 example pages using Vanilla JS.">
-    <meta name="keywords"
-        content="bootstrap 5, bootstrap, bootstrap 5 admin dashboard, bootstrap 5 dashboard, bootstrap 5 charts, bootstrap 5 calendar, bootstrap 5 datepicker, bootstrap 5 tables, bootstrap 5 datatable, vanilla js datatable, colorlibhq, colorlibhq dashboard, colorlibhq admin dashboard">
+    
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/source-sans-3@5.0.12/index.css"
         integrity="sha256-tXJfXfp6Ewt1ilPzLDtQnJV4hclT9XuaZUKyUvmyr+Q=" crossorigin="anonymous">
 
@@ -38,12 +35,12 @@
                 <ul class="navbar-nav">
                     <li class="nav-item"> <a class="nav-link" data-lte-toggle="sidebar" href="#" role="button">
                             <i class="bi bi-list"></i> </a> </li>
-                    <li class="nav-item d-none d-md-block"> <a href="#" class="nav-link">Home</a> </li>
+                    <li class="nav-item d-none d-md-block"> <span
+                            class="nav-link">{{ Str::ucfirst(Auth::user()->name) }}</span> </li>
                 </ul> <!--end::Start Navbar Links--> <!--begin::End Navbar Links-->
 
                 <ul class="navbar-nav ms-auto"> <!--begin::Navbar Search-->
-                    <a href="{{ route('auth.logout') }}"
-                        class="btn btn-outline-primary">{{ Str::ucfirst(Auth::user()->name) }} &nbsp;<i
+                    <a href="{{ route('auth.logout') }}" class="btn btn-outline-primary">Logout &nbsp;<i
                             class="nav-icon bi bi-box-arrow-in-right"></i></a>
                 </ul> <!--end::End Navbar Links-->
             </div> <!--end::Container-->
@@ -82,8 +79,8 @@
             <!--end::Copyright-->
         </footer> <!--end::Footer-->
     </div> <!--end::App Wrapper--> <!--begin::Script--> <!--begin::Third Party Plugin(OverlayScrollbars)-->
-    <script src="{{ asset('dist/js/jquery-3.6.0.min.js') }}"
-        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="{{ asset('dist/js/jquery-3.6.0.min.js') }}" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+        crossorigin="anonymous"></script>
     {{-- <script src="{{ asset('../../dist/js/datatables.min.js') }}"></script> --}}
 
     <script src="{{ asset('dist/js/bootstrap.bundle.min.js') }}"></script>

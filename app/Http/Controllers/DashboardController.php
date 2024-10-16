@@ -68,12 +68,12 @@ class DashboardController extends Controller
                     return $this->formatDateTime('d M, Y h:i A', $row->created_at);
                 })
                 ->addColumn('action', function ($row) {
-                    if ($row->status_id == '1') {
+                    if ($row->status_id == '1' || $row->status_id == '4') {
                         return '<div class="btn-group"> <button type="button" class="btn btn-light dropdown-toggle"
                                     style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"
                                     data-bs-toggle="dropdown" aria-expanded="false"> Action </button>
                                 <ul class="dropdown-menu" style="font-size: 0.75rem; padding: 0.25rem 0.5rem;">
-                                    <li> <a class="dropdown-item change-status" data-id="' . $row->id . '" href="javascript:void(0);">Status</a></li>
+                                    <li> <a class="dropdown-item change-status" data-id="' . $row->id . '" data-status="' . $row->status_id . '" href="javascript:void(0);">Status</a></li>
                                 </ul>
                             </div>';
                     } else {
@@ -112,6 +112,11 @@ class DashboardController extends Controller
                 $message .= "Vehicle No: " . $inquiryDetails->vehicle_no . "\n";
                 $message .= "Service Type: " . $this->serviceTypeArray[$inquiryDetails->service_type_id] . "\n";
                 $message .= "Location: " . $this->branchArray[$inquiryDetails->branch_id] . "\n";
+            } else if ($request->statusId == '3') { // Rejected
+                $message = 'Your service rejected for #' . $inquiryDetails->inquiry_no . "\n";
+                $message .= "Name: " . $inquiryDetails->name . "\n";
+                $message .= "Mobile: " . $inquiryDetails->mobile . "\n";
+                $message .= "Vehicle No: " . $inquiryDetails->vehicle_no . "\n";
             }
 
             $this->sendWhatsAppMessage($inquiryDetails->mobile, $message);
@@ -130,11 +135,11 @@ class DashboardController extends Controller
 
     public function export(Request $request)
     {
-        try {    
+        try {
             $exportStartDate = $request->input('exportStartDate');
             $exportEndDate = $request->input('exportEndDate');
             $exportStatusId = $request->input('exportStatusId', '');
-           // dd($exportStartDate, $exportEndDate, $exportStatusId);
+            // dd($exportStartDate, $exportEndDate, $exportStatusId);
             return Excel::download(new InquiryDetailsExport($exportStartDate, $exportEndDate, $exportStatusId), 'inquiry.xlsx');
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);

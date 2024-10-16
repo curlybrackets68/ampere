@@ -51,7 +51,7 @@
                             </div>
                             <hr>
                             <div class="row mt-3">
-                                <table class="table table-bordered table-striped dt-responsive nowrap" style="width:100%"
+                                <table class="table table-bordered table-striped" style="width:100%"
                                     id="inquiryTable">
                                     <thead>
                                         <tr>
@@ -90,10 +90,10 @@
                             <input type="hidden" id="statusInquiryId">
                             <label>Status</label>
                             <select class="form-select" id="statusId">
-                                <option value="">Select</option>
+                                {{-- <option value="">Select</option> --}}
+                                {{-- <option value="4">Confirmed</option>
                                 <option value="2">Completed</option>
-                                <option value="3">Rejected</option>
-                                <option value="4">Confirmed</option>
+                                <option value="3">Rejected</option> --}}
                             </select>
                             <div class="status_error"></div>
                         </div>
@@ -171,7 +171,6 @@
                 columns: [{
                         data: 'DT_RowIndex',
                         name: 'id',
-                        orderable: false,
                         searchable: false
                     },
                     {
@@ -220,9 +219,19 @@
 
         $(document).on('click', '.change-status', function() {
             let id = $(this).data('id');
+            let statusId = $(this).data('status');
             $('#statusInquiryId').val(id);
-            $('#statusId').val('').trigger('change');
+            //$('#statusId').val('').trigger('change');
             $('#statusModal').modal('show');
+            $('#confirmDIv').addClass('d-none');
+            let html = '<option value="">Select</option>';
+            if (statusId == '1') {
+                html += '<option value="4">Confirmed</option>';
+            } else if (statusId == '4') {
+                html += '<option value="2">Completed</option><option value="3">Rejected</option>';
+            }
+            
+            $('#statusId').html(html);
         });
 
         $(document).on('click', '#changeStatusBtn', function() {
