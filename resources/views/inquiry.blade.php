@@ -39,7 +39,7 @@
                                     <label>Status</label>
                                     <select class="form-select" id="searchStatusId">
                                         <option value="0">All</option>
-                                        <option value="1">Pending</option>
+                                        <option value="1" selected>Pending</option>
                                         <option value="2">Completed</option>
                                         <option value="3">Rejected</option>
                                         <option value="4">Confirmed</option>
@@ -238,6 +238,17 @@
             let id = $('#statusInquiryId').val();
             let statusId = $('#statusId').val();
 
+            let startDate = $('#datePeriod').data('daterangepicker').startDate.format('YYYY-MM-DD');
+            let endDate = $('#datePeriod').data('daterangepicker').endDate.format('YYYY-MM-DD');
+            let searchStatusId = $('#searchStatusId').val();
+
+            let filterData = {
+                actionType: 'report',
+                startDate: startDate,
+                endDate: endDate,
+                statusId: searchStatusId
+            };
+            
             if (statusId == '') {
                 $('.status_error').html('Please select a status');
                 return false;
@@ -260,7 +271,7 @@
                 success: async function(response) {
                     if (response.code == '1') {
                         $('#statusModal').modal('hide');
-                        await inquiryDetails();
+                        await inquiryDetails(filterData);
                     } else {
                         alert(response.message);
                     }
