@@ -129,7 +129,7 @@ trait CommonFunctions
     public function sendWhatsAppMessage($mobileNumber, $message)
     {
         $url = "https://wa.smsidea.com/api/v1/sendMessage";
-        $whatsAppAPIKey = '694904390fe0404d8875b34a86951d16';
+        $whatsAppAPIKey = '6edc72b9f0884247ba0a630beb94c028';
 
         $data = [
             'key' => $whatsAppAPIKey,

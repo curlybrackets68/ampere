@@ -19,7 +19,8 @@
                             <h5 class="card-title">Inquiry</h5>
                             <div class="d-flex justify-content-end">
                                 <a href="javascript:void(0);" class="btn btn-primary btn-sm d-none" id="exportExcel">
-                                    <form action="{{ route('user.inquiry.excel.export') }}" method="POST" id="exportExcelForm">
+                                    <form action="{{ route('user.inquiry.excel.export') }}" method="POST"
+                                        id="exportExcelForm">
                                         @csrf
                                         {{ Form::hidden('exportStartDate', null, ['id' => 'exportStartDate']) }}
                                         {{ Form::hidden('exportEndDate', null, ['id' => 'exportEndDate']) }}
@@ -38,31 +39,46 @@
                                 <div class="col-md-3">
                                     <label>Status</label>
                                     <select class="form-select" id="searchStatusId">
-                                        <option value="0">All</option>
-                                        <option value="1" selected>Pending</option>
-                                        <option value="2">Completed</option>
-                                        <option value="3">Rejected</option>
-                                        <option value="4">Confirmed</option>
+                                        <option value="0" {{ isset($status) && $status == '0' ? 'selected' : '' }}>All
+                                        </option>
+                                        <option value="1" {{ !isset($status) || $status == '1' ? 'selected' : '' }}>
+                                            Pending</option>
+                                        <option value="2" {{ isset($status) && $status == '2' ? 'selected' : '' }}>
+                                            Completed</option>
+                                        <option value="3" {{ isset($status) && $status == '3' ? 'selected' : '' }}>
+                                            Rejected</option>
+                                        <option value="4" {{ isset($status) && $status == '4' ? 'selected' : '' }}>
+                                            Confirmed</option>
                                     </select>
                                 </div>
                                 <div class="col-md-2" style="margin-top: 31px;">
                                     <button type="button" class="btn btn-primary" id="searchReport">Search</button>
                                 </div>
+
+                                <div class="col-md-4 mt-4">
+                                    <div class="input-group">
+                                        <input type="text" name="mobileNumber" id="mobileNumber"
+                                            placeholder="Type Mobile Number..." class="form-control">
+                                        <span class="input-group-append">
+                                            <button type="button" class="btn btn-primary" id="sendMessage">Send</button>
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
                             <hr>
                             <div class="row mt-3">
-                                <table class="table table-bordered table-striped" style="width:100%"
-                                    id="inquiryTable">
+                                <table class="table table-bordered table-striped" style="width:100%" id="inquiryTable">
                                     <thead>
                                         <tr>
                                             <th style="text-align: left;">Sr. No</th>
                                             <th style="text-align: left;">Inq Date.</th>
                                             <th style="text-align: left;">Inq No.</th>
+                                            <th style="text-align: left;">Branch Name</th>
+                                            <th style="text-align: left;">Service Type</th>
                                             <th style="text-align: left;">Name</th>
                                             <th style="text-align: left;">Mobile</th>
                                             <th style="text-align: left;">Vehicle No</th>
                                             <th style="text-align: left;">Status</th>
-                                            <th style="text-align: left;">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -117,7 +133,17 @@
     <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
     <script>
         $(document).ready(async function() {
-            await inquiryDetails();
+            let startDate = $('#datePeriod').data('daterangepicker').startDate.format('YYYY-MM-DD');
+            let endDate = $('#datePeriod').data('daterangepicker').endDate.format('YYYY-MM-DD');
+            let searchStatusId = $('#searchStatusId').val();
+
+            let filterData = {
+                actionType: 'report',
+                startDate: startDate,
+                endDate: endDate,
+                statusId: searchStatusId
+            };
+            await inquiryDetails(filterData);
         });
 
         flatpickr("#confirmDate", {
@@ -182,6 +208,14 @@
                         name: 'inquiry_no'
                     },
                     {
+                        data: 'branch_name',
+                        name: 'branch_name'
+                    },
+                    {
+                        data: 'service_type',
+                        name: 'service_type'
+                    },
+                    {
                         data: 'name',
                         name: 'name'
                     },
@@ -196,11 +230,7 @@
                     {
                         data: 'display_status',
                         name: 'display_status'
-                    },
-                    {
-                        data: 'action',
-                        name: 'action'
-                    },
+                    }
                 ],
                 order: [
                     [0, 'desc']
@@ -220,18 +250,24 @@
         $(document).on('click', '.change-status', function() {
             let id = $(this).data('id');
             let statusId = $(this).data('status');
+            console.log(statusId);
+
             $('#statusInquiryId').val(id);
-            //$('#statusId').val('').trigger('change');
             $('#statusModal').modal('show');
             $('#confirmDIv').addClass('d-none');
+
+            let selectedValue = '';
             let html = '<option value="">Select</option>';
             if (statusId == '1') {
-                html += '<option value="4">Confirmed</option>';
+                selectedValue = '4';
+                html += '<option value="4" selected>Confirmed</option>';
             } else if (statusId == '4') {
                 html += '<option value="2">Completed</option><option value="3">Rejected</option>';
             }
-            
+
             $('#statusId').html(html);
+
+            $('#statusId').val(selectedValue).trigger('change');
         });
 
         $(document).on('click', '#changeStatusBtn', function() {
@@ -248,7 +284,7 @@
                 endDate: endDate,
                 statusId: searchStatusId
             };
-            
+
             if (statusId == '') {
                 $('.status_error').html('Please select a status');
                 return false;
@@ -291,6 +327,30 @@
 
         $(document).on('click', '#exportExcel', function() {
             $('#exportExcelForm').submit();
+        });
+
+        $(document).on('click', '#sendMessage', function() {
+            let mobileNumber = $('#mobileNumber').val();
+
+            if (mobileNumber) {
+                $.ajax({
+                    type: "POST",
+                    headers: {
+                        "Accept": "application/json"
+                    },
+                    url: "{{ route('send-message') }}",
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        mobile: mobileNumber,
+                    },
+                    crossDomain: true,
+                    success: function(response) {
+                        if (response) {
+                            $('#mobileNumber').val('')
+                        }
+                    }
+                });
+            }
         });
     </script>
 @endsection

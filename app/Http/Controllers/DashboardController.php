@@ -42,7 +42,11 @@ class DashboardController extends Controller
                     $inquiry = $inquiry->where('status_id', $request->statusId);
                 }
             } else {
-                $inquiry = $inquiry->where('status_id', '1');
+                if (!empty($request->status)) {
+                    $inquiry = $inquiry->where('status_id', $request->status);
+                } else {
+                    $inquiry = $inquiry->where('status_id', '1');
+                }
             }
 
             //return dd($inquiry->toRawSql());
@@ -58,14 +62,26 @@ class DashboardController extends Controller
                         $class = 'info';
                     }
 
-                    $html = '<span class="badge text-bg-' . $class . '">' . $this->getArrayNameById($this->statusArray, $row->status_id) . '</span>';
+                    // $html = '<span class="badge text-bg-' . $class . '">' . $this->getArrayNameById($this->statusArray, $row->status_id) . '</span>';
+                    if ($row->status_id == '1' || $row->status_id == '4') {
+                        $html = '<button type="button" class="btn btn-' . $class . ' btn-sm change-status" data-id="' . $row->id . '" data-status="' . $row->status_id . '">' . $this->getArrayNameById($this->statusArray, $row->status_id) . '</button>';
+                    } else {
+                        $html = '<button type="button" class="btn btn-' . $class . ' btn-sm">' . $this->getArrayNameById($this->statusArray, $row->status_id) . '</button>';
+                    }
                     if ($row->status_id == '4') {
-                        $html .= '<br><span class="link-primary">' . $this->formatDateTime('d M, Y h:i A', $row->confirm_date) . '</span>';
+                        $html .= '<br>
+                        <span class="link-primary">' . $this->formatDateTime('d M, Y h:i A', $row->confirm_date) . '</span>';
                     }
                     return $html;
                 })
                 ->addColumn('display_inquiry_date', function ($row) {
                     return $this->formatDateTime('d M, Y h:i A', $row->created_at);
+                })
+                ->addColumn('branch_name', function ($row) {
+                    return $this->getArrayNameById($this->branchArray, $row->branch_id);
+                })
+                ->addColumn('service_type', function ($row) {
+                    return $this->getArrayNameById($this->serviceTypeArray, $row->service_type_id);
                 })
                 ->addColumn('action', function ($row) {
                     if ($row->status_id == '1' || $row->status_id == '4') {
@@ -81,11 +97,12 @@ class DashboardController extends Controller
                     }
 
                 })
-                ->rawColumns(['display_status', 'action', 'display_inquiry_date'])
+                ->rawColumns(['display_status', 'action', 'display_inquiry_date', 'branch_name', 'service_type'])
                 ->make(true);
         }
 
-        return view('inquiry');
+        $status = $request->input('status');
+        return view('inquiry', compact('status'));
     }
 
     public function changeStatus(Request $request)
@@ -144,5 +161,20 @@ class DashboardController extends Controller
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
+    }
+
+    public function sendMessage(Request $request)
+    {
+        $message = 'Please enter Hi for inquiry';
+        $mobile = $request->input('mobile');
+        $this->sendWhatsAppMessage($mobile, $message);
+        SystemLogs::create([
+            'inquiry_id' => 0,
+            'remark' => 'WhatsApp message sent to ' . $mobile,
+            'action_id' => 1,
+            'created_by' => 1,
+        ]);
+        return response()->json(['code' => 1, 'message' => 'Message sent successfully']);
+
     }
 }
