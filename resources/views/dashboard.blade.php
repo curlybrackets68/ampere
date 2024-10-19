@@ -55,6 +55,64 @@
                     </a>
                 </div> <!--end::Col-->
             </div>
+            <hr>
+            <div class="row">
+                <div class="col-md-4 mt-4">
+                    <div class="input-group">
+                        <input type="text" name="mobileNumber" maxlength="10" id="mobileNumber"
+                            placeholder="Type Mobile Number..." class="form-control">
+                        <span class="input-group-append">
+                            <button type="button" class="btn btn-primary" id="sendMessage">Send</button>
+                        </span>
+
+                    </div>
+                    <div id="errorContainer" style="color: red; display: none;"></div>
+                </div>
+            </div>
         </div>
     </div>
+@endsection
+
+@section('javascript')
+    <script>
+        $(document).on('input', '#mobileNumber', function() {
+            this.value = this.value.replace(/\D/g, '');
+        });
+
+        $(document).on('click', '#sendMessage', function() {
+            let mobileNumber = $('#mobileNumber').val();
+            let errorMessage = '';
+
+            if (!mobileNumber) {
+                errorMessage = 'Mobile number is required.';
+            } else if (mobileNumber.length !== 10) {
+                errorMessage = 'Mobile number must be 10 digits long.';
+            }
+
+            if (errorMessage) {
+                $('#errorContainer').text(errorMessage).show();
+            } else {
+                $('#errorContainer').hide();
+                $('#sendMessage').prop('disabled', true);
+                $.ajax({
+                    type: "POST",
+                    headers: {
+                        "Accept": "application/json"
+                    },
+                    url: "{{ route('send-message') }}",
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        mobile: mobileNumber,
+                    },
+                    crossDomain: true,
+                    success: function(response) {
+                        if (response) {
+                            $('#sendMessage').prop('disabled', false);
+                            $('#mobileNumber').val('');
+                        }
+                    }
+                });
+            }
+        });
+    </script>
 @endsection

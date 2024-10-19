@@ -54,16 +54,6 @@
                                 <div class="col-md-2" style="margin-top: 31px;">
                                     <button type="button" class="btn btn-primary" id="searchReport">Search</button>
                                 </div>
-
-                                <div class="col-md-4 mt-4">
-                                    <div class="input-group">
-                                        <input type="text" name="mobileNumber" id="mobileNumber"
-                                            placeholder="Type Mobile Number..." class="form-control">
-                                        <span class="input-group-append">
-                                            <button type="button" class="btn btn-primary" id="sendMessage">Send</button>
-                                        </span>
-                                    </div>
-                                </div>
                             </div>
                             <hr>
                             <div class="row mt-3">
@@ -327,30 +317,6 @@
 
         $(document).on('click', '#exportExcel', function() {
             $('#exportExcelForm').submit();
-        });
-
-        $(document).on('click', '#sendMessage', function() {
-            let mobileNumber = $('#mobileNumber').val();
-
-            if (mobileNumber) {
-                $.ajax({
-                    type: "POST",
-                    headers: {
-                        "Accept": "application/json"
-                    },
-                    url: "{{ route('send-message') }}",
-                    data: {
-                        _token: '{{ csrf_token() }}',
-                        mobile: mobileNumber,
-                    },
-                    crossDomain: true,
-                    success: function(response) {
-                        if (response) {
-                            $('#mobileNumber').val('')
-                        }
-                    }
-                });
-            }
         });
     </script>
 @endsection
