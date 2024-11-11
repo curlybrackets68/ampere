@@ -108,17 +108,16 @@ class DashboardController extends Controller
     public function changeStatus(Request $request)
     {
         $statusId = $request->statusId;
+        $remark = $request->statusRemark;
         if ($request->statusId == '3') {
             $statusId = '1';
         }
 
-        $save = InquiryDetails::where('id', $request->id)->update(['status_id' => $statusId]);
+        $save = InquiryDetails::where('id', $request->id)->update(['status_id' => $statusId, 'status_remark' => $remark]);
 
         if ($request->statusId == '4') {
             InquiryDetails::where('id', $request->id)->update(['confirm_date' => $this->formatDateTime(mDateTime: $request->confirmDate)]);
         }
-
-        $remark = $request->statusRemark;
 
         if ($save) {
             $inquiryDetails = InquiryDetails::find($request->id);

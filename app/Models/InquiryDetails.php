@@ -24,6 +24,7 @@ class InquiryDetails extends Model
         'modified_by',
         'created_at',
         'updated_at',
+        'status_remark'
     ];
 
 }

@@ -40,9 +40,10 @@ class InquiryDetailsExport implements FromCollection, WithHeadings
         $results = $query->get();
 
         $data = [];
+        $serialNo = 1;
         foreach ($results as $row) {
             $data[] = [
-                $row->id,
+                $serialNo++,
                 $this->formatDateTime('d-m-Y', $row->created_at),
                 $this->formatDateTime('d-m-Y H:i:m', $row->confirm_date),
                 $row->inquiry_no,
@@ -52,7 +53,7 @@ class InquiryDetailsExport implements FromCollection, WithHeadings
                 $this->getArrayNameById($this->serviceTypeArray, $row->service_type_id),
                 $this->getArrayNameById($this->branchArray, $row->branch_id),
                 $this->getArrayNameById($this->statusArray, $row->status_id),
-               $row->status_remarks,
+                $row->status_remark,
                 $this->formatDateTime('d-m-Y H:i:s', $row->created_at),
             ];
         }

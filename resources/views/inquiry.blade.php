@@ -178,6 +178,12 @@
         });
 
         async function inquiryDetails(filters = []) {
+            let orderByConfirmDate = false;
+            
+            if (filters.statusId == '4') {
+                orderByConfirmDate = true;
+            }
+            
             $('#inquiryTable').DataTable({
                 serverSide: true,
                 processing: true,
@@ -224,9 +230,20 @@
                     {
                         data: 'display_status',
                         name: 'display_status'
+                    },
+                    {
+                        data: 'confirm_date',
+                        name: 'confirm_date',
+                        visible: false,
+                        type: 'date'
                     }
                 ],
-                order: [
+                // order: [
+                //     [0, 'desc']
+                // ],
+                order: orderByConfirmDate ? [
+                    [9, 'desc']
+                ] : [
                     [0, 'desc']
                 ],
                 createdRow: function(row, data, index) {
@@ -256,7 +273,8 @@
                 selectedValue = '4';
                 html += '<option value="4" selected>Confirmed</option>';
             } else if (statusId == '4') {
-                html += '<option value="2">Completed</option><option value="3">Rejected</option><option value="5">Workshop</option>';
+                html +=
+                    '<option value="2">Completed</option><option value="3">Rejected</option><option value="5">Workshop</option>';
             }
 
             $('#statusId').html(html);
