@@ -107,11 +107,18 @@ class DashboardController extends Controller
 
     public function changeStatus(Request $request)
     {
-        $save = InquiryDetails::where('id', $request->id)->update(['status_id' => $request->statusId]);
+        $statusId = $request->statusId;
+        if ($request->statusId == '3') {
+            $statusId = '1';
+        }
+
+        $save = InquiryDetails::where('id', $request->id)->update(['status_id' => $statusId]);
 
         if ($request->statusId == '4') {
             InquiryDetails::where('id', $request->id)->update(['confirm_date' => $this->formatDateTime(mDateTime: $request->confirmDate)]);
         }
+
+        $remark = $request->statusRemark;
 
         if ($save) {
             $inquiryDetails = InquiryDetails::find($request->id);
@@ -121,6 +128,7 @@ class DashboardController extends Controller
                 $message .= "Name: " . $inquiryDetails->name . "\n";
                 $message .= "Mobile: " . $inquiryDetails->mobile . "\n";
                 $message .= "Vehicle No: " . $inquiryDetails->vehicle_no . "\n";
+                $message .= "Remark: " . $remark . "\n";
             } else if ($request->statusId == '4') { // Confirmed
                 $message = 'Your booking confirmed as #' . $inquiryDetails->inquiry_no . "\n";
                 $message .= "Date: " . $this->formatDateTime('d M, Y h:i A', $inquiryDetails->confirm_date) . "\n";
@@ -134,6 +142,7 @@ class DashboardController extends Controller
                 $message .= "Name: " . $inquiryDetails->name . "\n";
                 $message .= "Mobile: " . $inquiryDetails->mobile . "\n";
                 $message .= "Vehicle No: " . $inquiryDetails->vehicle_no . "\n";
+                $message .= "Remark: " . $remark . "\n";
             }
 
             $this->sendWhatsAppMessage($inquiryDetails->mobile, $message);

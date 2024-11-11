@@ -107,6 +107,10 @@
                             <label>Date</label>
                             <input type="text" id="confirmDate" class="form-control">
                         </div>
+                        <div class="col-md-12 d-none mt-3" id="remarkDiv">
+                            <label>Remark</label>
+                            <textarea rows="3" id="statusRemark" class="form-control"></textarea>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -238,9 +242,9 @@
         }
 
         $(document).on('click', '.change-status', function() {
+            $('#statusRemark').val('');
             let id = $(this).data('id');
             let statusId = $(this).data('status');
-            console.log(statusId);
 
             $('#statusInquiryId').val(id);
             $('#statusModal').modal('show');
@@ -252,7 +256,7 @@
                 selectedValue = '4';
                 html += '<option value="4" selected>Confirmed</option>';
             } else if (statusId == '4') {
-                html += '<option value="2">Completed</option><option value="3">Rejected</option>';
+                html += '<option value="2">Completed</option><option value="3">Rejected</option><option value="5">Workshop</option>';
             }
 
             $('#statusId').html(html);
@@ -263,6 +267,7 @@
         $(document).on('click', '#changeStatusBtn', function() {
             let id = $('#statusInquiryId').val();
             let statusId = $('#statusId').val();
+            let statusRemark = $('#statusRemark').val();
 
             let startDate = $('#datePeriod').data('daterangepicker').startDate.format('YYYY-MM-DD');
             let endDate = $('#datePeriod').data('daterangepicker').endDate.format('YYYY-MM-DD');
@@ -292,6 +297,7 @@
                     _token: '{{ csrf_token() }}',
                     id: id,
                     statusId: statusId,
+                    statusRemark: statusRemark,
                     confirmDate: confirmDate
                 },
                 success: async function(response) {
@@ -308,9 +314,23 @@
         $(document).on('change', '#statusId', function() {
             $('.status_error').html('');
 
-            if ($(this).val() === '4') {
+            if ($(this).val() == '1') {
+                $('#statusRemark').val('');
+                $('#remarkDiv').addClass('d-none');
+                $('#confirmDIv').addClass('d-none');
+            } else if ($(this).val() === '2') {
+                $('#remarkDiv').removeClass('d-none');
+                $('#confirmDIv').addClass('d-none');
+            } else if ($(this).val() === '3') {
+                $('#remarkDiv').removeClass('d-none');
+                $('#confirmDIv').addClass('d-none');
+            } else if ($(this).val() === '4') {
+                $('#statusRemark').val('');
+                $('#remarkDiv').addClass('d-none');
                 $('#confirmDIv').removeClass('d-none');
             } else {
+                $('#statusRemark').val('');
+                $('#remarkDiv').addClass('d-none');
                 $('#confirmDIv').addClass('d-none');
             }
         });
