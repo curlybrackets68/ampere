@@ -12,9 +12,9 @@ trait CommonFunctions
     protected $data = [];
 
     protected $serviceTypeArray = [
-        "1" => 'PERIODIC MAINTENANCE',
-        "2" => 'WARRANTY REPAIR',
-        "3" => 'INSURANCE CLAIM',
+        "1" => 'Regular service',
+        "2" => 'Vehicle Off Road',
+        "3" => 'Insurance Repair',
         "4" => 'MINOR SERVICE',
         "5" => 'Other',
     ];
@@ -147,5 +147,5 @@ trait CommonFunctions
             }
         }
     }
-  
+
 }
