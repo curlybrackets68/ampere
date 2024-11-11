@@ -15,8 +15,8 @@ trait CommonFunctions
         "1" => 'Regular service',
         "2" => 'Vehicle Off Road',
         "3" => 'Insurance Repair',
-        "4" => 'MINOR SERVICE',
-        "5" => 'Other',
+        //"4" => 'MINOR SERVICE',
+      //  "5" => 'Other',
     ];
     protected $branchArray = [
         "1" => "KALALI",
@@ -28,6 +28,7 @@ trait CommonFunctions
         "2" => 'Completed',
         "3" => 'Rejected',
         "4" => 'Confirmed',
+        "5" => 'In Workshop',
     ];
 
     protected $actionLogsArray = [
