@@ -27,7 +27,7 @@ class InquiryDetailsExport implements FromCollection, WithHeadings
 
     public function collection()
     {
-        $query = InquiryDetails::query();
+        $query = InquiryDetails::query()->orderBy('confirm_date', 'desc')->orderBy('id', 'desc');
 
         if (!empty($this->startDate) && !empty($this->endDate)) {
             $query = $query->whereBetween(DB::raw('DATE(created_at)'), [$this->startDate, $this->endDate]);
@@ -44,6 +44,7 @@ class InquiryDetailsExport implements FromCollection, WithHeadings
             $data[] = [
                 $row->id,
                 $this->formatDateTime('d-m-Y', $row->created_at),
+                $this->formatDateTime('d-m-Y H:i:m', $row->confirm_date),
                 $row->inquiry_no,
                 $row->name,
                 $row->mobile,
@@ -51,6 +52,7 @@ class InquiryDetailsExport implements FromCollection, WithHeadings
                 $this->getArrayNameById($this->serviceTypeArray, $row->service_type_id),
                 $this->getArrayNameById($this->branchArray, $row->branch_id),
                 $this->getArrayNameById($this->statusArray, $row->status_id),
+               $row->status_remarks,
                 $this->formatDateTime('d-m-Y H:i:s', $row->created_at),
             ];
         }
@@ -63,6 +65,7 @@ class InquiryDetailsExport implements FromCollection, WithHeadings
         return [
             'ID',
             'Inquiry Date',
+            'Confirm Date',
             'Inquiry No',
             'Inquiry Name',
             'Mobile',
@@ -70,6 +73,7 @@ class InquiryDetailsExport implements FromCollection, WithHeadings
             'Service Type',
             'Branch',
             'Status',
+            'Status Remarks',
             'Created At',
         ];
     }
