@@ -49,6 +49,8 @@
                                             Rejected</option>
                                         <option value="4" {{ isset($status) && $status == '4' ? 'selected' : '' }}>
                                             Confirmed</option>
+                                        <option value="5" {{ isset($status) && $status == '5' ? 'selected' : '' }}>
+                                            Workshop</option>
                                     </select>
                                 </div>
                                 <div class="col-md-2" style="margin-top: 31px;">
@@ -271,7 +273,7 @@
             let html = '<option value="">Select</option>';
             if (statusId == '1') {
                 selectedValue = '4';
-                html += '<option value="4" selected>Confirmed</option>';
+                html += '<option value="4" selected>Confirmed</option><option value="3">Rejected</option>';
             } else if (statusId == '4') {
                 html +=
                     '<option value="2">Completed</option><option value="3">Rejected</option><option value="5">Workshop</option>';

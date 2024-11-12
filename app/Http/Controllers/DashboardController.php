@@ -24,8 +24,9 @@ class DashboardController extends Controller
         $completeInquiry = $inquiryCounts[2] ?? 0;
         $rejectedInquiry = $inquiryCounts[3] ?? 0;
         $confirmInquiry = $inquiryCounts[4] ?? 0;
+        $workshopInquiry = $inquiryCounts[5] ?? 0;
 
-        return view('dashboard')->with(compact('pendingInquiry', 'completeInquiry', 'rejectedInquiry', 'confirmInquiry'));
+        return view('dashboard')->with(compact('pendingInquiry', 'completeInquiry', 'rejectedInquiry', 'confirmInquiry', 'workshopInquiry'));
     }
 
     public function inquiryDetails(Request $request)
@@ -60,6 +61,8 @@ class DashboardController extends Controller
                         $class = 'danger';
                     } else if ($row->status_id == '4') {
                         $class = 'info';
+                    } else if ($row->status_id == '5') {
+                        $class = 'primary';
                     }
 
                     // $html = '<span class="badge text-bg-' . $class . '">' . $this->getArrayNameById($this->statusArray, $row->status_id) . '</span>';

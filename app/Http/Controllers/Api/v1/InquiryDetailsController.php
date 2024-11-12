@@ -14,15 +14,13 @@ class InquiryDetailsController extends Controller
     {
         // Define validation rules
         $rules = [
-            'vehicle_no' => 'required|alpha_num|size:10', // Adjust size based on vehicle number length
+            'vehicle_no' => 'required', // Adjust size based on vehicle number length
             'mobile' => 'required|digits:10' // 10-digit validation for mobile
         ];
 
         // Define custom error messages
         $messages = [
             'vehicle_no.required' => 'Vehicle number is required.',
-            'vehicle_no.alpha_num' => 'Vehicle number must be alphanumeric.',
-            'vehicle_no.size' => 'Vehicle number must be exactly 10 characters.', // Adjust based on actual format
             'mobile.required' => 'Mobile number is required.',
             'mobile.digits' => 'Mobile number must be 10 digits long.'
         ];

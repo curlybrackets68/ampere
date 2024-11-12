@@ -14,7 +14,7 @@
             </div>
 
             <div class="row mt-3"> <!--begin::Col-->
-                <div class="col-lg-3 col-6"> <!--begin::Small Box Widget 1-->
+                <div class="col-lg-2 col-md-4 col-6 mb-3"> <!--begin::Small Box Widget 1-->
                     <a href="{{ route('inquiry', ['status' => '1']) }}">
                         <div class="small-box text-bg-warning">
                             <div class="inner">
@@ -24,7 +24,7 @@
                         </div> <!--end::Small Box Widget 1-->
                     </a>
                 </div> <!--end::Col-->
-                <div class="col-lg-3 col-6"> <!--begin::Small Box Widget 2-->
+                <div class="col-lg-2 col-md-4 col-6 mb-3"> <!--begin::Small Box Widget 2-->
                     <a href="{{ route('inquiry', ['status' => '2']) }}">
                         <div class="small-box text-bg-success">
                             <div class="inner">
@@ -34,7 +34,7 @@
                         </div> <!--end::Small Box Widget 2-->
                     </a>
                 </div> <!--end::Col-->
-                <div class="col-lg-3 col-6"> <!--begin::Small Box Widget 3-->
+                <div class="col-lg-2 col-md-4 col-6 mb-3"> <!--begin::Small Box Widget 3-->
                     <a href="{{ route('inquiry', ['status' => '3']) }}">
                         <div class="small-box text-bg-danger">
                             <div class="inner">
@@ -44,12 +44,22 @@
                         </div> <!--end::Small Box Widget 3-->
                     </a>
                 </div> <!--end::Col-->
-                <div class="col-lg-3 col-6"> <!--begin::Small Box Widget 4-->
+                <div class="col-lg-2 col-md-4 col-6 mb-3"> <!--begin::Small Box Widget 4-->
                     <a href="{{ route('inquiry', ['status' => '4']) }}">
                         <div class="small-box text-bg-primary">
                             <div class="inner">
                                 <h3>{{ $confirmInquiry }}</h3>
                                 <p>Confirm</p>
+                            </div>
+                        </div> <!--end::Small Box Widget 4-->
+                    </a>
+                </div> <!--end::Col-->
+                <div class="col-lg-2 col-md-4 col-6 mb-3"> <!--begin::Small Box Widget 4-->
+                    <a href="{{ route('inquiry', ['status' => '5']) }}">
+                        <div class="small-box text-bg-info">
+                            <div class="inner">
+                                <h3>{{ $workshopInquiry }}</h3>
+                                <p>Workshop</p>
                             </div>
                         </div> <!--end::Small Box Widget 4-->
                     </a>
