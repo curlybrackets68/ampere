@@ -277,6 +277,9 @@
             } else if (statusId == '4') {
                 html +=
                     '<option value="2">Completed</option><option value="3">Rejected</option><option value="5">Workshop</option>';
+            } else if (statusId == '5') {
+                html +=
+                    '<option value="2">Completed</option><option value="3">Rejected</option>';
             }
 
             $('#statusId').html(html);

@@ -73,7 +73,7 @@
                             placeholder="Type Mobile Number..." class="form-control">
                         <span class="input-group-append">
                             <button type="button" class="btn btn-primary" id="sendMessage">Send</button>
-                        </span>
+                        </span> 
 
                     </div>
                     <div id="errorContainer" style="color: red; display: none;"></div>

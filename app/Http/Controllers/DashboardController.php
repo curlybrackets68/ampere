@@ -15,7 +15,7 @@ class DashboardController extends Controller
     public function dashboard()
     {
         $inquiryCounts = InquiryDetails::select('status_id', DB::raw('count(*) as count'))
-            ->whereIn('status_id', [1, 2, 3, 4])
+            ->whereIn('status_id', [1, 2, 3, 4, 5])
             ->groupBy('status_id')
             ->pluck('count', 'status_id')
             ->toArray();
@@ -66,7 +66,7 @@ class DashboardController extends Controller
                     }
 
                     // $html = '<span class="badge text-bg-' . $class . '">' . $this->getArrayNameById($this->statusArray, $row->status_id) . '</span>';
-                    if ($row->status_id == '1' || $row->status_id == '4') {
+                    if ($row->status_id == '1' || $row->status_id == '4' || $row->status_id == '5') {
                         $html = '<button type="button" class="btn btn-' . $class . ' btn-sm change-status" data-id="' . $row->id . '" data-status="' . $row->status_id . '">' . $this->getArrayNameById($this->statusArray, $row->status_id) . '</button>';
                     } else {
                         $html = '<button type="button" class="btn btn-' . $class . ' btn-sm">' . $this->getArrayNameById($this->statusArray, $row->status_id) . '</button>';
@@ -87,7 +87,7 @@ class DashboardController extends Controller
                     return $this->getArrayNameById($this->serviceTypeArray, $row->service_type_id);
                 })
                 ->addColumn('action', function ($row) {
-                    if ($row->status_id == '1' || $row->status_id == '4') {
+                    if ($row->status_id == '1' || $row->status_id == '4' || $row->status_id == '5') {
                         return '<div class="btn-group"> <button type="button" class="btn btn-light dropdown-toggle"
                                     style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"
                                     data-bs-toggle="dropdown" aria-expanded="false"> Action </button>
@@ -112,9 +112,6 @@ class DashboardController extends Controller
     {
         $statusId = $request->statusId;
         $remark = $request->statusRemark;
-        if ($request->statusId == '3') {
-            $statusId = '1';
-        }
 
         $save = InquiryDetails::where('id', $request->id)->update(['status_id' => $statusId, 'status_remark' => $remark]);
 
