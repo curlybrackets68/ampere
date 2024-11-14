@@ -31,9 +31,9 @@ class DashboardController extends Controller
 
     public function inquiryDetails(Request $request)
     {
+        $branches = $this->branchArray;
         if ($request->ajax()) {
             $inquiry = InquiryDetails::query();
-
             if (isset($request->actionType) && $request->actionType == 'report') {
                 if (!empty($request->startDate) && !empty($request->endDate)) {
                     $inquiry = $inquiry->whereBetween(DB::raw('DATE(created_at)'), [$request->startDate, $request->endDate]);
@@ -41,6 +41,10 @@ class DashboardController extends Controller
 
                 if (!empty($request->statusId)) {
                     $inquiry = $inquiry->where('status_id', $request->statusId);
+                }
+
+                if (!empty($request->searchBranchId)) {
+                    $inquiry = $inquiry->where('branch_id', $request->searchBranchId);
                 }
             } else {
                 if (!empty($request->status)) {
@@ -105,7 +109,7 @@ class DashboardController extends Controller
         }
 
         $status = $request->input('status');
-        return view('inquiry', compact('status'));
+        return view('inquiry', compact('status', 'branches'));
     }
 
     public function changeStatus(Request $request)
@@ -164,8 +168,9 @@ class DashboardController extends Controller
             $exportStartDate = $request->input('exportStartDate');
             $exportEndDate = $request->input('exportEndDate');
             $exportStatusId = $request->input('exportStatusId', '');
+            $exportBranchId = $request->input('exportBranchId', '');
             // dd($exportStartDate, $exportEndDate, $exportStatusId);
-            return Excel::download(new InquiryDetailsExport($exportStartDate, $exportEndDate, $exportStatusId), 'inquiry.xlsx');
+            return Excel::download(new InquiryDetailsExport($exportStartDate, $exportEndDate, $exportStatusId, $exportBranchId), 'inquiry.xlsx');
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }

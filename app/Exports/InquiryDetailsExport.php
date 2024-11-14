@@ -16,13 +16,14 @@ class InquiryDetailsExport implements FromCollection, WithHeadings
 
     use CommonFunctions;
 
-    protected $startDate, $endDate, $statusId;
+    protected $startDate, $endDate, $statusId, $branchId;
 
-    public function __construct($startDate = '', $endDate = '', $statusId = '')
+    public function __construct($startDate = '', $endDate = '', $statusId = '', $branchId = '')
     {
         $this->startDate = $this->formatDateTime('Y-m-d', $startDate);
         $this->endDate = $this->formatDateTime('Y-m-d', $endDate);
         $this->statusId = $statusId;
+        $this->branchId = $branchId;
     }
 
     public function collection()
@@ -35,6 +36,10 @@ class InquiryDetailsExport implements FromCollection, WithHeadings
 
         if (!empty($this->statusId)) {
             $query = $query->where('status_id', $this->statusId);
+        }
+
+        if (!empty($this->branchId)) {
+            $inquiry = $query->where('branch_id', $this->branchId);
         }
 
         $results = $query->get();

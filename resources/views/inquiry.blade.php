@@ -25,6 +25,7 @@
                                         {{ Form::hidden('exportStartDate', null, ['id' => 'exportStartDate']) }}
                                         {{ Form::hidden('exportEndDate', null, ['id' => 'exportEndDate']) }}
                                         {{ Form::hidden('exportStatusId', 0, ['id' => 'exportStatusId']) }}
+                                        {{ Form::hidden('exportBranchId', 0, ['id' => 'exportBranchId']) }}
                                         <i class="bi bi-cloud-download me-1 align-middle me-1"></i> Export
                                     </form>
                                 </a>
@@ -51,6 +52,16 @@
                                             Confirmed</option>
                                         <option value="5" {{ isset($status) && $status == '5' ? 'selected' : '' }}>
                                             Workshop</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label>Branch</label>
+                                    <select class="form-select" id="searchBranchId">
+                                        <option value="0">All</option>
+                                        @foreach ($branches as $key => $value)
+                                            <option value="{{ $key }}">{{ $value }}</option>
+                                        @endforeach
+                                    </select>
                                     </select>
                                 </div>
                                 <div class="col-md-2" style="margin-top: 31px;">
@@ -132,12 +143,14 @@
             let startDate = $('#datePeriod').data('daterangepicker').startDate.format('YYYY-MM-DD');
             let endDate = $('#datePeriod').data('daterangepicker').endDate.format('YYYY-MM-DD');
             let searchStatusId = $('#searchStatusId').val();
+            let searchBranchId = $('#searchBranchId').val();
 
             let filterData = {
                 actionType: 'report',
                 startDate: startDate,
                 endDate: endDate,
-                statusId: searchStatusId
+                statusId: searchStatusId,
+                searchBranchId: searchBranchId
             };
             await inquiryDetails(filterData);
         });
@@ -164,16 +177,19 @@
             let startDate = $('#datePeriod').data('daterangepicker').startDate.format('YYYY-MM-DD');
             let endDate = $('#datePeriod').data('daterangepicker').endDate.format('YYYY-MM-DD');
             let statusId = $('#searchStatusId').val();
+            let branchId = $('#searchBranchId').val();
 
             $('#exportStartDate').val(startDate);
             $('#exportEndDate').val(endDate);
             $('#exportStatusId').val(statusId);
+            $('#exportBranchId').val(branchId);
 
             let data = {
                 actionType: 'report',
                 startDate: startDate,
                 endDate: endDate,
-                statusId: statusId
+                statusId: statusId,
+                searchBranchId: branchId
             };
             await inquiryDetails(data);
             $('#exportExcel').removeClass('d-none');
@@ -181,11 +197,11 @@
 
         async function inquiryDetails(filters = []) {
             let orderByConfirmDate = false;
-            
+
             if (filters.statusId == '4') {
                 orderByConfirmDate = true;
             }
-            
+
             $('#inquiryTable').DataTable({
                 serverSide: true,
                 processing: true,
@@ -295,12 +311,14 @@
             let startDate = $('#datePeriod').data('daterangepicker').startDate.format('YYYY-MM-DD');
             let endDate = $('#datePeriod').data('daterangepicker').endDate.format('YYYY-MM-DD');
             let searchStatusId = $('#searchStatusId').val();
+            let searchBranchId = $('#searchBranchId').val();
 
             let filterData = {
                 actionType: 'report',
                 startDate: startDate,
                 endDate: endDate,
-                statusId: searchStatusId
+                statusId: searchStatusId,
+                searchBranchId: searchBranchId,
             };
 
             if (statusId == '') {
