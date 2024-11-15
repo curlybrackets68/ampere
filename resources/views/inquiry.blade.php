@@ -260,9 +260,9 @@
                 //     [0, 'desc']
                 // ],
                 order: orderByConfirmDate ? [
-                    [9, 'desc']
+                    [9, 'asc']
                 ] : [
-                    [0, 'desc']
+                    [0, 'asc']
                 ],
                 createdRow: function(row, data, index) {
                     $('td', row).eq(0).css('text-align', 'left');
