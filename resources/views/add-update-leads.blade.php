@@ -145,6 +145,7 @@
             }
 
             if (isValid) {
+                loaderButton('addUpdateLeads', true);
                 $('form[name="leadsForm"]').submit();
             }
         });
