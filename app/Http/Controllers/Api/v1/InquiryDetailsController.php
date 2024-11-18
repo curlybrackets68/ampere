@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\v1;
 
 use App\Http\Controllers\Controller;
 use App\Models\InquiryDetails;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Validator;
@@ -52,5 +53,19 @@ class InquiryDetailsController extends Controller
         $command = $request->command;
         Artisan::call($command);
         return;
+    }
+
+    public function checkInquiry(Request $request)
+    {
+        $today = Carbon::today()->toDateString();
+        $mobileNumber = $request->input('mobile');
+        $existingInquiry = InquiryDetails::where('mobile', $mobileNumber)
+            ->whereRaw('DATE(created_at) = ?', [$today])
+            ->first();
+        if ($existingInquiry) {
+            return $this->failResponse([], 'An inquiry has already been created with this mobile number today, Please try with another number. Thank you.');
+        } else {
+            return $this->successResponse([], "");
+        }
     }
 }
