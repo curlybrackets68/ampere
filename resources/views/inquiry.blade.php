@@ -133,6 +133,31 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="confirmDateModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true"
+        data-bs-backdrop="static">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Status</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <input type="hidden" id="confirmInquiryId">
+                            <label>Date</label>
+                            <input type="text" id="confirmDateValue" class="form-control">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="confirmDateSave">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 @section('javascript')
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
@@ -156,6 +181,13 @@
         });
 
         flatpickr("#confirmDate", {
+            enableTime: true,
+            dateFormat: "d-m-Y H:i",
+            time_24hr: false,
+            defaultDate: new Date().setHours(9, 0)
+        });
+        
+        flatpickr("#confirmDateValue", {
             enableTime: true,
             dateFormat: "d-m-Y H:i",
             time_24hr: false,
@@ -378,6 +410,36 @@
 
         $(document).on('click', '#exportExcel', function() {
             $('#exportExcelForm').submit();
+        });
+
+        $(document).on('click', '.confirmDateChange', function() {
+            $('#confirmInquiryId').val($(this).data('id'));
+            $('#confirmDateModal').modal('show');
+        });
+
+        $(document).on('click', '#confirmDateSave', function(event) {
+            let confirmDate = $('#confirmDateValue').val();
+            let id = $('#confirmInquiryId').val();
+
+            $.ajax({
+                url: '{{ route('inquiry.change-status') }}',
+                type: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    id: id,
+                    statusId: '4',
+                    statusRemark: 'Change Confirm Date',
+                    confirmDate: confirmDate
+                },
+                success: async function(response) {
+                    if (response.code == '1') {
+                        $('#confirmDateModal').modal('hide');
+                        await inquiryDetails(filterData);
+                    } else {
+                        alert(response.message);
+                    }
+                }
+            });
         });
     </script>
 @endsection

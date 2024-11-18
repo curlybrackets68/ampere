@@ -77,7 +77,7 @@ class DashboardController extends Controller
                     }
                     if ($row->status_id == '4') {
                         $html .= '<br>
-                        <span class="link-primary">' . $this->formatDateTime('d M, Y h:i A', $row->confirm_date) . '</span>';
+                        <a class="link-primary confirmDateChange" data-id="' . $row->id . '" style="cursor: pointer;">' . $this->formatDateTime('d M, Y h:i A', $row->confirm_date) . '</a>';
                     }
                     return $html;
                 })
@@ -96,7 +96,7 @@ class DashboardController extends Controller
                                     style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"
                                     data-bs-toggle="dropdown" aria-expanded="false"> Action </button>
                                 <ul class="dropdown-menu" style="font-size: 0.75rem; padding: 0.25rem 0.5rem;">
-                                    <li> <a class="dropdown-item change-status" data-id="' . $row->id . '" data-status="' . $row->status_id . '" href="javascript:void(0);">Status</a></li>
+                                    <li> <a class="dropdown-item change-status" data-status= data-id="' . $row->id . '" data-status="' . $row->status_id . '" href="javascript:void(0);">Status</a></li>
                                 </ul>
                             </div>';
                     } else {
