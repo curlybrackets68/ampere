@@ -3,11 +3,11 @@
 
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>@yield('title') | Dashboard</title><!--begin::Primary Meta Tags-->
+    <title>@yield('title')</title><!--begin::Primary Meta Tags-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="title" content="Ampere | Dashboard">
     <meta name="author" content="ColorlibHQ">
-    
+
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/source-sans-3@5.0.12/index.css"
         integrity="sha256-tXJfXfp6Ewt1ilPzLDtQnJV4hclT9XuaZUKyUvmyr+Q=" crossorigin="anonymous">
 
@@ -57,14 +57,23 @@
                         data-accordion="false">
 
                         <li class="nav-header">Dashboard</li>
-                        <li class="nav-item"> <a href="{{ route('dashboard') }}" class="nav-link"> <i
+                        <li class="nav-item">
+                            <a href="{{ route('dashboard') }}" class="nav-link"> <i
                                     class="nav-icon bi bi-grip-horizontal"></i>
                                 <p>Dashboard</p>
-                            </a> </li>
-                        <li class="nav-item"> <a href="{{ route('inquiry') }}" class="nav-link"> <i
-                                    class="nav-icon bi bi-star-half"></i>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('inquiry') }}" class="nav-link"> <i class="nav-icon bi bi-star-half"></i>
                                 <p>Inquiry</p>
-                            </a> </li>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a href="{{ route('leads.index') }}" class="nav-link"> <i class="nav-icon bi bi-table"></i>
+                                <p>Deals</p>
+                            </a>
+                        </li>
                     </ul> <!--end::Sidebar Menu-->
                 </nav>
             </div> <!--end::Sidebar Wrapper-->

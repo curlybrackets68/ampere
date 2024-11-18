@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\LeadsController;
 use App\Http\Controllers\LoginController;
 use Illuminate\Support\Facades\Route;
 
@@ -30,4 +31,5 @@ Route::middleware(['auth'])->group(function () {
     Route::post('change-status', [DashboardController::class, 'changeStatus'])->name('inquiry.change-status');
     Route::post('export-inquiry', [DashboardController::class, 'export'])->name('user.inquiry.excel.export');
     Route::post('send-message', [DashboardController::class, 'sendMessage'])->name('send-message');
+    Route::resource('leads', LeadsController::class);
 });

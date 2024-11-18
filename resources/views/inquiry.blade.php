@@ -1,7 +1,7 @@
 @extends('master')
 
 @section('title')
-    AMPERE
+    Inquiry | AMPERE
 @endsection
 
 @section('css')

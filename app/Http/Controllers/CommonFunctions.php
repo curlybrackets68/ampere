@@ -36,6 +36,14 @@ trait CommonFunctions
         "2" => 'Edit',
         "3" => 'change Status',
     ];
+
+    protected $leadSource = [
+        '1' => 'BTL Field Activity',
+        '2' => 'Existing Customer',
+        '3' => 'Natural Walk-In',
+        '4' => 'Reference',
+    ];
+
     // End fix constants for project
 
     public function convertNullOrEmptyStringToZero($str)
