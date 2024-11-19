@@ -117,7 +117,7 @@ class DashboardController extends Controller
         $statusId = $request->statusId;
         $remark = $request->statusRemark;
 
-        $save = InquiryDetails::where('id', $request->id)->update(['status_id' => $statusId, 'status_remark' => $remark]);
+        $save = InquiryDetails::where('id', $request->id)->update(['status_id' => $statusId, 'status_remark' => $remark ?? '']);
 
         if ($request->statusId == '4') {
             InquiryDetails::where('id', $request->id)->update(['confirm_date' => $this->formatDateTime(mDateTime: $request->confirmDate)]);
@@ -148,7 +148,7 @@ class DashboardController extends Controller
                 $message .= "Remark: " . $remark . "\n";
             }
 
-            $this->sendWhatsAppMessage($inquiryDetails->mobile, $message);
+            //$this->sendWhatsAppMessage($inquiryDetails->mobile, $message);
             SystemLogs::create([
                 'inquiry_id' => $request->id,
                 'remark' => 'Status changed to ' . $this->getArrayNameById($this->statusArray, $request->statusId),

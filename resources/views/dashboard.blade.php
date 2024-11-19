@@ -73,7 +73,7 @@
                             placeholder="Type Mobile Number..." class="form-control">
                         <span class="input-group-append">
                             <button type="button" class="btn btn-primary" id="sendMessage">Send</button>
-                        </span> 
+                        </span>
 
                     </div>
                     <div id="errorContainer" style="color: red; display: none;"></div>
@@ -103,7 +103,7 @@
                 $('#errorContainer').text(errorMessage).show();
             } else {
                 $('#errorContainer').hide();
-                $('#sendMessage').prop('disabled', true);
+                // $('#sendMessage').prop('disabled', true);
                 $.ajax({
                     type: "POST",
                     headers: {
@@ -114,10 +114,16 @@
                         _token: '{{ csrf_token() }}',
                         mobile: mobileNumber,
                     },
+                    beforeSend: function() {
+                        loaderButton('sendMessage', true);
+                    },
+                    complete: function() {
+                        loaderButton('sendMessage', false);
+                    },
                     crossDomain: true,
                     success: function(response) {
                         if (response) {
-                            $('#sendMessage').prop('disabled', false);
+                            // $('#sendMessage').prop('disabled', false);
                             $('#mobileNumber').val('');
                         }
                     }

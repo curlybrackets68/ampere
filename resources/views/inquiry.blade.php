@@ -186,7 +186,7 @@
             time_24hr: false,
             defaultDate: new Date().setHours(9, 0)
         });
-        
+
         flatpickr("#confirmDateValue", {
             enableTime: true,
             dateFormat: "d-m-Y H:i",
@@ -373,6 +373,12 @@
                     statusRemark: statusRemark,
                     confirmDate: confirmDate
                 },
+                beforeSend: function() {
+                    loaderButton('changeStatusBtn', true);
+                },
+                complete: function() {
+                    loaderButton('changeStatusBtn', false);
+                },
                 success: async function(response) {
                     if (response.code == '1') {
                         $('#statusModal').modal('hide');
@@ -430,6 +436,12 @@
                     statusId: '4',
                     statusRemark: 'Change Confirm Date',
                     confirmDate: confirmDate
+                },
+                beforeSend: function() {
+                    loaderButton('confirmDateSave', true);
+                },
+                complete: function() {
+                    loaderButton('confirmDateSave', false);
                 },
                 success: async function(response) {
                     if (response.code == '1') {
