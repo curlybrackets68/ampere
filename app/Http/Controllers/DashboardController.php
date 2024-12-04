@@ -146,9 +146,10 @@ class DashboardController extends Controller
                 $message .= "Mobile: " . $inquiryDetails->mobile . "\n";
                 $message .= "Vehicle No: " . $inquiryDetails->vehicle_no . "\n";
                 $message .= "Remark: " . $remark . "\n";
+                $message .= "To book appointment again, please send Hi on whatsapp";
             }
 
-            //$this->sendWhatsAppMessage($inquiryDetails->mobile, $message);
+            $this->sendWhatsAppMessage($inquiryDetails->mobile, $message);
             SystemLogs::create([
                 'inquiry_id' => $request->id,
                 'remark' => 'Status changed to ' . $this->getArrayNameById($this->statusArray, $request->statusId),
