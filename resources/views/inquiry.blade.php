@@ -172,8 +172,8 @@
 
             let filterData = {
                 actionType: 'report',
-                startDate: startDate,
-                endDate: endDate,
+                startDate: '',
+                endDate: '',
                 statusId: searchStatusId,
                 searchBranchId: searchBranchId
             };
