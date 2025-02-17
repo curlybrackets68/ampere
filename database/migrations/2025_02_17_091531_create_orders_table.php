@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('customer_name', 255)->nullable();
             $table->string('customer_mobile', 12)->nullable();
             $table->string('customer_vehicle_no', 255)->nullable();
-            $table->string('order_name', 255)->nullable();
+            $table->text('order_name')->nullable();
             $table->dateTime('order_date')->nullable();
             $table->bigInteger('status_id')->default(1);
             $table->text('status_remark')->nullable();

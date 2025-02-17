@@ -29,6 +29,8 @@ trait CommonFunctions
         "3" => 'Rejected',
         "4" => 'Confirmed',
         "5" => 'In Workshop',
+        "6" => 'Ordered',
+        "7" => 'Recieved',
     ];
 
     protected $actionLogsArray = [

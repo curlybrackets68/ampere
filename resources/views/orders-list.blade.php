@@ -44,26 +44,14 @@
                                         </option>
                                         <option value="1" {{ !isset($status) || $status == '1' ? 'selected' : '' }}>
                                             Pending</option>
-                                        <option value="2" {{ isset($status) && $status == '2' ? 'selected' : '' }}>
-                                            Completed</option>
-                                        <option value="3" {{ isset($status) && $status == '3' ? 'selected' : '' }}>
-                                            Rejected</option>
-                                        <option value="4" {{ isset($status) && $status == '4' ? 'selected' : '' }}>
-                                            Confirmed</option>
-                                        <option value="5" {{ isset($status) && $status == '5' ? 'selected' : '' }}>
-                                            Workshop</option>
+                                        <option value="6" {{ isset($status) && $status == '6' ? 'selected' : '' }}>
+                                            Ordered</option>
+                                        <option value="7" {{ isset($status) && $status == '7' ? 'selected' : '' }}>
+                                            Recieved</option>
+
                                     </select>
                                 </div>
-                                <div class="col-md-3">
-                                    <label>Branch</label>
-                                    <select class="form-select" id="searchBranchId">
-                                        <option value="0">All</option>
-                                        {{-- @foreach ($branches as $key => $value)
-                                            <option value="{{ $key }}">{{ $value }}</option>
-                                        @endforeach --}}
-                                    </select>
-                                    </select>
-                                </div>
+                                
                                 <div class="col-md-2" style="margin-top: 31px;">
                                     <button type="button" class="btn btn-primary" id="searchReport">Search</button>
                                 </div>
@@ -239,7 +227,7 @@
                 responsive: true,
                 scrollX: true,
                 ajax: {
-                    url: '{{ route('orders.index') }}',
+                    url: '{{ route('orders') }}',
                     data: filters
                 },
                 columns: [{
@@ -271,16 +259,9 @@
                         data: 'action',
                         name: 'action'
                     },
-
-
-
                 ],
-                // order: [
-                //     [0, 'desc']
-                // ],
-                order: orderByConfirmDate ? [
-                    [9, 'asc']
-                ] : [
+
+                order: [
                     [0, 'asc']
                 ],
                 createdRow: function(row, data, index) {
@@ -307,15 +288,14 @@
             let selectedValue = '';
             let html = '<option value="">Select</option>';
             if (statusId == '1') {
-                selectedValue = '4';
-                html += '<option value="4" selected>Confirmed</option><option value="3">Rejected</option>';
-            } else if (statusId == '4') {
+                selectedValue = '6';
+                html += '<option value="6">Order</option>';
+            } else if (statusId == '6') {
                 html +=
-                    '<option value="2">Completed</option><option value="3">Rejected</option><option value="5">Workshop</option>';
-            } else if (statusId == '5') {
-                html +=
-                    '<option value="2">Completed</option><option value="3">Rejected</option>';
+                    '<option value="7">Recieved</option>';
             }
+
+
 
             $('#statusId').html(html);
 
@@ -351,7 +331,7 @@
             }
 
             $.ajax({
-                url: '{{ route('inquiry.change-status') }}',
+                url: '{{ route('orders.change-status') }}',
                 type: 'POST',
                 data: {
                     _token: '{{ csrf_token() }}',

@@ -44,5 +44,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('add-lead-source', [LeadsController::class, 'addLeadSource'])->name('add-lead-source');
     Route::get('lead-source-details', [LeadsController::class, 'leadSourceDetails'])->name('lead-source-details');
 
-    Route::resource('orders', OrdersController::class);
+   // Route::resource('orders', OrdersController::class);
+    Route::get('orders', [OrdersController::class, 'index'])->name('orders');
+    Route::post('orders-change-status', [OrdersController::class, 'changeStatus'])->name('orders.change-status');
 });

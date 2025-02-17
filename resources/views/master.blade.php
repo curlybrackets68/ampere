@@ -74,9 +74,9 @@
                                 <p>Leads</p>
                             </a>
                         </li>
-                        </li> 
+                        </li>
                         <li class="nav-item">
-                            <a href="{{ route('orders.index') }}" class="nav-link"> <i class="nav-icon bi bi-table"></i>
+                            <a href="{{ route('orders') }}" class="nav-link"> <i class="nav-icon bi bi-table"></i>
                                 <p>Orders</p>
                             </a>
                         </li>
