@@ -7,12 +7,14 @@
 @section('content')
     <div class="app-content-header">
         <div class="container-fluid">
-            <div class="row">
-                <div class="col-sm-6">
-                    <h3 class="mb-0">Dashboard</h3>
-                </div>
-            </div>
 
+                <div class="row">
+                    <div class="col-sm-6">
+                        <h3 class="mb-0">Dashboard</h3>
+                    </div>
+                </div>
+          
+            <div class="card">
             <div class="row mt-3"> <!--begin::Col-->
                 <div class="col-lg-2 col-md-4 col-6 mb-3"> <!--begin::Small Box Widget 1-->
                     <a href="{{ route('inquiry', ['status' => '1']) }}">
@@ -78,6 +80,7 @@
                     </div>
                     <div id="errorContainer" style="color: red; display: none;"></div>
                 </div>
+            </div>
             </div>
         </div>
     </div>

@@ -31,7 +31,10 @@ class OrdersController extends Controller
                     }
 
                 })
-                ->rawColumns([ 'action'])
+                ->addColumn('display_order_date', function ($row) {
+                    return $this->formatDateTime('d M, Y h:i A', $row->created_at);
+                })
+                ->rawColumns(['action','display_order_date'])
                 ->make(true);
 
         }
