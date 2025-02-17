@@ -74,6 +74,11 @@
                                 <p>Deals</p>
                             </a>
                         </li> --}}
+                        <li class="nav-item">
+                            <a href="{{ route('orders.index') }}" class="nav-link"> <i class="nav-icon bi bi-table"></i>
+                                <p>Orders</p>
+                            </a>
+                        </li>
                     </ul> <!--end::Sidebar Menu-->
                 </nav>
             </div> <!--end::Sidebar Wrapper-->
@@ -102,7 +107,7 @@
     <!--end::Required Plugin(popperjs for Bootstrap 5)--><!--begin::Required Plugin(Bootstrap 5)-->
 
     <script src="{{ asset('dist/js/adminlte.js') }}"></script> <!--end::Required Plugin(AdminLTE)--><!--begin::OverlayScrollbars Configure-->
-    <script src="{{ asset('dist/js/custom.js') }}"></script> 
+    <script src="{{ asset('dist/js/custom.js') }}"></script>
 
     <script src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
     <script src="https://cdn.datatables.net/2.1.8/js/dataTables.bootstrap4.js"></script>
