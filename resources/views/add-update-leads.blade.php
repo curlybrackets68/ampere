@@ -36,9 +36,24 @@
                                         </div>
                                         <div class="form-group">
                                             <label>Vehicle</label>
-                                            <select class="form-select" name="vehicle" id="vehicle">
-                                                <option value="vehicle">Select Vehicle</option>
-                                            </select>
+                                            <div class="row">
+                                                <div class="col-md-10">
+                                                    <select class="form-select" name="vehicle" id="vehicle">
+                                                        <option value="vehicle">Select Vehicle</option>
+                                                        @forelse (@$vehicle as $key => $value)
+                                                            <option value="{{ $key }}"
+                                                                {{ @$lead && $key == $lead->vehicle ? 'selected' : '' }}>
+                                                                {{ $value }}</option>
+                                                        @empty
+                                                        @endforelse
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <button type="button" class="btn btn-primary" id="addVehicle"><i
+                                                            class="bi bi-plus"></i></button>
+                                                </div>
+                                            </div>
+
                                         </div>
                                         <div class="form-group">
                                             <label>Mobile</label>
@@ -56,21 +71,45 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label>Lead Source</label>
-                                            <select class="form-select" name="lead_source" id="lead_source">
-                                                <option value="">Select Lead Source</option>
-                                                @forelse ($leadSource as $key => $value)
-                                                    <option value="{{ $key }}">{{ $value }}</option>
-                                                @empty
-                                                @endforelse
-
-                                            </select>
+                                            <div class="row">
+                                                <div class="col-md-10">
+                                                    <select class="form-select" name="lead_source" id="lead_source">
+                                                        <option value="">Select Lead Source</option>
+                                                        @forelse (@$leadSource as $key => $value)
+                                                            <option value="{{ $key }}"
+                                                                {{ @$lead && $key == $lead->lead_source ? 'selected' : '' }}>
+                                                                {{ $value }}</option>
+                                                        @empty
+                                                        @endforelse
+    
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <button type="button" class="btn btn-primary" id="addLeadSource"><i
+                                                            class="bi bi-plus"></i></button>
+                                                </div>
+                                            </div>
                                         </div>
                                         <div class="form-group">
                                             <label>Salesman</label>
-                                            <select class="form-select" name="salesman" id="salesman">
-                                                <option value="">Select Salesman</option>
-                                                <option value="1">Mihir</option>
-                                            </select>
+                                            <div class="row">
+                                                <div class="col-md-10">
+                                                    <select class="form-select" name="salesman" id="salesman">
+                                                        <option value="">Select Salesman</option>
+                                                        @forelse (@$salesman as $key => $value)
+                                                            <option value="{{ $key }}"
+                                                                {{ @$lead && $key == $lead->salesman ? 'selected' : '' }}>
+                                                                {{ $value }}
+                                                            </option>
+                                                        @empty
+                                                        @endforelse
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <button type="button" class="btn btn-primary" id="addSalesman"><i
+                                                            class="bi bi-plus"></i></button>
+                                                </div>
+                                            </div>
                                         </div>
                                         <div class="form-group">
                                             <label>Notes</label>
@@ -81,6 +120,7 @@
                             </div>
                             <div class="card-footer">
                                 <button type="submit" class="btn btn-primary btn-sm" id="addUpdateLeads">Submit</button>
+                                <button type="reset" class="btn btn-light btn-sm">Cancel</button>
                             </div>
                         </div>
                 </div>
@@ -88,6 +128,74 @@
             </div>
         </div>
     </div>
+    <div class="modal fade" id="vehicleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true"
+        data-bs-backdrop="static">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Add Vehicle</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label>Name</label>
+                            <input type="text" id="vehicleName" class="form-control">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="saveVehicle">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="salesmanModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true"
+        data-bs-backdrop="static">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Add Salesman</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label>Name</label>
+                            <input type="text" id="salesmanName" class="form-control">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="saveSalesman">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="leadSourceModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true"
+        data-bs-backdrop="static">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Add Lead Source</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label>Name</label>
+                            <input type="text" id="leadSourceName" class="form-control">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="saveLeadSource">Save</button>
+                </div>
+            </div>
+        </div>
     </div>
 @endsection
 @section('javascript')
@@ -159,5 +267,137 @@
             value = value.replace(/[^0-9]/g, '').substring(0, 10);
             $(this).val(value);
         });
+
+        $(document).on('click', '#addVehicle', function() {
+            $('#vehicleModal').modal('show');
+        });
+
+        $(document).on('click', '#addSalesman', function() {
+            $('#salesmanModal').modal('show');
+        });
+
+        $(document).on('click', '#addLeadSource', function() {
+            $('#leadSourceModal').modal('show');
+        });
+
+        $(document).on('click', '#saveVehicle', function() {
+            let vehicleName = $('#vehicleName').val();
+            if (vehicleName === '') {
+                alert('Vehicle name is required.');
+                return;
+            }
+            let vehicle = {
+                _token: "{{ csrf_token() }}",
+                name: vehicleName,
+            };
+
+            $.ajax({
+                type: "POST",
+                url: "{{ route('add-vehicle') }}",
+                data: vehicle,
+                success: function(response) {
+                    $('#vehicleModal').modal('hide');
+                    $('#vehicleName').val('');
+                    getVehicles();
+                }
+            });
+        });
+
+        $(document).on('click', '#saveSalesman', function() {
+            let salesmanName = $('#salesmanName').val();
+            if (salesmanName === '') {
+                alert('Salesman name is required.');
+                return;
+            }
+            let vehicle = {
+                _token: "{{ csrf_token() }}",
+                name: salesmanName,
+            };
+
+            $.ajax({
+                type: "POST",
+                url: "{{ route('add-salesman') }}",
+                data: vehicle,
+                success: function(response) {
+                    $('#salesmanModal').modal('hide');
+                    $('#salesmanName').val('');
+                    getSalesman();
+                }
+            });
+        });
+
+        $(document).on('click', '#saveLeadSource', function() {
+            let leadSourceName = $('#leadSourceName').val();
+            if (leadSourceName === '') {
+                alert('Lead Source name is required.');
+                return;
+            }
+            let vehicle = {
+                _token: "{{ csrf_token() }}",
+                name: leadSourceName,
+            };
+
+            $.ajax({
+                type: "POST",
+                url: "{{ route('add-lead-source') }}",
+                data: vehicle,
+                success: function(response) {
+                    $('#leadSourceModal').modal('hide');
+                    $('#leadSourceName').val('');
+                    getLeadSource();
+                }
+            });
+        });
+
+        function getVehicles() {
+            $.ajax({
+                url: "{{ route('vehicle-details') }}",
+                type: 'GET',
+                success: function(response) {
+                    let vehicleSelect = $('#vehicle');
+                    vehicleSelect.empty();
+                    vehicleSelect.append('<option value="">Select Vehicle</option>');
+                    response.forEach(function(vehicle) {
+                        vehicleSelect.append(
+                            '<option value="' + vehicle.id + '">' + vehicle.name + '</option>'
+                        );
+                    });
+                },
+            });
+        }
+
+        function getSalesman() {
+            $.ajax({
+                url: "{{ route('salesman-details') }}",
+                type: 'GET',
+                success: function(response) {
+                    let salesmanSelect = $('#salesman');
+                    salesmanSelect.empty();
+                    salesmanSelect.append('<option value="">Select Salesman</option>');
+                    response.forEach(function(salesman) {
+                        salesmanSelect.append(
+                            '<option value="' + salesman.id + '">' + salesman.name + '</option>'
+                        );
+                    });
+                },
+            });
+        }
+
+        function getLeadSource() {
+            $.ajax({
+                url: "{{ route('lead-source-details') }}",
+                type: 'GET',
+                success: function(response) {
+                    let select = $('#lead_source');
+                    select.empty();
+                    select.append('<option value="">Select Lead Source</option>');
+                    response.forEach(function(lead_source) {
+                        select.append(
+                            '<option value="' + lead_source.id + '">' + lead_source.name + '</option>'
+                        );
+                    });
+                },
+            });
+        }
     </script>
 @endsection

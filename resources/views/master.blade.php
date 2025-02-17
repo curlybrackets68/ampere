@@ -69,11 +69,11 @@
                             </a>
                         </li>
 
-                        {{-- <li class="nav-item">
+                        <li class="nav-item">
                             <a href="{{ route('leads.index') }}" class="nav-link"> <i class="nav-icon bi bi-table"></i>
                                 <p>Deals</p>
                             </a>
-                        </li> --}}
+                        </li>
                     </ul> <!--end::Sidebar Menu-->
                 </nav>
             </div> <!--end::Sidebar Wrapper-->

@@ -72,20 +72,20 @@
                         name: 'name'
                     },
                     {
-                        data: 'vehicle',
-                        name: 'vehicle'
+                        data: 'vehicleName',
+                        name: 'vehicle.name'
                     },
                     {
                         data: 'mobile',
                         name: 'mobile'
                     },
                     {
-                        data: 'lead_source',
-                        name: 'lead_source'
+                        data: 'leadSourceName',
+                        name: 'lead_sources.name'
                     },
                     {
-                        data: 'salesman',
-                        name: 'salesman'
+                        data: 'salesmanName',
+                        name: 'salesman.name'
                     },
                     {
                         data: 'action',
