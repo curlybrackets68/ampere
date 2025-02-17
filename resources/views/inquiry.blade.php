@@ -70,7 +70,7 @@
                             </div>
                             <hr>
                             <div class="row mt-3">
-                                <table class="table table-bordered table-striped" style="width:100%" id="inquiryTable">
+                                <table class="table table-bordered table-hover" style="width:100%" id="inquiryTable">
                                     <thead>
                                         <tr>
                                             <th style="text-align: left;">Sr. No</th>

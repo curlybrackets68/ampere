@@ -23,22 +23,25 @@
                         </div>
                         <div class="card-body">
                             <div class="row mt-3">
-                                <table class="table table-bordered table-striped" style="width:100%" id="leadsTable">
-                                    <thead>
-                                        <tr>
-                                            <th style="text-align: left;">Sr. No</th>
-                                            <th style="text-align: left;">Name</th>
-                                            <th style="text-align: left;">Vehicle</th>
-                                            <th style="text-align: left;">Mobile</th>
-                                            <th style="text-align: left;">Lead Source</th>
-                                            <th style="text-align: left;">Salesman</th>
-                                            <th style="text-align: left;">Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-
-                                    </tbody>
-                                </table>
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-hover" style="width:100%" id="leadsTable">
+                                        <thead>
+                                            <tr>
+                                                <th style="text-align: left;">Sr. No</th>
+                                                <th style="text-align: left;">Name</th>
+                                                <th style="text-align: left;">Vehicle</th>
+                                                <th style="text-align: left;">Mobile</th>
+                                                <th style="text-align: left;">Lead Source</th>
+                                                <th style="text-align: left;">Salesman</th>
+                                                <th style="text-align: left;">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+    
+                                        </tbody>
+                                    </table>
+                                </div>
+                                
                             </div>
                         </div>
                     </div>
@@ -58,7 +61,6 @@
                 processing: true,
                 destroy: true,
                 responsive: true,
-                scrollX: true,
                 ajax: {
                     url: '{{ route('leads.index') }}',
                 },
