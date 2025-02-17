@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('order_name', 255)->nullable();
             $table->dateTime('order_date')->nullable();
             $table->bigInteger('status_id')->default(1);
+            $table->text('status_remark')->nullable();
             $table->dateTime('status_date')->nullable();
             $table->integer('created_by')->default(0);
             $table->integer('modified_by')->default(0);
