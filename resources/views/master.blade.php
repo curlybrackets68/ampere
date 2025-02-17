@@ -71,7 +71,7 @@
 
                         <li class="nav-item">
                             <a href="{{ route('leads.index') }}" class="nav-link"> <i class="nav-icon bi bi-table"></i>
-                                <p>Deals</p>
+                                <p>Leads</p>
                             </a>
                         </li>
                     </ul> <!--end::Sidebar Menu-->
