@@ -1,9 +1,9 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Exports\InquiryDetailsExport;
 use App\Models\InquiryDetails;
+use App\Models\Order;
 use App\Models\SystemLogs;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -20,13 +20,23 @@ class DashboardController extends Controller
             ->pluck('count', 'status_id')
             ->toArray();
 
-        $pendingInquiry = $inquiryCounts[1] ?? 0;
+        $pendingInquiry  = $inquiryCounts[1] ?? 0;
         $completeInquiry = $inquiryCounts[2] ?? 0;
         $rejectedInquiry = $inquiryCounts[3] ?? 0;
-        $confirmInquiry = $inquiryCounts[4] ?? 0;
+        $confirmInquiry  = $inquiryCounts[4] ?? 0;
         $workshopInquiry = $inquiryCounts[5] ?? 0;
 
-        return view('dashboard')->with(compact('pendingInquiry', 'completeInquiry', 'rejectedInquiry', 'confirmInquiry', 'workshopInquiry'));
+        $orders = Order::select('status_id', DB::raw('count(*) as count'))
+            ->whereIn('status_id', [1, 6, 7])
+            ->groupBy('status_id')
+            ->pluck('count', 'status_id')
+            ->toArray();
+
+        $totalOrdersPending  = $orders[1] ?? 0;
+        $totalOrdersOrdered  = $orders[6] ?? 0;
+        $totalOrdersReceived = $orders[7] ?? 0;
+
+        return view('dashboard')->with(compact('pendingInquiry', 'completeInquiry', 'rejectedInquiry', 'confirmInquiry', 'workshopInquiry', 'totalOrdersPending', 'totalOrdersOrdered', 'totalOrdersReceived'));
     }
 
     public function inquiryDetails(Request $request)
@@ -35,19 +45,19 @@ class DashboardController extends Controller
         if ($request->ajax()) {
             $inquiry = InquiryDetails::query();
             if (isset($request->actionType) && $request->actionType == 'report') {
-                if (!empty($request->startDate) && !empty($request->endDate)) {
+                if (! empty($request->startDate) && ! empty($request->endDate)) {
                     $inquiry = $inquiry->whereBetween(DB::raw('DATE(created_at)'), [$request->startDate, $request->endDate]);
                 }
 
-                if (!empty($request->statusId)) {
+                if (! empty($request->statusId)) {
                     $inquiry = $inquiry->where('status_id', $request->statusId);
                 }
 
-                if (!empty($request->searchBranchId)) {
+                if (! empty($request->searchBranchId)) {
                     $inquiry = $inquiry->where('branch_id', $request->searchBranchId);
                 }
             } else {
-                if (!empty($request->status)) {
+                if (! empty($request->status)) {
                     $inquiry = $inquiry->where('status_id', $request->status);
                 } else {
                     $inquiry = $inquiry->where('status_id', '1');
@@ -115,7 +125,7 @@ class DashboardController extends Controller
     public function changeStatus(Request $request)
     {
         $statusId = $request->statusId;
-        $remark = $request->statusRemark;
+        $remark   = $request->statusRemark;
 
         $save = InquiryDetails::where('id', $request->id)->update(['status_id' => $statusId, 'status_remark' => $remark ?? '']);
 
@@ -125,7 +135,7 @@ class DashboardController extends Controller
 
         if ($save) {
             $inquiryDetails = InquiryDetails::find($request->id);
-            $message = '';
+            $message        = '';
             if ($request->statusId == '2') { // Completed
                 $message = 'Your service completed for #' . $inquiryDetails->inquiry_no . "\n";
                 $message .= "Name: " . $inquiryDetails->name . "\n";
@@ -152,8 +162,8 @@ class DashboardController extends Controller
             $this->sendWhatsAppMessage($inquiryDetails->mobile, $message);
             SystemLogs::create([
                 'inquiry_id' => $request->id,
-                'remark' => 'Status changed to ' . $this->getArrayNameById($this->statusArray, $request->statusId),
-                'action_id' => 3,
+                'remark'     => 'Status changed to ' . $this->getArrayNameById($this->statusArray, $request->statusId),
+                'action_id'  => 3,
                 'created_by' => auth()->id(),
             ]);
             return response()->json(['code' => 1, 'message' => 'Status updated successfully']);
@@ -167,9 +177,9 @@ class DashboardController extends Controller
     {
         try {
             $exportStartDate = $request->input('exportStartDate');
-            $exportEndDate = $request->input('exportEndDate');
-            $exportStatusId = $request->input('exportStatusId', '');
-            $exportBranchId = $request->input('exportBranchId', '');
+            $exportEndDate   = $request->input('exportEndDate');
+            $exportStatusId  = $request->input('exportStatusId', '');
+            $exportBranchId  = $request->input('exportBranchId', '');
             // dd($exportStartDate, $exportEndDate, $exportStatusId);
             return Excel::download(new InquiryDetailsExport($exportStartDate, $exportEndDate, $exportStatusId, $exportBranchId), 'inquiry.xlsx');
         } catch (\Exception $e) {
@@ -180,12 +190,12 @@ class DashboardController extends Controller
     public function sendMessage(Request $request)
     {
         $message = 'Please enter Hi for inquiry';
-        $mobile = $request->input('mobile');
+        $mobile  = $request->input('mobile');
         $this->sendWhatsAppMessage($mobile, $message);
         SystemLogs::create([
             'inquiry_id' => 0,
-            'remark' => 'WhatsApp message sent to ' . $mobile,
-            'action_id' => 1,
+            'remark'     => 'WhatsApp message sent to ' . $mobile,
+            'action_id'  => 1,
             'created_by' => 1,
         ]);
         return response()->json(['code' => 1, 'message' => 'Message sent successfully']);
