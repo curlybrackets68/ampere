@@ -51,7 +51,7 @@
 
                                     </select>
                                 </div>
-                                
+
                                 <div class="col-md-2" style="margin-top: 31px;">
                                     <button type="button" class="btn btn-primary" id="searchReport">Search</button>
                                 </div>
@@ -67,6 +67,7 @@
                                             <th style="text-align: left;">Order</th>
                                             <th style="text-align: left;">Mobile</th>
                                             <th style="text-align: left;">Vehicle No</th>
+                                            <th style="text-align: left;">Order Details</th>
                                             <th style="text-align: left;">Status</th>
                                         </tr>
                                     </thead>
@@ -254,6 +255,9 @@
                     {
                         data: 'customer_vehicle_no',
                         name: 'customer_vehicle_no'
+                    },{
+                        data: 'order_name',
+                        name: 'order_name'
                     },
                     {
                         data: 'action',
@@ -385,40 +389,7 @@
             $('#exportExcelForm').submit();
         });
 
-        $(document).on('click', '.confirmDateChange', function() {
-            $('#confirmInquiryId').val($(this).data('id'));
-            $('#confirmDateModal').modal('show');
-        });
 
-        $(document).on('click', '#confirmDateSave', function(event) {
-            let confirmDate = $('#confirmDateValue').val();
-            let id = $('#confirmInquiryId').val();
 
-            $.ajax({
-                url: '{{ route('inquiry.change-status') }}',
-                type: 'POST',
-                data: {
-                    _token: '{{ csrf_token() }}',
-                    id: id,
-                    statusId: '4',
-                    statusRemark: 'Change Confirm Date',
-                    confirmDate: confirmDate
-                },
-                beforeSend: function() {
-                    loaderButton('confirmDateSave', true);
-                },
-                complete: function() {
-                    loaderButton('confirmDateSave', false);
-                },
-                success: async function(response) {
-                    if (response.code == '1') {
-                        $('#confirmDateModal').modal('hide');
-                        await inquiryDetails(filterData);
-                    } else {
-                        alert(response.message);
-                    }
-                }
-            });
-        });
     </script>
 @endsection
