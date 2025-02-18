@@ -51,7 +51,8 @@ class OrdersController extends Controller
                 ->rawColumns(['action', 'display_order_date'])
                 ->make(true);
         }
-        return view('orders-list');
+        $status = $request->input('status');
+        return view('orders-list',compact('status'));
     }
 
     public function changeStatus(Request $request)
