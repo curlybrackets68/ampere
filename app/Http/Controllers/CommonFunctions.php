@@ -161,4 +161,28 @@ trait CommonFunctions
         }
     }
 
+    public function sendWhatsAppMessageWithFile($mobileNumber, $message, $file)
+    {
+        $url = "https://wa.smsidea.com/api/v1/sendDocument";
+        $whatsAppAPIKey = '6edc72b9f0884247ba0a630beb94c028';
+
+        $data = [
+            'key' => $whatsAppAPIKey,
+            'to' => '91' . $mobileNumber,
+            'caption' => $message,
+            'isUrgent' => true,
+            "url" => $file,
+            "filename" => "brochure.pdf"
+        ];
+        $response = Http::post($url, $data);
+        if ($response->successful()) {
+            $responseDecode = $response->json();
+            if ($responseDecode['ErrorCode'] === '000') {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
+
 }

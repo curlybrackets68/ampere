@@ -37,7 +37,7 @@
                                         <div class="form-group">
                                             <label>Vehicle</label>
                                             <div class="row">
-                                                <div class="col-md-10">
+                                                <div class="col-md-12">
                                                     <select class="form-select" name="vehicle" id="vehicle">
                                                         <option value="vehicle">Select Vehicle</option>
                                                         @forelse (@$vehicle as $key => $value)
@@ -48,10 +48,10 @@
                                                         @endforelse
                                                     </select>
                                                 </div>
-                                                <div class="col-md-2">
+                                                {{-- <div class="col-md-2">
                                                     <button type="button" class="btn btn-primary" id="addVehicle"><i
                                                             class="bi bi-plus"></i></button>
-                                                </div>
+                                                </div> --}}
                                             </div>
 
                                         </div>
@@ -72,7 +72,7 @@
                                         <div class="form-group">
                                             <label>Lead Source</label>
                                             <div class="row">
-                                                <div class="col-md-10">
+                                                <div class="col-md-12">
                                                     <select class="form-select" name="lead_source" id="lead_source">
                                                         <option value="">Select Lead Source</option>
                                                         @forelse (@$leadSource as $key => $value)
@@ -84,16 +84,16 @@
     
                                                     </select>
                                                 </div>
-                                                <div class="col-md-2">
+                                                {{-- <div class="col-md-2">
                                                     <button type="button" class="btn btn-primary" id="addLeadSource"><i
                                                             class="bi bi-plus"></i></button>
-                                                </div>
+                                                </div> --}}
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             <label>Salesman</label>
                                             <div class="row">
-                                                <div class="col-md-10">
+                                                <div class="col-md-12">
                                                     <select class="form-select" name="salesman" id="salesman">
                                                         <option value="">Select Salesman</option>
                                                         @forelse (@$salesman as $key => $value)
@@ -105,10 +105,10 @@
                                                         @endforelse
                                                     </select>
                                                 </div>
-                                                <div class="col-md-2">
+                                                {{-- <div class="col-md-2">
                                                     <button type="button" class="btn btn-primary" id="addSalesman"><i
                                                             class="bi bi-plus"></i></button>
-                                                </div>
+                                                </div> --}}
                                             </div>
                                         </div>
                                         <div class="form-group">

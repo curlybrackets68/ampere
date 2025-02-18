@@ -1,11 +1,14 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Exports\LeadsExport;
 use App\Models\Lead;
 use App\Models\LeadSource;
 use App\Models\Salesman;
 use App\Models\Vehicle;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
 
 class LeadsController extends Controller
@@ -20,6 +23,10 @@ class LeadsController extends Controller
                 ->leftJoin('vehicle', 'vehicle.id', '=', 'leads.vehicle')
                 ->leftJoin('lead_sources', 'lead_sources.id', '=', 'leads.lead_source')
                 ->leftJoin('salesman', 'salesman.id', '=', 'leads.salesman');
+
+            if (! empty($request->startDate) && ! empty($request->endDate)) {
+                $inquiry = $inquiry->whereBetween(DB::raw('DATE(leads.created_at)'), [$request->startDate, $request->endDate]);
+            }
 
             return DataTables::of($inquiry)
                 ->addIndexColumn()
@@ -48,7 +55,35 @@ class LeadsController extends Controller
      */
     public function store(Request $request)
     {
-        Lead::create($request->all());
+        $salesmanName   = '';
+        $salesmanMobile = '';
+
+        $nameQuery = Salesman::find($request->salesman);
+        if ($nameQuery) {
+            $salesmanName   = $nameQuery->name;
+            $salesmanMobile = $nameQuery->mobile;
+        }
+
+        $lead = Lead::create($request->all());
+        if ($lead) {
+            $message = "Hi " . $request->name . "\n \n";
+            $message .= "Thank you for showing your interest in Ampere Electric Vehicles.\n \n";
+            $message .= "My name is " . $salesmanName . " and I will be your companion along this electrifying journey \n \n";
+            $message .= "Warm Regards\n";
+            $message .= $salesmanName . "\n";
+            $message .= $salesmanMobile;
+
+            $pdfUrl = '';
+            if ($request->vehicle == '1') { // Nexus
+                $pdfUrl = 'https://chiragautomotive.com/amper/assets/pdf/Ampere_Nexus.pdf';
+            } else if ($request->vehicle == '2') { // Magnus
+                $pdfUrl = 'https://chiragautomotive.com/amper/assets/pdf/Ampere_Magnus_Neo.pdf';
+            } else if ($request->vehicle == '3') { // Reo
+                $pdfUrl = 'https://chiragautomotive.com/amper/assets/pdf/Ampere_Reo_LI.pdf';
+            }
+
+            $this->sendWhatsAppMessageWithFile($request->mobile, $message, $pdfUrl);
+        }
         return redirect()->route('leads.index')->with('success', 'Lead added successfully!');
     }
 
@@ -128,5 +163,17 @@ class LeadsController extends Controller
     {
         $data = LeadSource::all();
         return response()->json($data);
+    }
+
+    public function export(Request $request)
+    {
+        try {
+            $exportStartDate = $request->input('exportStartDate');
+            $exportEndDate   = $request->input('exportEndDate');
+
+            return Excel::download(new LeadsExport($exportStartDate, $exportEndDate), 'leads.xlsx');
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 }
