@@ -34,7 +34,7 @@ class InquiryDetailsController extends Controller
         }
 
 
-        if ($request->inquiry_type == 'order') {
+        if ($request->action_type == 'order') {
             $lastInquiryId = Order::orderBy('id', 'desc')->first()->id ?? 0;
             $data['created_by'] = 1;
             $data['customer_name'] = $request->name;
@@ -53,7 +53,7 @@ class InquiryDetailsController extends Controller
 
 
         // Save the inquiry
-        if ($request->inquiry_type == 'order') {
+        if ($request->action_type == 'order') {
             $inquirySave = Order::create($data);
             $inquiryId = $inquirySave->order_no;
         } else {
@@ -63,7 +63,7 @@ class InquiryDetailsController extends Controller
 
         if ($this->isNotNullOrEmptyOrZero($inquirySave)) {
 
-            if ($request->inquiry_type == 'order') {
+            if ($request->action_type == 'order') {
                 return $this->successResponse([], "Order No # $inquiryId added successfully. We will contact you soon.");
             } else {
                 return $this->successResponse([], "Inquiry No # $inquiryId added successfully. We will contact you soon.");

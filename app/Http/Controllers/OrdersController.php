@@ -60,12 +60,6 @@ class OrdersController extends Controller
         $remark   = $request->statusRemark;
 
         $save = Order::where('id', $request->id)->update(['status_id' => $statusId, 'status_remark' => $remark ?? '']);
-
-        // dd($save);
-        // if ($request->statusId == '4') {
-        //     Order::where('id', $request->id)->update(['confirm_date' => $this->formatDateTime(mDateTime: $request->confirmDate)]);
-        // }
-
         if ($save) {
             $orderDetails = Order::find($request->id);
             $message        = '';
@@ -86,12 +80,12 @@ class OrdersController extends Controller
             }
 
             $this->sendWhatsAppMessage($orderDetails->customer_mobile, $message);
-            SystemLogs::create([
-                'inquiry_id' => $request->id,
-                'remark'     => 'Status changed to ' . $this->getArrayNameById($this->statusArray, $request->statusId),
-                'action_id'  => 3,
-                'created_by' => auth()->id(),
-            ]);
+            // SystemLogs::create([
+            //     'inquiry_id' => $request->id,
+            //     'remark'     => 'Status changed to ' . $this->getArrayNameById($this->statusArray, $request->statusId),
+            //     'action_id'  => 3,
+            //     'created_by' => auth()->id(),
+            // ]);
             return response()->json(['code' => 1, 'message' => 'Status updated successfully']);
         } else {
             return response()->json(['code' => 0, 'message' => 'Failed to update status']);
