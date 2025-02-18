@@ -94,7 +94,7 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-lg-2 col-md-4 col-6 mb-3"> <!--begin::Small Box Widget 1-->
-                                    <a href="{{ route('inquiry', ['status' => '1']) }}">
+                                    <a href="{{ route('orders', ['status' => '1']) }}">
                                         <div class="small-box text-bg-warning">
                                             <div class="inner">
                                                 <h3>{{ $totalOrdersPending }}</h3>
@@ -104,7 +104,7 @@
                                     </a>
                                 </div> <!--end::Col-->
                                 <div class="col-lg-2 col-md-4 col-6 mb-3"> <!--begin::Small Box Widget 1-->
-                                    <a href="{{ route('inquiry', ['status' => '6']) }}">
+                                    <a href="{{ route('orders', ['status' => '6']) }}">
                                         <div class="small-box text-bg-primary">
                                             <div class="inner">
                                                 <h3>{{ $totalOrdersOrdered }}</h3>
@@ -114,7 +114,7 @@
                                     </a>
                                 </div> <!--end::Col-->
                                 <div class="col-lg-2 col-md-4 col-6 mb-3"> <!--begin::Small Box Widget 1-->
-                                    <a href="{{ route('inquiry', ['status' => '7']) }}">
+                                    <a href="{{ route('orders', ['status' => '7']) }}">
                                         <div class="small-box text-bg-info">
                                             <div class="inner">
                                                 <h3>{{ $totalOrdersReceived }}</h3>
