@@ -34,6 +34,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('export-inquiry', [DashboardController::class, 'export'])->name('user.inquiry.excel.export');
     Route::post('send-message', [DashboardController::class, 'sendMessage'])->name('send-message');
     Route::resource('leads', LeadsController::class);
+    Route::post('export-leads', [LeadsController::class, 'export'])->name('user.leads.excel.export');
 
     Route::post('add-vehicle', [LeadsController::class, 'addVehicle'])->name('add-vehicle');
     Route::get('vehicle-details', [LeadsController::class, 'vehicleDetails'])->name('vehicle-details');

@@ -7,7 +7,6 @@
 @section('css')
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
-
 @endsection
 
 @section('content')
@@ -19,30 +18,47 @@
                         <div class="card-header">
                             <h5 class="card-title">Leads</h5>
                             <div class="d-flex justify-content-end">
-                                <a class="btn btn-primary btn-sm" href="{{ route('leads.create') }}">Add Lead</a>
+                                <a href="javascript:void(0);" class="btn btn-primary btn-sm me-2 d-none" id="exportExcel">
+                                    <form action="{{ route('user.leads.excel.export') }}" method="POST"
+                                        id="exportExcelForm">
+                                        @csrf
+                                        {{ Form::hidden('exportStartDate', null, ['id' => 'exportStartDate']) }}
+                                        {{ Form::hidden('exportEndDate', null, ['id' => 'exportEndDate']) }}
+                                        <i class="bi bi-cloud-download me-1 align-middle me-1"></i> Export
+                                    </form>
+                                </a>
+                                <a class="btn btn-info btn-sm" href="{{ route('leads.create') }}">
+                                    <i class="bi bi-plus me-1 align-middle me-1"></i> Add Lead</a>
                             </div>
                         </div>
                         <div class="card-body">
-                            <div class="row mt-3">
-                                <div class="table-responsive">
-                                    <table class="table table-bordered table-hover" style="width:100%" id="leadsTable">
-                                        <thead>
-                                            <tr>
-                                                <th style="text-align: left;">Sr. No</th>
-                                                <th style="text-align: left;">Name</th>
-                                                <th style="text-align: left;">Vehicle</th>
-                                                <th style="text-align: left;">Mobile</th>
-                                                <th style="text-align: left;">Lead Source</th>
-                                                <th style="text-align: left;">Salesman</th>
-                                                <th style="text-align: left;">Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-    
-                                        </tbody>
-                                    </table>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <label>Date</label>
+                                    <input type="text" id="datePeriod" class="form-control">
                                 </div>
-                                
+                                <div class="col-md-2" style="margin-top: 31px;">
+                                    <button type="button" class="btn btn-primary" id="searchReport">Search</button>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row mt-3">
+                                <table class="table table-bordered table-hover" style="width:100%" id="leadsTable">
+                                    <thead>
+                                        <tr>
+                                            <th style="text-align: left;">Sr. No</th>
+                                            <th style="text-align: left;">Name</th>
+                                            <th style="text-align: left;">Vehicle</th>
+                                            <th style="text-align: left;">Mobile</th>
+                                            <th style="text-align: left;">Lead Source</th>
+                                            <th style="text-align: left;">Salesman</th>
+                                            <th style="text-align: left;">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
@@ -58,6 +74,37 @@
 
     <script>
         $(document).ready(function() {
+            $('#datePeriod').daterangepicker({
+                timePicker: false,
+                timePicker24Hour: true,
+                timePickerIncrement: 1,
+                locale: {
+                    format: 'DD-MM-YYYY'
+                },
+                startDate: moment().startOf('month'),
+                endDate: moment().endOf('month')
+            });
+
+            leadList();
+        });
+
+        $(document).on('click', '#searchReport', function() {
+            let startDate = $('#datePeriod').data('daterangepicker').startDate.format('YYYY-MM-DD');
+            let endDate = $('#datePeriod').data('daterangepicker').endDate.format('YYYY-MM-DD');
+
+            $('#exportStartDate').val(startDate);
+            $('#exportEndDate').val(endDate);
+
+            let filter = {
+                startDate: startDate,
+                endDate: endDate
+            };
+
+            leadList(filter);
+            $('#exportExcel').removeClass('d-none');
+        });
+
+        function leadList(filter = []) {
             $('#leadsTable').DataTable({
                 serverSide: true,
                 processing: true,
@@ -65,6 +112,7 @@
                 responsive: true,
                 ajax: {
                     url: '{{ route('leads.index') }}',
+                    data: filter
                 },
                 columns: [{
                         data: 'DT_RowIndex',
@@ -108,6 +156,10 @@
                     $('td', row).eq(5).css('text-align', 'left');
                 },
             });
+        }
+
+        $(document).on('click', '#exportExcel', function() {
+            $('#exportExcelForm').submit();
         });
     </script>
 @endsection
