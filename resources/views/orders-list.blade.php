@@ -48,6 +48,10 @@
                                             Ordered</option>
                                         <option value="7" {{ isset($status) && $status == '7' ? 'selected' : '' }}>
                                             Recieved</option>
+                                        <option value="8" {{ isset($status) && $status == '8' ? 'selected' : '' }}>
+                                            Cancelled</option>
+                                        <option value="9" {{ isset($status) && $status == '9' ? 'selected' : '' }}>
+                                            Fitment</option>
 
                                     </select>
                                 </div>
@@ -255,13 +259,13 @@
                     {
                         data: 'customer_vehicle_no',
                         name: 'customer_vehicle_no'
-                    },{
+                    }, {
                         data: 'order_name',
                         name: 'order_name'
                     },
                     {
-                        data: 'action',
-                        name: 'action'
+                        data: 'display_status',
+                        name: 'display_status'
                     },
                 ],
 
@@ -292,14 +296,12 @@
             let selectedValue = '';
             let html = '<option value="">Select</option>';
             if (statusId == '1') {
-                selectedValue = '6';
-                html += '<option value="6">Order</option>';
+                html += '<option value="6">Order</option><option value="8">Cancelled</option>';
             } else if (statusId == '6') {
-                html +=
-                    '<option value="7">Recieved</option>';
+                html += '<option value="7">Recieved</option>';
+            } else if (statusId == '7') {
+                html += '<option value="9">Fitment</option>';
             }
-
-
 
             $('#statusId').html(html);
 
@@ -364,32 +366,30 @@
         $(document).on('change', '#statusId', function() {
             $('.status_error').html('');
 
-            if ($(this).val() == '1') {
-                $('#statusRemark').val('');
-                $('#remarkDiv').addClass('d-none');
-                $('#confirmDIv').addClass('d-none');
-            } else if ($(this).val() === '2') {
-                $('#remarkDiv').removeClass('d-none');
-                $('#confirmDIv').addClass('d-none');
-            } else if ($(this).val() === '3') {
-                $('#remarkDiv').removeClass('d-none');
-                $('#confirmDIv').addClass('d-none');
-            } else if ($(this).val() === '4') {
-                $('#statusRemark').val('');
-                $('#remarkDiv').addClass('d-none');
-                $('#confirmDIv').removeClass('d-none');
-            } else {
-                $('#statusRemark').val('');
-                $('#remarkDiv').addClass('d-none');
-                $('#confirmDIv').addClass('d-none');
-            }
+            // if ($(this).val() == '1') {
+            //     $('#statusRemark').val('');
+            //     $('#remarkDiv').addClass('d-none');
+            //     $('#confirmDIv').addClass('d-none');
+            // } else if ($(this).val() === '2') {
+            //     $('#remarkDiv').removeClass('d-none');
+            //     $('#confirmDIv').addClass('d-none');
+            // } else if ($(this).val() === '3') {
+            //     $('#remarkDiv').removeClass('d-none');
+            //     $('#confirmDIv').addClass('d-none');
+            // } else if ($(this).val() === '4') {
+            //     $('#statusRemark').val('');
+            //     $('#remarkDiv').addClass('d-none');
+            //     $('#confirmDIv').removeClass('d-none');
+            // } else {
+            //     $('#statusRemark').val('');
+            //     $('#remarkDiv').addClass('d-none');
+            //     $('#confirmDIv').addClass('d-none');
+            // }
+            $('#remarkDiv').removeClass('d-none');
         });
 
         $(document).on('click', '#exportExcel', function() {
             $('#exportExcelForm').submit();
         });
-
-
-
     </script>
 @endsection

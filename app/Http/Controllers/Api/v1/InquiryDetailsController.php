@@ -33,15 +33,16 @@ class InquiryDetailsController extends Controller
             return $this->failResponse([], 'Validation Error Please enter valid Vehicle Number,Mobile number', $validator->errors());
         }
 
-
-        if ($request->action_type == 'order') {
-            $lastInquiryId = Order::orderBy('id', 'desc')->first()->id ?? 0;
+        $latestNumber = 0;
+        if ($request->action_type == '2') {
+            $lastOrderId = Order::orderBy('id', 'desc')->first()->id ?? 0;
             $data['created_by'] = 1;
             $data['customer_name'] = $request->name;
-            $data['customer_mobile'] = $request->mobile;
+            $data['branch_id'] = $request->order_branch;
             $data['customer_vehicle_no'] = strtoupper($request->vehicle_no);
-            $data['order_name'] = strtoupper($request->order_name);
-            $data['order_no'] = 'ORD-' . ($lastInquiryId + 1);
+            $data['order_name'] = $request->order_name;
+            $data['customer_mobile'] = $request->mobile;
+            $data['order_no'] = 'ORD-' . ($lastOrderId + 1);
             $data['order_date'] = now()->format('Y-m-d H:i:s');
         } else {
             $data = $request->all();
@@ -53,20 +54,22 @@ class InquiryDetailsController extends Controller
 
 
         // Save the inquiry
-        if ($request->action_type == 'order') {
-            $inquirySave = Order::create($data);
-            $inquiryId = $inquirySave->order_no;
+        if ($request->action_type == '2') {
+          //  dd($data);
+            $orderSave = Order::create($data);
+
+            $latestNumber = $orderSave->order_no;
         } else {
             $inquirySave = InquiryDetails::create($data);
-            $inquiryId = $inquirySave->inquiry_no;
+            $latestNumber = $inquirySave->inquiry_no;
         }
 
-        if ($this->isNotNullOrEmptyOrZero($inquirySave)) {
+        if ($this->isNotNullOrEmptyOrZero($latestNumber)) {
 
-            if ($request->action_type == 'order') {
-                return $this->successResponse([], "Order No # $inquiryId added successfully. We will contact you soon.");
+            if ($request->action_type == '2') {
+                return $this->successResponse([], "Order No # $latestNumber added successfully. We will contact you soon.");
             } else {
-                return $this->successResponse([], "Inquiry No # $inquiryId added successfully. We will contact you soon.");
+                return $this->successResponse([], "Inquiry No # $latestNumber added successfully. We will contact you soon.");
             }
         } else {
             return $this->failResponse([], 'Something went wrong.');

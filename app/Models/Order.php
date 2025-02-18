@@ -11,13 +11,14 @@ class Order extends Model
     use HasFactory;
 
 
-   
+
 
     protected $fillable = [
         'order_no',
         'customer_name',
         'customer_mobile',
         'customer_vehicle_no',
+        'branch_id',
         'order_name',
         'order_date',
         'status_id',

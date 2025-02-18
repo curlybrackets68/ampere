@@ -31,6 +31,8 @@ trait CommonFunctions
         "5" => 'In Workshop',
         "6" => 'Ordered',
         "7" => 'Recieved',
+        "8" => 'Cancelled',
+        "9" => 'Fitment',
     ];
 
     protected $actionLogsArray = [

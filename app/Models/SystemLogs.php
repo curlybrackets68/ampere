@@ -11,6 +11,8 @@ class SystemLogs extends Model
 
     protected $fillable = [
         'id',
+        'type',
+        'type_id',
         'inquiry_id',
         'remark',
         'action_id',
