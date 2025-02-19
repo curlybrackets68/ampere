@@ -70,7 +70,7 @@ class OrdersController extends Controller
                 ->addColumn('display_order_date', function ($row) {
                     return $this->formatDateTime('d M, Y h:i A', $row->created_at);
                 })
-                ->rawColumns(['action', 'display_order_date','display_status'])
+                ->rawColumns(['action', 'display_order_date', 'display_status'])
                 ->make(true);
         }
         $status = $request->input('status');
@@ -86,22 +86,33 @@ class OrdersController extends Controller
         if ($save) {
             $orderDetails = Order::find($request->id);
             $message        = '';
-          //  dd($request->statusId);
+            //  dd($request->statusId);
             if ($request->statusId == '6') { // Ordered
                 $message = 'Your Ordered #' . $orderDetails->order_no . " successful.\n";
                 $message .= "We will contact you once the part has arrived \n";
 
                 $message .= "Remark: " . $remark . "\n";
-            } else if ($request->statusId == '7') { // Confirmed
+            } else if ($request->statusId == '7') { // received
                 $message = "Your part has been received. Our executive will reach out to you for the fitment of the same \n";
                 $message .= "Remark: " . $remark . "\n";
+            } else if ($request->statusId == '8') { // Cancelled
+                $message = 'Your Ordered #' . $orderDetails->order_no . " is Cancelled.\n";
+                $message .= "Remark: " . $remark . "\n";
+            } else if ($request->statusId == '9') { // Fitment
+                $message = 'Your Ordered #' . $orderDetails->order_no . " is Cancelled.\n";
+                $message .= "Name: " . $orderDetails->customer_name . "\n";
+                $message .= "Mobile: " . $orderDetails->customer_mobile . "\n";
+                $message .= "Vehicle No: " . $orderDetails->customer_vehicle_no . "\n";
+                $message .= "Part Details: " . $orderDetails->order_name . "\n";
+                $message .= "Remark: " . $remark . "\n";
+                $message .= "To book appointment again, please send Hi on whatsapp";
             }
 
             $this->sendWhatsAppMessage($orderDetails->customer_mobile, $message);
             SystemLogs::create([
                 'inquiry_id' => 0,
-                'type' => '2',// for Order
-                'type' => $request->id,// for Order
+                'type' => '2', // for Order
+                'type' => $request->id, // for Order
                 'remark'     => 'Status changed to ' . $this->getArrayNameById($this->statusArray, $request->statusId),
                 'action_id'  => 3,
                 'created_by' => auth()->id(),
