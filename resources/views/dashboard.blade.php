@@ -52,16 +52,7 @@
                                         </div> <!--end::Small Box Widget 2-->
                                     </a>
                                 </div> <!--end::Col-->
-                                <div class="col-lg-2 col-md-4 col-6 mb-3"> <!--begin::Small Box Widget 3-->
-                                    <a href="{{ route('inquiry', ['status' => '3']) }}">
-                                        <div class="small-box text-bg-danger">
-                                            <div class="inner">
-                                                <h3>{{ $rejectedInquiry }}</h3>
-                                                <p>Rejected</p>
-                                            </div>
-                                        </div> <!--end::Small Box Widget 3-->
-                                    </a>
-                                </div> <!--end::Col-->
+                                
                                 <div class="col-lg-2 col-md-4 col-6 mb-3"> <!--begin::Small Box Widget 4-->
                                     <a href="{{ route('inquiry', ['status' => '4']) }}">
                                         <div class="small-box text-bg-primary">
@@ -80,6 +71,16 @@
                                                 <p>Workshop</p>
                                             </div>
                                         </div> <!--end::Small Box Widget 4-->
+                                    </a>
+                                </div> <!--end::Col-->
+                                <div class="col-lg-2 col-md-4 col-6 mb-3"> <!--begin::Small Box Widget 3-->
+                                    <a href="{{ route('inquiry', ['status' => '3']) }}">
+                                        <div class="small-box text-bg-danger">
+                                            <div class="inner">
+                                                <h3>{{ $rejectedInquiry }}</h3>
+                                                <p>Rejected</p>
+                                            </div>
+                                        </div> <!--end::Small Box Widget 3-->
                                     </a>
                                 </div> <!--end::Col-->
                             </div>
@@ -119,6 +120,26 @@
                                             <div class="inner">
                                                 <h3>{{ $totalOrdersReceived }}</h3>
                                                 <p>Received</p>
+                                            </div>
+                                        </div> <!--end::Small Box Widget 1-->
+                                    </a>
+                                </div> <!--end::Col-->
+                                <div class="col-lg-2 col-md-4 col-6 mb-3"> <!--begin::Small Box Widget 1-->
+                                    <a href="{{ route('orders', ['status' => '8']) }}">
+                                        <div class="small-box text-bg-danger">
+                                            <div class="inner">
+                                                <h3>{{ $totalOrdersCancelled }}</h3>
+                                                <p>Cancelled</p>
+                                            </div>
+                                        </div> <!--end::Small Box Widget 1-->
+                                    </a>
+                                </div> <!--end::Col-->
+                                <div class="col-lg-2 col-md-4 col-6 mb-3"> <!--begin::Small Box Widget 1-->
+                                    <a href="{{ route('orders', ['status' => '9']) }}">
+                                        <div class="small-box text-bg-success">
+                                            <div class="inner">
+                                                <h3>{{ $totalOrdersFitment }}</h3>
+                                                <p>Fitment</p>
                                             </div>
                                         </div> <!--end::Small Box Widget 1-->
                                     </a>

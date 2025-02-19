@@ -15,12 +15,16 @@ class LeadsExport implements FromCollection, WithHeadings
 
     use CommonFunctions;
 
-    protected $startDate, $endDate;
+    protected $startDate, $endDate, $salesmanId, $leadSourceId, $mobileNumber, $customerName;
 
-    public function __construct($startDate = '', $endDate = '')
+    public function __construct($startDate = '', $endDate = '', $salesmanId = '', $leadSourceId = '', $mobileNumber = '', $customerName = '')
     {
         $this->startDate = $this->formatDateTime('Y-m-d', $startDate);
         $this->endDate   = $this->formatDateTime('Y-m-d', $endDate);
+        $this->salesmanId = $salesmanId;
+        $this->leadSourceId = $leadSourceId;
+        $this->mobileNumber = $mobileNumber;
+        $this->customerName = $customerName;
     }
 
     public function collection()
@@ -32,6 +36,22 @@ class LeadsExport implements FromCollection, WithHeadings
 
         if (! empty($this->startDate) && ! empty($this->endDate)) {
             $query = $query->whereBetween(DB::raw('DATE(leads.created_at)'), [$this->startDate, $this->endDate]);
+        }
+
+        if (! empty($this->salesmanId)) {
+            $query = $query->where('salesman.id', $this->salesmanId);
+        }
+
+        if (! empty($this->leadSourceId)) {
+            $query = $query->where('lead_sources.id', $this->leadSourceId);
+        }
+
+        if (! empty($this->mobileNumber)) {
+            $query = $query->where('leads.mobile', 'like', '%' . $this->mobileNumber . '%');
+        }
+
+        if (! empty($this->customerName)) {
+            $query = $query->where('leads.name', 'like', '%' . $this->customerName . '%');
         }
 
         $results = $query->get();

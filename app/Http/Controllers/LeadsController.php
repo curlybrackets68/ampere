@@ -18,6 +18,9 @@ class LeadsController extends Controller
      */
     public function index(Request $request)
     {
+        $salesman   = Salesman::pluck('name', 'id');
+        $leadSource = LeadSource::pluck('name', 'id');
+
         if ($request->ajax()) {
             $inquiry = Lead::query()->select('leads.*', 'vehicle.name AS vehicleName', 'salesman.name AS salesmanName', 'lead_sources.name AS leadSourceName')
                 ->leftJoin('vehicle', 'vehicle.id', '=', 'leads.vehicle')
@@ -28,6 +31,22 @@ class LeadsController extends Controller
                 $inquiry = $inquiry->whereBetween(DB::raw('DATE(leads.created_at)'), [$request->startDate, $request->endDate]);
             }
 
+            if (! empty($request->salesmanId)) {
+                $inquiry = $inquiry->where('salesman.id', $request->salesmanId);
+            }
+
+            if (! empty($request->leadSourceId)) {
+                $inquiry = $inquiry->where('lead_sources.id', $request->leadSourceId);
+            }
+
+            if (! empty($request->mobileNumber)) {
+                $inquiry = $inquiry->where('leads.mobile', 'like', '%' . $request->mobileNumber . '%');
+            }
+
+            if (! empty($request->customerName)) {
+                $inquiry = $inquiry->where('leads.name', 'like', '%' . $request->customerName . '%');
+            }
+
             return DataTables::of($inquiry)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
@@ -36,7 +55,7 @@ class LeadsController extends Controller
                 ->make(true);
 
         }
-        return view('leads-list');
+        return view('leads-list')->with(compact('leadSource', 'salesman'));
     }
 
     /**
@@ -47,7 +66,7 @@ class LeadsController extends Controller
         $vehicle    = Vehicle::pluck('name', 'id');
         $salesman   = Salesman::pluck('name', 'id');
         $leadSource = LeadSource::pluck('name', 'id');
-        return view('add-update-leads')->with(compact('leadSource', 'vehicle', 'salesman', 'leadSource'));
+        return view('add-update-leads')->with(compact('leadSource', 'vehicle', 'salesman'));
     }
 
     /**
@@ -105,7 +124,7 @@ class LeadsController extends Controller
         $vehicle    = Vehicle::pluck('name', 'id');
         $salesman   = Salesman::pluck('name', 'id');
         $leadSource = LeadSource::pluck('name', 'id');
-        return view('add-update-leads')->with(compact('lead', 'leadSource', 'vehicle', 'salesman', 'leadSource'));
+        return view('add-update-leads')->with(compact('lead', 'leadSource', 'vehicle', 'salesman'));
     }
 
     /**
@@ -135,9 +154,14 @@ class LeadsController extends Controller
 
     public function addSalesman(Request $request)
     {
-        $name = $request->name;
-        Salesman::create(['name' => $name]);
-        return response()->json(['success' => 'Salesman added successfully!']);
+        Salesman::updateOrCreate(
+            ['id' => $request->id],
+            [
+                'name'   => $request->name,
+                'mobile' => $request->mobile,
+            ]
+        );
+        return response()->json(['success' => true, 'message' => 'Salesman saved successfully.']);
     }
 
     public function addLeadSource(Request $request)
@@ -153,10 +177,10 @@ class LeadsController extends Controller
         return response()->json($vehicles);
     }
 
-    public function salesmanDetails()
+    public function salesmanDetails($id = null)
     {
-        $vehicles = Salesman::all();
-        return response()->json($vehicles);
+        $salesmen = $id ? Salesman::find($id) : Salesman::all();
+        return response()->json($salesmen);
     }
 
     public function leadSourceDetails()
@@ -168,12 +192,32 @@ class LeadsController extends Controller
     public function export(Request $request)
     {
         try {
-            $exportStartDate = $request->input('exportStartDate');
-            $exportEndDate   = $request->input('exportEndDate');
+            $exportStartDate    = $request->input('exportStartDate');
+            $exportEndDate      = $request->input('exportEndDate');
+            $exportSalesmanId   = $request->input('exportSalesmanId');
+            $exportLeadSourceId = $request->input('exportLeadSourceId');
+            $exportMobileNumber = $request->input('exportMobileNumber');
+            $exportCustomerName = $request->input('exportCustomerName');
 
-            return Excel::download(new LeadsExport($exportStartDate, $exportEndDate), 'leads.xlsx');
+            return Excel::download(new LeadsExport($exportStartDate, $exportEndDate, $exportSalesmanId, $exportLeadSourceId, $exportMobileNumber, $exportCustomerName), 'leads.xlsx');
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
+    }
+
+    public function salesmanIndex(Request $request)
+    {
+        if ($request->ajax()) {
+            $data = Salesman::query();
+
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->addColumn('action', function ($row) {
+                    return '<button type="button" class="btn btn-sm btn-primary edit-salesman" data-id="' . $row->id . '">Edit</a>';
+                })
+                ->rawColumns(['action'])
+                ->make(true);
+        }
+        return view('salesman');
     }
 }

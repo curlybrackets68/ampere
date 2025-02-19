@@ -24,6 +24,11 @@
                                         @csrf
                                         {{ Form::hidden('exportStartDate', null, ['id' => 'exportStartDate']) }}
                                         {{ Form::hidden('exportEndDate', null, ['id' => 'exportEndDate']) }}
+                                        {{ Form::hidden('exportSalesmanId', null, ['id' => 'exportSalesmanId']) }}
+                                        {{ Form::hidden('exportLeadSourceId', null, ['id' => 'exportLeadSourceId']) }}
+                                        {{ Form::hidden('exportMobileNumber', null, ['id' => 'exportMobileNumber']) }}
+                                        {{ Form::hidden('exportCustomerName', null, ['id' => 'exportCustomerName']) }}
+
                                         <i class="bi bi-cloud-download me-1 align-middle me-1"></i> Export
                                     </form>
                                 </a>
@@ -37,7 +42,35 @@
                                     <label>Date</label>
                                     <input type="text" id="datePeriod" class="form-control">
                                 </div>
-                                <div class="col-md-2" style="margin-top: 31px;">
+                                <div class="col-md-3">
+                                    <label>Salesman</label>
+                                    <select class="form-select" id="salesmanId">
+                                        <option value="0" selected>All</option>
+                                        @forelse ($salesman as $key => $value)
+                                            <option value="{{ $key }}">{{ $value }}</option>
+                                        @empty
+                                        @endforelse
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label>Lead Source</label>
+                                    <select class="form-select" id="leadSourceId">
+                                        <option value="0" selected>All</option>
+                                        @forelse (@$leadSource as $key => $value)
+                                            <option value="{{ $key }}">{{ $value }}</option>
+                                        @empty
+                                        @endforelse
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label>Mobile</label>
+                                    <input type="text" class="form-control" id="mobileNumber">
+                                </div>
+                                <div class="col-md-3 mt-3">
+                                    <label>Customer Name</label>
+                                    <input type="text" class="form-control" id="customerName">
+                                </div>
+                                <div class="col-md-2 mt-5">
                                     <button type="button" class="btn btn-primary" id="searchReport">Search</button>
                                 </div>
                             </div>
@@ -88,16 +121,34 @@
             leadList();
         });
 
+        $(document).on('input', '#mobile', function() {
+            let value = $(this).val();
+            value = value.replace(/[^0-9]/g, '').substring(0, 10);
+            $(this).val(value);
+        });
+
         $(document).on('click', '#searchReport', function() {
             let startDate = $('#datePeriod').data('daterangepicker').startDate.format('YYYY-MM-DD');
             let endDate = $('#datePeriod').data('daterangepicker').endDate.format('YYYY-MM-DD');
+            let salesmanId = $('#salesmanId').val();
+            let leadSourceId = $('#leadSourceId').val();
+            let mobileNumber = $('#mobileNumber').val();
+            let customerName = $('#customerName').val();
 
             $('#exportStartDate').val(startDate);
             $('#exportEndDate').val(endDate);
+            $('#exportSalesmanId').val(salesmanId);
+            $('#exportLeadSourceId').val(leadSourceId);
+            $('#exportMobileNumber').val(mobileNumber);
+            $('#exportCustomerName').val(customerName);
 
             let filter = {
                 startDate: startDate,
-                endDate: endDate
+                endDate: endDate,
+                salesmanId: salesmanId,
+                leadSourceId: leadSourceId,
+                mobileNumber: mobileNumber,
+                customerName: customerName
             };
 
             leadList(filter);

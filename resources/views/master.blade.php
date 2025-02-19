@@ -76,9 +76,24 @@
                         </li>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('orders') }}" class="nav-link"> <i class="nav-icon bi bi-table"></i>
+                            <a href="{{ route('orders') }}" class="nav-link"> <i class="nav-icon bi bi-box-seam-fill"></i>
                                 <p>Orders</p>
                             </a>
+                        </li>
+                        <li class="nav-item"> <a href="#" class="nav-link"> <i class="nav-icon bi bi-gear"></i>
+                                <p>
+                                    Settings
+                                    <i class="nav-arrow bi bi-chevron-right"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{ route('salesman') }}" class="nav-link"> <i
+                                            class="nav-icon bi bi-circle"></i>
+                                        <p>Salesman</p>
+                                    </a>
+                                </li>
+                            </ul>
                         </li>
                     </ul> <!--end::Sidebar Menu-->
                 </nav>

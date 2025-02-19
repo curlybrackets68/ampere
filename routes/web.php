@@ -40,7 +40,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('vehicle-details', [LeadsController::class, 'vehicleDetails'])->name('vehicle-details');
 
     Route::post('add-salesman', [LeadsController::class, 'addSalesman'])->name('add-salesman');
-    Route::get('salesman-details', [LeadsController::class, 'salesmanDetails'])->name('salesman-details');
+    Route::get('salesman-details/{id?}', [LeadsController::class, 'salesmanDetails'])->name('salesman-details');
+
+    Route::get('salesman', [LeadsController::class, 'salesmanIndex'])->name('salesman');
 
     Route::post('add-lead-source', [LeadsController::class, 'addLeadSource'])->name('add-lead-source');
     Route::get('lead-source-details', [LeadsController::class, 'leadSourceDetails'])->name('lead-source-details');

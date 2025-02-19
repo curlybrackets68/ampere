@@ -27,7 +27,7 @@ class DashboardController extends Controller
         $workshopInquiry = $inquiryCounts[5] ?? 0;
 
         $orders = Order::select('status_id', DB::raw('count(*) as count'))
-            ->whereIn('status_id', [1, 6, 7])
+            ->whereIn('status_id', [1, 6, 7, 8, 9])
             ->groupBy('status_id')
             ->pluck('count', 'status_id')
             ->toArray();
@@ -35,8 +35,10 @@ class DashboardController extends Controller
         $totalOrdersPending  = $orders[1] ?? 0;
         $totalOrdersOrdered  = $orders[6] ?? 0;
         $totalOrdersReceived = $orders[7] ?? 0;
+        $totalOrdersCancelled = $orders[8] ?? 0;
+        $totalOrdersFitment = $orders[9] ?? 0;
 
-        return view('dashboard')->with(compact('pendingInquiry', 'completeInquiry', 'rejectedInquiry', 'confirmInquiry', 'workshopInquiry', 'totalOrdersPending', 'totalOrdersOrdered', 'totalOrdersReceived'));
+        return view('dashboard')->with(compact('pendingInquiry', 'completeInquiry', 'rejectedInquiry', 'confirmInquiry', 'workshopInquiry', 'totalOrdersPending', 'totalOrdersOrdered', 'totalOrdersReceived', 'totalOrdersCancelled', 'totalOrdersFitment'));
     }
 
     public function inquiryDetails(Request $request)
