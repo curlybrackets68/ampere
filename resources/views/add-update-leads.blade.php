@@ -39,7 +39,7 @@
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <select class="form-select" name="vehicle" id="vehicle">
-                                                        <option value="vehicle">Select Vehicle</option>
+                                                        <option value="">Select Vehicle</option>
                                                         @forelse (@$vehicle as $key => $value)
                                                             <option value="{{ $key }}"
                                                                 {{ @$lead && $key == $lead->vehicle ? 'selected' : '' }}>
