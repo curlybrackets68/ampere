@@ -99,13 +99,13 @@ class OrdersController extends Controller
                 $message = 'Your Ordered #' . $orderDetails->order_no . " is Cancelled.\n";
                 $message .= "Remark: " . $remark . "\n";
             } else if ($request->statusId == '9') { // Fitment
-                $message = 'Your Ordered #' . $orderDetails->order_no . " is Cancelled.\n";
+                $message = 'Your Ordered #' . $orderDetails->order_no . " is Fitment.\n";
                 $message .= "Name: " . $orderDetails->customer_name . "\n";
                 $message .= "Mobile: " . $orderDetails->customer_mobile . "\n";
                 $message .= "Vehicle No: " . $orderDetails->customer_vehicle_no . "\n";
                 $message .= "Part Details: " . $orderDetails->order_name . "\n";
                 $message .= "Remark: " . $remark . "\n";
-                $message .= "To book appointment again, please send Hi on whatsapp";
+
             }
 
             $this->sendWhatsAppMessage($orderDetails->customer_mobile, $message);
