@@ -52,7 +52,7 @@ class OrdersController extends Controller
                     } else {
                         $html = '<button type="button" class="btn btn-' . $class . ' btn-sm">' . $this->getArrayNameById($this->statusArray, $row->status_id) . '</button>';
                     }
-                    if ($row->status_id == '4') {
+                    if ($row->status_id == '9') {
                         $html .= '<br>
                         <a class="link-primary confirmDateChange" data-id="' . $row->id . '" style="cursor: pointer;">' . $this->formatDateTime('d M, Y h:i A', $row->confirm_date) . '</a>';
                     }
@@ -67,10 +67,13 @@ class OrdersController extends Controller
                         </ul>
                     </div>';
                 })
+                ->addColumn('branch_name', function ($row) {
+                    return $this->getArrayNameById($this->branchArray, $row->branch_id);
+                })
                 ->addColumn('display_order_date', function ($row) {
                     return $this->formatDateTime('d M, Y h:i A', $row->created_at);
                 })
-                ->rawColumns(['action', 'display_order_date', 'display_status'])
+                ->rawColumns(['action', 'display_order_date', 'display_status','branch_name'])
                 ->make(true);
         }
         $status = $request->input('status');
@@ -83,6 +86,10 @@ class OrdersController extends Controller
         $remark   = $request->statusRemark;
 
         $save = Order::where('id', $request->id)->update(['status_id' => $statusId, 'status_remark' => $remark ?? '']);
+        if ($request->statusId == '9') {
+            Order::where('id', $request->id)->update(['confirm_date' => $this->formatDateTime(mDateTime: $request->confirmDate)]);
+        }
+
         if ($save) {
             $orderDetails = Order::find($request->id);
             $message        = '';

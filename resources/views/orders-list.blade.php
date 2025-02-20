@@ -70,6 +70,7 @@
                                             <th style="text-align: left;">Order No.</th>
                                             <th style="text-align: left;">Order</th>
                                             <th style="text-align: left;">Mobile</th>
+                                            <th style="text-align: left;">Branch</th>
                                             <th style="text-align: left;">Vehicle No</th>
                                             <th style="text-align: left;">Order Details</th>
                                             <th style="text-align: left;">Status</th>
@@ -168,7 +169,7 @@
                 statusId: searchStatusId,
                 searchBranchId: searchBranchId
             };
-            await inquiryDetails(filterData);
+            await orderDetails(filterData);
         });
 
         flatpickr("#confirmDate", {
@@ -214,14 +215,13 @@
                 statusId: statusId,
                 searchBranchId: branchId
             };
-            await inquiryDetails(data);
-            $('#exportExcel').removeClass('d-none');
+            await orderDetails(data);
         });
 
-        async function inquiryDetails(filters = []) {
+        async function orderDetails(filters = []) {
             let orderByConfirmDate = false;
 
-            if (filters.statusId == '4') {
+            if (filters.statusId == '9') {
                 orderByConfirmDate = true;
             }
 
@@ -255,6 +255,10 @@
                     {
                         data: 'customer_mobile',
                         name: 'customer_mobile'
+                    },
+                    {
+                        data: 'branch_name',
+                        name: 'branch_name'
                     },
                     {
                         data: 'customer_vehicle_no',
@@ -292,6 +296,7 @@
             $('#statusInquiryId').val(id);
             $('#statusModal').modal('show');
             $('#confirmDIv').addClass('d-none');
+            $('#remarkDiv').addClass('d-none');
 
             let selectedValue = '';
             let html = '<option value="">Select</option>';
@@ -304,7 +309,6 @@
             }
 
             $('#statusId').html(html);
-
             $('#statusId').val(selectedValue).trigger('change');
         });
 
@@ -332,7 +336,7 @@
             }
 
             let confirmDate = '';
-            if (statusId == '4') {
+            if (statusId == '9') {
                 confirmDate = $('#confirmDate').val();
             }
 
@@ -355,7 +359,7 @@
                 success: async function(response) {
                     if (response.code == '1') {
                         $('#statusModal').modal('hide');
-                        await inquiryDetails(filterData);
+                        await orderDetails(filterData);
                     } else {
                         alert(response.message);
                     }
@@ -365,31 +369,15 @@
 
         $(document).on('change', '#statusId', function() {
             $('.status_error').html('');
+            $('#remarkDiv').addClass('d-none');
+            $('#statusRemark').val('');
+            if ($(this).val() === '9') {
+                $('#confirmDIv').removeClass('d-none');
+            } else {
+                $('#remarkDiv').removeClass('d-none');
+                $('#confirmDIv').addClass('d-none');
+            }
 
-            // if ($(this).val() == '1') {
-            //     $('#statusRemark').val('');
-            //     $('#remarkDiv').addClass('d-none');
-            //     $('#confirmDIv').addClass('d-none');
-            // } else if ($(this).val() === '2') {
-            //     $('#remarkDiv').removeClass('d-none');
-            //     $('#confirmDIv').addClass('d-none');
-            // } else if ($(this).val() === '3') {
-            //     $('#remarkDiv').removeClass('d-none');
-            //     $('#confirmDIv').addClass('d-none');
-            // } else if ($(this).val() === '4') {
-            //     $('#statusRemark').val('');
-            //     $('#remarkDiv').addClass('d-none');
-            //     $('#confirmDIv').removeClass('d-none');
-            // } else {
-            //     $('#statusRemark').val('');
-            //     $('#remarkDiv').addClass('d-none');
-            //     $('#confirmDIv').addClass('d-none');
-            // }
-            $('#remarkDiv').removeClass('d-none');
-        });
-
-        $(document).on('click', '#exportExcel', function() {
-            $('#exportExcelForm').submit();
         });
     </script>
 @endsection

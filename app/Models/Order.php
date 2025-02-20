@@ -21,9 +21,12 @@ class Order extends Model
         'branch_id',
         'order_name',
         'order_date',
+        'confirm_date',
         'status_id',
         'status_date',
         'created_by',
         'modified_by'
     ];
+
+
 }
