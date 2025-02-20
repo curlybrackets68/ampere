@@ -29,9 +29,9 @@ class InquiryDetailsController extends Controller
 
         $validator = Validator::make($request->all(), $rules, $messages);
 
-        if ($validator->fails()) {
-            return $this->failResponse([], 'Validation Error Please enter valid Vehicle Number,Mobile number', $validator->errors());
-        }
+        // if ($validator->fails()) {
+        //     return $this->failResponse([], 'Validation Error Please enter valid Vehicle Number,Mobile number', $validator->errors());
+        // }
 
         $latestNumber = 0;
         if ($request->action_type == '2') {
@@ -40,7 +40,7 @@ class InquiryDetailsController extends Controller
             $data['customer_name'] = $request->name;
             $data['branch_id'] = $request->order_branch;
             $data['customer_vehicle_no'] = strtoupper($request->vehicle_no);
-            $data['order_name'] = $request->order_name;
+            $data['order_name'] = $request->order_details;
             $data['customer_mobile'] = $request->mobile;
             $data['order_no'] = 'ORD-' . ($lastOrderId + 1);
             $data['order_date'] = now()->format('Y-m-d H:i:s');
