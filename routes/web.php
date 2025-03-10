@@ -50,4 +50,6 @@ Route::middleware(['auth'])->group(function () {
    // Route::resource('orders', OrdersController::class);
     Route::get('orders', [OrdersController::class, 'index'])->name('orders');
     Route::post('orders-change-status', [OrdersController::class, 'changeStatus'])->name('orders.change-status');
+
+    Route::get('get-history/{type_id?}', [OrdersController::class, 'getHistory'])->name('orders.get-history');
 });

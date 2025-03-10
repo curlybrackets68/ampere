@@ -74,6 +74,7 @@
                                             <th style="text-align: left;">Vehicle No</th>
                                             <th style="text-align: left;">Order Details</th>
                                             <th style="text-align: left;">Status</th>
+                                            <th style="text-align: left;">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -150,6 +151,38 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="historyModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true"
+        data-bs-backdrop="static">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">History</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mt-3">
+                        <table class="table table-bordered table-striped" style="width:100%" id="orderHistoryTable">
+                            <thead>
+                                <tr>
+                                    <th style="text-align: left;">Sr. No</th>
+                                    <th style="text-align: left;">Action</th>
+                                    <th style="text-align: left;">DateTime</th>
+                                    <th style="text-align: left;">Remark</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 @section('javascript')
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
@@ -218,6 +251,8 @@
             await orderDetails(data);
         });
 
+
+
         async function orderDetails(filters = []) {
             let orderByConfirmDate = false;
 
@@ -270,6 +305,10 @@
                     {
                         data: 'display_status',
                         name: 'display_status'
+                    },
+                    {
+                        data: 'action',
+                        name: 'action'
                     },
                 ],
 
@@ -377,6 +416,42 @@
                 $('#remarkDiv').removeClass('d-none');
                 $('#confirmDIv').addClass('d-none');
             }
+
+        });
+
+        $(document).on('click', '.open-history-modal', async function() {
+            let type_id = $(this).data('type-id');
+            $('#historyModal').modal('show');
+            let url = '{{ route('orders.get-history', ['type_id' => 'ID']) }}';
+            url = url.replace('ID', type_id);
+            $('#orderHistoryTable').DataTable({
+                serverSide: true,
+                processing: true,
+                destroy: true,
+                responsive: true,
+                scrollX: true,
+                ajax: {
+                    url: url,
+                },
+                columns: [{
+                        data: 'DT_RowIndex',
+                        name: 'id',
+                        searchable: false
+                    },
+                    {
+                        data: 'display_action',
+                        name: 'display_action'
+                    }, {
+                        data: 'display_date',
+                        name: 'created_at'
+                    }, {
+                        data: 'remark',
+                        name: 'remark'
+                    }
+
+                ],
+
+            });
 
         });
     </script>

@@ -59,13 +59,7 @@ class OrdersController extends Controller
                     return $html;
                 })
                 ->addColumn('action', function ($row) {
-                    return '<div class="btn-group"> <button type="button" class="btn btn-light dropdown-toggle"
-                      style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"
-                        data-bs-toggle="dropdown" aria-expanded="false"> Action </button>
-                        <ul class="dropdown-menu" style="font-size: 0.75rem; padding: 0.25rem 0.5rem;">
-                            <li> <a class="dropdown-item change-status" data-id="' . $row->id . '" data-status="' . $row->status_id . '" href="javascript:void(0);">Status</a></li>
-                        </ul>
-                    </div>';
+                    return '<button type="button" class="btn btn-info btn-sm open-history-modal" data-type="order" data-type-id="' . $row->id . '">Hisotry</button>';
                 })
                 ->addColumn('branch_name', function ($row) {
                     return $this->getArrayNameById($this->branchArray, $row->branch_id);
@@ -73,7 +67,7 @@ class OrdersController extends Controller
                 ->addColumn('display_order_date', function ($row) {
                     return $this->formatDateTime('d M, Y h:i A', $row->created_at);
                 })
-                ->rawColumns(['action', 'display_order_date', 'display_status','branch_name'])
+                ->rawColumns(['action', 'display_order_date', 'display_status', 'branch_name'])
                 ->make(true);
         }
         $status = $request->input('status');
@@ -112,14 +106,13 @@ class OrdersController extends Controller
                 $message .= "Vehicle No: " . $orderDetails->customer_vehicle_no . "\n";
                 $message .= "Part Details: " . $orderDetails->order_name . "\n";
                 $message .= "Remark: " . $remark . "\n";
-
             }
 
             $this->sendWhatsAppMessage($orderDetails->customer_mobile, $message);
             SystemLogs::create([
                 'inquiry_id' => 0,
                 'type' => '2', // for Order
-                'type' => $request->id, // for Order
+                'type_id' => $request->id, // for Order
                 'remark'     => 'Status changed to ' . $this->getArrayNameById($this->statusArray, $request->statusId),
                 'action_id'  => 3,
                 'created_by' => auth()->id(),
@@ -127,6 +120,23 @@ class OrdersController extends Controller
             return response()->json(['code' => 1, 'message' => 'Status updated successfully']);
         } else {
             return response()->json(['code' => 0, 'message' => 'Failed to update status']);
+        }
+    }
+
+    public function getHistory(Request $request)
+    {
+        if ($request->ajax()) {
+
+            $order = SystemLogs::query()->where('type', 2)->where('type_id', $request->type_id)->get();
+
+            return DataTables::of($order)
+                ->addIndexColumn()
+                ->addColumn('display_action', function ($row) {
+                    return $this->getArrayNameById($this->actionLogsArray,$row->action_id);
+                })->addColumn('display_date', function ($row) {
+                    return $this->formatDateTime('d M, Y h:i A', $row->created_at);
+                })
+                ->make(true);
         }
     }
 }

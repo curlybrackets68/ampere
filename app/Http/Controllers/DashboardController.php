@@ -164,6 +164,8 @@ class DashboardController extends Controller
             $this->sendWhatsAppMessage($inquiryDetails->mobile, $message);
             SystemLogs::create([
                 'inquiry_id' => $request->id,
+                'type' => '1', // for Inq
+                'type_id' => $request->id, // for Inq
                 'remark'     => 'Status changed to ' . $this->getArrayNameById($this->statusArray, $request->statusId),
                 'action_id'  => 3,
                 'created_by' => auth()->id(),

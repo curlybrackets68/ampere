@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\v1;
 use App\Http\Controllers\Controller;
 use App\Models\InquiryDetails;
 use App\Models\Order;
+use App\Models\SystemLogs;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
@@ -55,13 +56,28 @@ class InquiryDetailsController extends Controller
 
         // Save the inquiry
         if ($request->action_type == '2') {
-          //  dd($data);
             $orderSave = Order::create($data);
-
             $latestNumber = $orderSave->order_no;
+            SystemLogs::create([
+                'inquiry_id' => 0,
+                'type' => '2', // for Order
+                'type_id' => $orderSave->id, // for Order
+                'remark'     => 'Part Order Created # '.$latestNumber,
+                'action_id'  => 1,
+                'created_by' => auth()->id(),
+            ]);
         } else {
             $inquirySave = InquiryDetails::create($data);
             $latestNumber = $inquirySave->inquiry_no;
+            SystemLogs::create([
+                'inquiry_id' => $inquirySave->id,
+                'type' => '1', // for Order
+                'type_id' => $inquirySave->id, // for Order
+                'remark'     => 'Inquiry Created # '.$latestNumber,
+                'action_id'  => 1,
+                'created_by' => auth()->id(),
+            ]);
+
         }
 
         if ($this->isNotNullOrEmptyOrZero($latestNumber)) {
