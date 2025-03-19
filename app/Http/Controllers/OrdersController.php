@@ -113,7 +113,7 @@ class OrdersController extends Controller
                 'inquiry_id' => 0,
                 'type' => '2', // for Order
                 'type_id' => $request->id, // for Order
-                'remark'     => 'Status changed to ' . $this->getArrayNameById($this->statusArray, $request->statusId),
+                'remark'     => 'Status changed to ' . $this->getArrayNameById($this->statusArray, $request->statusId) ." Status Remark: - ".$remark,
                 'action_id'  => 3,
                 'created_by' => auth()->id(),
             ]);

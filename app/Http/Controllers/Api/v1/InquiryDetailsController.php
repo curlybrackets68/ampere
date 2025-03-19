@@ -64,7 +64,7 @@ class InquiryDetailsController extends Controller
                 'type_id' => $orderSave->id, // for Order
                 'remark'     => 'Part Order Created # '.$latestNumber,
                 'action_id'  => 1,
-                'created_by' => auth()->id(),
+                'created_by' => 1,
             ]);
         } else {
             $inquirySave = InquiryDetails::create($data);
@@ -75,7 +75,7 @@ class InquiryDetailsController extends Controller
                 'type_id' => $inquirySave->id, // for Order
                 'remark'     => 'Inquiry Created # '.$latestNumber,
                 'action_id'  => 1,
-                'created_by' => auth()->id(),
+                'created_by' => 1,
             ]);
 
         }
