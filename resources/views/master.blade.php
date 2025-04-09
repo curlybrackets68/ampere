@@ -35,8 +35,9 @@
                 <ul class="navbar-nav">
                     <li class="nav-item"> <a class="nav-link" data-lte-toggle="sidebar" href="#" role="button">
                             <i class="bi bi-list"></i> </a> </li>
-                    <li class="nav-item d-none d-md-block"> <span
-                            class="nav-link">{{ Str::ucfirst(Auth::user()->name) }}</span> </li>
+                    <li class="nav-item d-none d-md-block"> 
+                        <span class="nav-link fw-bold">Welcome, {{ Str::ucfirst(Auth::user()->name) }}</span>
+                    </li>
                 </ul> <!--end::Start Navbar Links--> <!--begin::End Navbar Links-->
 
                 <ul class="navbar-nav ms-auto"> <!--begin::Navbar Search-->
