@@ -64,7 +64,18 @@
                                 <p>Dashboard</p>
                             </a>
                         </li>
-                        
+                        <li class="nav-item">
+                            <a href="{{ route('admin.modules') }}" class="nav-link"> <i
+                                    class="nav-icon bi bi-grip-horizontal"></i>
+                                <p>Modules</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('admin.users') }}" class="nav-link"> <i
+                                    class="nav-icon bi bi-grip-horizontal"></i>
+                                <p>Users</p>
+                            </a>
+                        </li>
                     </ul> <!--end::Sidebar Menu-->
                 </nav>
             </div> <!--end::Sidebar Wrapper-->
