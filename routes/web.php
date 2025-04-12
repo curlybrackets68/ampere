@@ -22,7 +22,7 @@ Route::group(['middleware' => 'guest'], function () {
     Route::get('/', function () {
         return view('auth.index');
     });
-    Route::get('login', [LoginController::class, 'showLogin'])->name('auth.show-login');
+    Route::get('login', [LoginController::class, 'showLogin'])->name(name: 'auth.show-login');
     Route::post('/login', [LoginController::class, 'login'])->name('auth.login');
 });
 
@@ -53,3 +53,6 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('get-history/{type_id?}', [OrdersController::class, 'getHistory'])->name('orders.get-history');
 });
+
+
+include_once 'admin.php';
