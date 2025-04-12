@@ -17,7 +17,7 @@ return new class extends Migration
             $table->bigInteger('module_id')->default(0);
             $table->bigInteger('sub_module_id')->default(0);
             $table->tinyInteger('role_view')->default(0)->comment('1 - Allow, 0 - Not allow	');
-            $table->tinyInteger('role_view_all')->default(0)->comment('1 - Allow, 0 - Not allow	');
+            $table->tinyInteger('role_viewAll')->default(0)->comment('1 - Allow, 0 - Not allow	');
             $table->tinyInteger('role_add')->default(0)->comment('1 - Allow, 0 - Not allow	');
             $table->tinyInteger('role_edit')->default(0)->comment('1 - Allow, 0 - Not allow	');
             $table->tinyInteger('role_delete')->default(0)->comment('1 - Allow, 0 - Not allow	');

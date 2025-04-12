@@ -22,5 +22,8 @@ Route::prefix("admin")->group(function () {
         Route::post('add-edit-user', [AdminController::class, 'addEditUser'])->name('admin.add-edit-user');
         Route::get('modules', [AdminController::class, 'modules'])->name('admin.modules');
         Route::post('add-edit-module', [AdminController::class, 'addEditModule'])->name('admin.add-edit-modules');
+
+        Route::get('rights/{id}', [AdminController::class, 'userRights'])->name('admin.rights');
+        Route::post('save-rights', [AdminController::class, 'saveUserRights'])->name('admin.save-rights');
     });
 });
