@@ -25,14 +25,14 @@
             </div>
 
             <div class="row mt-3"> <!--begin::Col-->
-                <div class="col-md-12">
+                <div class="col-6">
                     <div class="card">
                         <div class="card-header">
                             <h5 class="card-title">Inquiry</h5>
                         </div>
                         <div class="card-body">
                             <div class="row">
-                                <div class="col-lg-2 col-md-4 col-6 mb-3"> <!--begin::Small Box Widget 1-->
+                                <div class="col-4"> <!--begin::Small Box Widget 1-->
                                     <a href="{{ route('inquiry', ['status' => '1']) }}">
                                         <div class="small-box text-bg-warning">
                                             <div class="inner">
@@ -42,7 +42,7 @@
                                         </div> <!--end::Small Box Widget 1-->
                                     </a>
                                 </div> <!--end::Col-->
-                                <div class="col-lg-2 col-md-4 col-6 mb-3"> <!--begin::Small Box Widget 2-->
+                                <div class="col-4"> <!--begin::Small Box Widget 2-->
                                     <a href="{{ route('inquiry', ['status' => '2']) }}">
                                         <div class="small-box text-bg-success">
                                             <div class="inner">
@@ -52,8 +52,8 @@
                                         </div> <!--end::Small Box Widget 2-->
                                     </a>
                                 </div> <!--end::Col-->
-                                
-                                <div class="col-lg-2 col-md-4 col-6 mb-3"> <!--begin::Small Box Widget 4-->
+
+                                <div class="col-4"> <!--begin::Small Box Widget 4-->
                                     <a href="{{ route('inquiry', ['status' => '4']) }}">
                                         <div class="small-box text-bg-primary">
                                             <div class="inner">
@@ -63,7 +63,10 @@
                                         </div> <!--end::Small Box Widget 4-->
                                     </a>
                                 </div> <!--end::Col-->
-                                <div class="col-lg-2 col-md-4 col-6 mb-3"> <!--begin::Small Box Widget 4-->
+                            </div>
+                            <div class="row">
+                                <div class="col-2"></div>
+                                <div class="col-4"> <!--begin::Small Box Widget 4-->
                                     <a href="{{ route('inquiry', ['status' => '5']) }}">
                                         <div class="small-box text-bg-info">
                                             <div class="inner">
@@ -73,7 +76,7 @@
                                         </div> <!--end::Small Box Widget 4-->
                                     </a>
                                 </div> <!--end::Col-->
-                                <div class="col-lg-2 col-md-4 col-6 mb-3"> <!--begin::Small Box Widget 3-->
+                                <div class="col-4"> <!--begin::Small Box Widget 3-->
                                     <a href="{{ route('inquiry', ['status' => '3']) }}">
                                         <div class="small-box text-bg-danger">
                                             <div class="inner">
@@ -83,18 +86,32 @@
                                         </div> <!--end::Small Box Widget 3-->
                                     </a>
                                 </div> <!--end::Col-->
+                                <div class="col-2"></div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-12 mt-3">
+                <div class="col-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title">Inquiry Chart</h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="pieChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-3">
+                <div class="col-md-6 mt-3">
                     <div class="card">
                         <div class="card-header">
                             <h5 class="card-title">Orders</h5>
                         </div>
                         <div class="card-body">
                             <div class="row">
-                                <div class="col-lg-2 col-md-4 col-6 mb-3"> <!--begin::Small Box Widget 1-->
+                                <div class="col-4"> <!--begin::Small Box Widget 1-->
                                     <a href="{{ route('orders', ['status' => '1']) }}">
                                         <div class="small-box text-bg-warning">
                                             <div class="inner">
@@ -104,7 +121,7 @@
                                         </div> <!--end::Small Box Widget 1-->
                                     </a>
                                 </div> <!--end::Col-->
-                                <div class="col-lg-2 col-md-4 col-6 mb-3"> <!--begin::Small Box Widget 1-->
+                                <div class="col-4"> <!--begin::Small Box Widget 1-->
                                     <a href="{{ route('orders', ['status' => '6']) }}">
                                         <div class="small-box text-bg-primary">
                                             <div class="inner">
@@ -114,7 +131,7 @@
                                         </div> <!--end::Small Box Widget 1-->
                                     </a>
                                 </div> <!--end::Col-->
-                                <div class="col-lg-2 col-md-4 col-6 mb-3"> <!--begin::Small Box Widget 1-->
+                                <div class="col-4"> <!--begin::Small Box Widget 1-->
                                     <a href="{{ route('orders', ['status' => '7']) }}">
                                         <div class="small-box text-bg-info">
                                             <div class="inner">
@@ -124,7 +141,10 @@
                                         </div> <!--end::Small Box Widget 1-->
                                     </a>
                                 </div> <!--end::Col-->
-                                <div class="col-lg-2 col-md-4 col-6 mb-3"> <!--begin::Small Box Widget 1-->
+                            </div>
+                            <div class="row">
+                                <div class="col-2"></div>
+                                <div class="col-4"> <!--begin::Small Box Widget 1-->
                                     <a href="{{ route('orders', ['status' => '8']) }}">
                                         <div class="small-box text-bg-danger">
                                             <div class="inner">
@@ -134,7 +154,7 @@
                                         </div> <!--end::Small Box Widget 1-->
                                     </a>
                                 </div> <!--end::Col-->
-                                <div class="col-lg-2 col-md-4 col-6 mb-3"> <!--begin::Small Box Widget 1-->
+                                <div class="col-4"> <!--begin::Small Box Widget 1-->
                                     <a href="{{ route('orders', ['status' => '9']) }}">
                                         <div class="small-box text-bg-success">
                                             <div class="inner">
@@ -154,6 +174,7 @@
 @endsection
 
 @section('javascript')
+    <script src="{{ asset('/dist/js/Chart.min.js') }}"></script>
     <script>
         $(document).on('input', '#mobileNumber', function() {
             this.value = this.value.replace(/\D/g, '');
@@ -200,5 +221,39 @@
                 });
             }
         });
+
+        var donutData        = {
+            labels: [
+                'Chrome',
+                'IE',
+                'FireFox',
+                'Safari',
+                'Opera',
+                'Navigator',
+            ],
+            datasets: [
+                {
+                    data: [700,500,400,600,300,100],
+                    backgroundColor : ['#f56954', '#00a65a', '#f39c12', '#00c0ef', '#3c8dbc', '#d2d6de'],
+                }
+            ]
+        }
+        //-------------
+        //- PIE CHART -
+        //-------------
+        // Get context with jQuery - using jQuery's .get() method.
+        var pieChartCanvas = $('#pieChart').get(0).getContext('2d')
+        var pieData        = donutData;
+        var pieOptions     = {
+            maintainAspectRatio : false,
+            responsive : true,
+        }
+        //Create pie or douhnut chart
+        // You can switch between pie and douhnut using the method below.
+        new Chart(pieChartCanvas, {
+            type: 'pie',
+            data: pieData,
+            options: pieOptions
+        })
     </script>
 @endsection
