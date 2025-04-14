@@ -23,6 +23,9 @@
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.bootstrap4.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/3.0.3/css/responsive.bootstrap4.css">
+    <!-- Toastr CSS -->
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+
 
     {{-- <link href="{{ asset('../../dist/css/datatables.min.css') }}" rel="stylesheet"> --}}
     @yield('css')
@@ -33,9 +36,9 @@
         <nav class="app-header navbar navbar-expand bg-body"> <!--begin::Container-->
             <div class="container-fluid"> <!--begin::Start Navbar Links-->
                 <ul class="navbar-nav">
-                    <li class="nav-item"> <a class="nav-link" data-lte-toggle="sidebar" href="#" role="button">
-                            <i class="bi bi-list"></i> </a> </li>
-                    <li class="nav-item d-none d-md-block"> 
+                    <li class="nav-item"><a class="nav-link" data-lte-toggle="sidebar" href="#" role="button">
+                            <i class="bi bi-list"></i> </a></li>
+                    <li class="nav-item d-none d-md-block">
                         <span class="nav-link fw-bold">Welcome, {{ Str::ucfirst(Auth::user()->user_name) }}</span>
                     </li>
                 </ul> <!--end::Start Navbar Links--> <!--begin::End Navbar Links-->
@@ -103,13 +106,52 @@
         integrity="sha256-whL0tQWoY1Ku1iskqPFvmZ+CHsvmRWx/PIoEvIeWh4I=" crossorigin="anonymous"></script>
     <!--end::Required Plugin(popperjs for Bootstrap 5)--><!--begin::Required Plugin(Bootstrap 5)-->
 
-    <script src="{{ asset('dist/js/adminlte.js') }}"></script> <!--end::Required Plugin(AdminLTE)--><!--begin::OverlayScrollbars Configure-->
+    <script src="{{ asset('dist/js/adminlte.js') }}"></script> <!--end::Required Plugin(AdminLTE)-->
+    <!--begin::OverlayScrollbars Configure-->
     <script src="{{ asset('dist/js/custom.js') }}"></script>
 
     <script src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
     <script src="https://cdn.datatables.net/2.1.8/js/dataTables.bootstrap4.js"></script>
+    <!-- Toastr JS -->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
 
     <script>
+        @if (Session::has('success'))
+            showToast('success', "{{ Session::get('success') }}");
+        @endif
+
+        @if (Session::has('error'))
+            showToast('error', "{{ Session::get('error') }}");
+        @endif
+
+        function showToast(type, message, title = '') {
+            toastr.options = {
+                "closeButton": true,
+                "progressBar": true,
+                "positionClass": "toast-top-center",
+                "timeOut": "4000",
+            };
+
+            switch (type) {
+                case 'success':
+                    toastr.success(message, title || 'Success');
+                    break;
+                case 'error':
+                    toastr.error(message, title || 'Error');
+                    break;
+                case 'warning':
+                    toastr.warning(message, title || 'Warning');
+                    break;
+                case 'info':
+                    toastr.info(message, title || 'Info');
+                    break;
+                default:
+                    toastr.info(message, title);
+                    break;
+            }
+        }
+
         const SELECTOR_SIDEBAR_WRAPPER = ".sidebar-wrapper";
         const Default = {
             scrollbarTheme: "os-theme-light",
@@ -133,7 +175,8 @@
         });
     </script> <!--end::OverlayScrollbars Configure--> <!-- OPTIONAL SCRIPTS --> <!-- sortablejs -->
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"
-        integrity="sha256-ipiJrswvAR4VAx/th+6zWsdeYmVae0iJuiR+6OqHJHQ=" crossorigin="anonymous"></script> <!-- sortablejs -->
+        integrity="sha256-ipiJrswvAR4VAx/th+6zWsdeYmVae0iJuiR+6OqHJHQ=" crossorigin="anonymous"></script>
+    <!-- sortablejs -->
     <script>
         const connectedSortables =
             document.querySelectorAll(".connectedSortable");

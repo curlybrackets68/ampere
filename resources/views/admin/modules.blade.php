@@ -153,6 +153,7 @@
                     if (response.status == '1') {
                         $('#addModuleModal').modal('hide');
                         moduleList();
+                        showToast('success', response.msg);
                     }
                 },
                 error: function (xhr) {

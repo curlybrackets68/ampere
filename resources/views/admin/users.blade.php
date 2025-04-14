@@ -186,6 +186,7 @@
                         if (response.status == '1') {
                             $('#addUserModal').modal('hide');
                             userList();
+                            showToast('success', response.msg);
                         }
                     },
                     error: function (xhr) {
