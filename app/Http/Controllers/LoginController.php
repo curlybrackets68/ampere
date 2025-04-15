@@ -6,6 +6,7 @@ use App\Models\Admin;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
 
 class LoginController extends Controller
 {
@@ -25,6 +26,12 @@ class LoginController extends Controller
 
         if ($user) {
             auth()->login($user);
+            session([
+                'user_id' => $user->id,
+                'name' => $user->name,
+                'user_name' => $user->user_name,
+            ]);
+            $this->generateSecretFile($user->id);
             return redirect()->route('dashboard')->withSuccess('Login success.');
         } else {
             return redirect()->back()->withInput()->withError('Invalid Credentials !!!');
@@ -33,6 +40,12 @@ class LoginController extends Controller
 
     public function logout()
     {
+        $secretPath = base_path('app/Secrets/');
+        $userFile = $secretPath . '/'.Auth::id().'.php';
+        if (File::exists($userFile)) {
+            File::delete($userFile);
+        }
+        session()->flush();
         Auth::logout();
         return redirect()->route('auth.show-login');
     }

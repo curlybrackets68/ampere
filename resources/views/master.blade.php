@@ -35,7 +35,7 @@
                 <ul class="navbar-nav">
                     <li class="nav-item"> <a class="nav-link" data-lte-toggle="sidebar" href="#" role="button">
                             <i class="bi bi-list"></i> </a> </li>
-                    <li class="nav-item d-none d-md-block"> 
+                    <li class="nav-item d-none d-md-block">
                         <span class="nav-link fw-bold">Welcome, {{ Str::ucfirst(Auth::user()->name) }}</span>
                     </li>
                 </ul> <!--end::Start Navbar Links--> <!--begin::End Navbar Links-->
@@ -56,46 +56,59 @@
                 <nav class="mt-2"> <!--begin::Sidebar Menu-->
                     <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="menu"
                         data-accordion="false">
+                        @php
+                            $modules = (array) unserialize(getSecretFileData('USER_MODULE_DATA'));
+                        @endphp
 
-                        <li class="nav-header">Dashboard</li>
-                        <li class="nav-item">
-                            <a href="{{ route('dashboard') }}" class="nav-link"> <i
-                                    class="nav-icon bi bi-grip-horizontal"></i>
-                                <p>Dashboard</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('inquiry') }}" class="nav-link"> <i class="nav-icon bi bi-star-half"></i>
-                                <p>Inquiry</p>
-                            </a>
-                        </li>
+                        @forelse ($modules as $module)
+                            <li class="nav-item">
+                                <a class="nav-link menu-link"
+                                   href="{{ Route::has($module['route_name']) ? route($module['route_name']) : '' }}">
+                                    <span data-key="t-widgets">{{ $module['name'] }}</span>
+                                </a>
+                            </li>
 
-                        <li class="nav-item">
-                            <a href="{{ route('leads.index') }}" class="nav-link"> <i class="nav-icon bi bi-table"></i>
-                                <p>Leads</p>
-                            </a>
-                        </li>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('orders') }}" class="nav-link"> <i class="nav-icon bi bi-box-seam-fill"></i>
-                                <p>Orders</p>
-                            </a>
-                        </li>
-                        <li class="nav-item"> <a href="#" class="nav-link"> <i class="nav-icon bi bi-gear"></i>
-                                <p>
-                                    Settings
-                                    <i class="nav-arrow bi bi-chevron-right"></i>
-                                </p>
-                            </a>
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                    <a href="{{ route('salesman') }}" class="nav-link"> <i
-                                            class="nav-icon bi bi-circle"></i>
-                                        <p>Salesman</p>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
+                        @empty
+                        @endforelse
+{{--                        <li class="nav-header">Dashboard</li>--}}
+{{--                        <li class="nav-item">--}}
+{{--                            <a href="{{ route('dashboard') }}" class="nav-link"> <i--}}
+{{--                                    class="nav-icon bi bi-grip-horizontal"></i>--}}
+{{--                                <p>Dashboard</p>--}}
+{{--                            </a>--}}
+{{--                        </li>--}}
+{{--                        <li class="nav-item">--}}
+{{--                            <a href="{{ route('inquiry') }}" class="nav-link"> <i class="nav-icon bi bi-star-half"></i>--}}
+{{--                                <p>Inquiry</p>--}}
+{{--                            </a>--}}
+{{--                        </li>--}}
+
+{{--                        <li class="nav-item">--}}
+{{--                            <a href="{{ route('leads.index') }}" class="nav-link"> <i class="nav-icon bi bi-table"></i>--}}
+{{--                                <p>Leads</p>--}}
+{{--                            </a>--}}
+{{--                        </li>--}}
+{{--                        </li>--}}
+{{--                        <li class="nav-item">--}}
+{{--                            <a href="{{ route('orders') }}" class="nav-link"> <i class="nav-icon bi bi-box-seam-fill"></i>--}}
+{{--                                <p>Orders</p>--}}
+{{--                            </a>--}}
+{{--                        </li>--}}
+{{--                        <li class="nav-item"> <a href="#" class="nav-link"> <i class="nav-icon bi bi-gear"></i>--}}
+{{--                                <p>--}}
+{{--                                    Settings--}}
+{{--                                    <i class="nav-arrow bi bi-chevron-right"></i>--}}
+{{--                                </p>--}}
+{{--                            </a>--}}
+{{--                            <ul class="nav nav-treeview">--}}
+{{--                                <li class="nav-item">--}}
+{{--                                    <a href="{{ route('salesman') }}" class="nav-link"> <i--}}
+{{--                                            class="nav-icon bi bi-circle"></i>--}}
+{{--                                        <p>Salesman</p>--}}
+{{--                                    </a>--}}
+{{--                                </li>--}}
+{{--                            </ul>--}}
+{{--                        </li>--}}
                     </ul> <!--end::Sidebar Menu-->
                 </nav>
             </div> <!--end::Sidebar Wrapper-->

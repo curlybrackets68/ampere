@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\SystemLogs;
+use App\Models\Module;
+use App\Models\UserRight;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
 
 trait CommonFunctions
@@ -16,7 +18,7 @@ trait CommonFunctions
         "2" => 'Vehicle Off Road',
         "3" => 'Insurance Repair',
         //"4" => 'MINOR SERVICE',
-      //  "5" => 'Other',
+        //  "5" => 'Other',
     ];
     protected $branchArray = [
         "1" => "KALALI",
@@ -183,6 +185,44 @@ trait CommonFunctions
                 return false;
             }
         }
+    }
+
+    public function generateSecretFile($id)
+    {
+        $secretPath = base_path('app/Secrets/');
+
+        if (!File::exists($secretPath)) {
+            File::makeDirectory($secretPath, 0777, true, true);
+        }
+
+
+        $userFile = $secretPath . '/'.$id.'.php';
+        if (File::exists($userFile)) {
+            File::delete($userFile);
+        }
+
+        $userData = "<?php\n";
+
+        $rights = UserRight::query()->where('user_id', $id)->get();
+        $module = Module::query()->get();
+
+        $userRightsData = [];
+
+        $modules = Module::query()->whereIn('id', $rights->pluck('module_id'))->get();
+
+        if ($module->count()) {
+            foreach ($modules as $value) {
+                $userRightsData[$value->id] = [
+                    'id' => $value->id,
+                    'name' => $value->name,
+                    'config_key' => $value->config_key,
+                    'route_name' => $value->route_name??'',
+                ];
+            }
+        }
+        $userData .= "\n\ndefine('USER_MODULE_DATA', '" . serialize($userRightsData) . "')";
+        $userData .= "\n\n?>";
+        File::put($userFile, $userData);
     }
 
 }
