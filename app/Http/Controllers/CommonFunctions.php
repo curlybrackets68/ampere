@@ -214,7 +214,7 @@ trait CommonFunctions
 
         if ($module->count()) {
             foreach ($modules as $value) {
-                $rights = UserRight::query()->where('module_id', $value->id)->get();
+                $rights = UserRight::query()->where('module_id', $value->id)->where('user_id', $id)->get();
                 if($rights){
                     foreach ($rights as $rightRow) {
                         if (!empty($value->config_key)) {
