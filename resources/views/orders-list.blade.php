@@ -270,7 +270,7 @@
             }
 
             $('#orderTable').DataTable({
-                serverSide: true,
+                serverSide: false,
                 processing: true,
                 destroy: true,
                 responsive: true,
