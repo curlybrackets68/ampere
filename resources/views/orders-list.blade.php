@@ -169,6 +169,7 @@
                                     <th style="text-align: left;">Action</th>
                                     <th style="text-align: left;">DateTime</th>
                                     <th style="text-align: left;">Remark</th>
+                                    <th style="text-align: left;">User Name</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -425,7 +426,7 @@
             let url = '{{ route('orders.get-history', ['type_id' => 'ID']) }}';
             url = url.replace('ID', type_id);
             $('#orderHistoryTable').DataTable({
-                serverSide: true,
+                serverSide: false,
                 processing: true,
                 destroy: true,
                 responsive: true,
@@ -447,6 +448,9 @@
                     }, {
                         data: 'remark',
                         name: 'remark'
+                    }, {
+                        data: 'created_by_name',
+                        name: 'created_by_name'
                     }
 
                 ],

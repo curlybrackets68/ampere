@@ -1,12 +1,16 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Exports\LeadsExport;
 use App\Models\Lead;
 use App\Models\LeadSource;
 use App\Models\Salesman;
+use App\Models\SystemLogs;
 use App\Models\Vehicle;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
@@ -18,39 +22,43 @@ class LeadsController extends Controller
      */
     public function index(Request $request)
     {
-        $salesman   = Salesman::pluck('name', 'id');
+        $salesman = User::pluck('user_name', 'id');
         $leadSource = LeadSource::pluck('name', 'id');
 
         if ($request->ajax()) {
-            $inquiry = Lead::query()->select('leads.*', 'vehicle.name AS vehicleName', 'salesman.name AS salesmanName', 'lead_sources.name AS leadSourceName')
+            $inquiry = Lead::query()->select('leads.*', 'vehicle.name AS vehicleName', 'users.user_name AS salesmanName', 'lead_sources.name AS leadSourceName')
                 ->leftJoin('vehicle', 'vehicle.id', '=', 'leads.vehicle')
                 ->leftJoin('lead_sources', 'lead_sources.id', '=', 'leads.lead_source')
-                ->leftJoin('salesman', 'salesman.id', '=', 'leads.salesman');
+                ->leftJoin('users', 'users.id', '=', 'leads.salesman');
 
-            if (! empty($request->startDate) && ! empty($request->endDate)) {
+            if (!empty($request->startDate) && !empty($request->endDate)) {
                 $inquiry = $inquiry->whereBetween(DB::raw('DATE(leads.created_at)'), [$request->startDate, $request->endDate]);
             }
 
-            if (! empty($request->salesmanId)) {
-                $inquiry = $inquiry->where('salesman.id', $request->salesmanId);
+            if (!empty($request->salesmanId)) {
+                $inquiry = $inquiry->where('users.id', $request->salesmanId);
             }
 
-            if (! empty($request->leadSourceId)) {
+            if (!empty($request->leadSourceId)) {
                 $inquiry = $inquiry->where('lead_sources.id', $request->leadSourceId);
             }
 
-            if (! empty($request->mobileNumber)) {
+            if (!empty($request->mobileNumber)) {
                 $inquiry = $inquiry->where('leads.mobile', 'like', '%' . $request->mobileNumber . '%');
             }
 
-            if (! empty($request->customerName)) {
+            if (!empty($request->customerName)) {
                 $inquiry = $inquiry->where('leads.name', 'like', '%' . $request->customerName . '%');
             }
 
             return DataTables::of($inquiry)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
-                    return '<a href="' . route('leads.edit', $row->id) . '" class="btn btn-sm btn-primary">Edit</a>';
+                    if (checkRights('USER_LEAD_ROLE_EDIT')){
+                        return '<a href="' . route('leads.edit', $row->id) . '" class="btn btn-sm btn-primary">Edit</a>';
+                    }else{
+                        return '';
+                    }
                 })
                 ->make(true);
 
@@ -63,8 +71,8 @@ class LeadsController extends Controller
      */
     public function create()
     {
-        $vehicle    = Vehicle::pluck('name', 'id');
-        $salesman   = Salesman::pluck('name', 'id');
+        $vehicle = Vehicle::pluck('name', 'id');
+        $salesman = User::pluck('user_name', 'id');
         $leadSource = LeadSource::pluck('name', 'id');
         return view('add-update-leads')->with(compact('leadSource', 'vehicle', 'salesman'));
     }
@@ -74,12 +82,12 @@ class LeadsController extends Controller
      */
     public function store(Request $request)
     {
-        $salesmanName   = '';
+        $salesmanName = '';
         $salesmanMobile = '';
 
-        $nameQuery = Salesman::find($request->salesman);
+        $nameQuery = User::find($request->salesman);
         if ($nameQuery) {
-            $salesmanName   = $nameQuery->name;
+            $salesmanName = $nameQuery->name;
             $salesmanMobile = $nameQuery->mobile;
         }
 
@@ -102,6 +110,14 @@ class LeadsController extends Controller
             }
 
             $this->sendWhatsAppMessageWithFile($request->mobile, $message, $pdfUrl);
+            SystemLogs::create([
+                'inquiry_id' => 0,
+                'type' => '3',
+                'type_id' => $lead->id,
+                'remark'     => 'Add Lead ',
+                'action_id'  => 1,
+                'created_by' => auth()->id(),
+            ]);
         }
         return redirect()->route('leads.index')->with('success', 'Lead added successfully!');
     }
@@ -119,10 +135,10 @@ class LeadsController extends Controller
      */
     public function edit(string $id)
     {
-        $lead       = Lead::find($id);
+        $lead = Lead::find($id);
         $leadSource = $this->leadSource;
-        $vehicle    = Vehicle::pluck('name', 'id');
-        $salesman   = Salesman::pluck('name', 'id');
+        $vehicle = Vehicle::pluck('name', 'id');
+        $salesman = User::pluck('user_name', 'id');
         $leadSource = LeadSource::pluck('name', 'id');
         return view('add-update-leads')->with(compact('lead', 'leadSource', 'vehicle', 'salesman'));
     }
@@ -134,6 +150,14 @@ class LeadsController extends Controller
     {
         $lead = Lead::find($id);
         $lead->update($request->all());
+        SystemLogs::create([
+            'inquiry_id' => 0,
+            'type' => '3',
+            'type_id' => $lead->id,
+            'remark'     => 'Edit Lead ',
+            'action_id'  => 2,
+            'created_by' => auth()->id(),
+        ]);
         return redirect()->route('leads.index')->with('success', 'Lead updated successfully!');
     }
 
@@ -157,7 +181,7 @@ class LeadsController extends Controller
         Salesman::updateOrCreate(
             ['id' => $request->id],
             [
-                'name'   => $request->name,
+                'name' => $request->name,
                 'mobile' => $request->mobile,
             ]
         );
@@ -192,9 +216,9 @@ class LeadsController extends Controller
     public function export(Request $request)
     {
         try {
-            $exportStartDate    = $request->input('exportStartDate');
-            $exportEndDate      = $request->input('exportEndDate');
-            $exportSalesmanId   = $request->input('exportSalesmanId');
+            $exportStartDate = $request->input('exportStartDate');
+            $exportEndDate = $request->input('exportEndDate');
+            $exportSalesmanId = $request->input('exportSalesmanId');
             $exportLeadSourceId = $request->input('exportLeadSourceId');
             $exportMobileNumber = $request->input('exportMobileNumber');
             $exportCustomerName = $request->input('exportCustomerName');

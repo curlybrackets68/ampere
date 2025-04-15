@@ -41,6 +41,8 @@ trait CommonFunctions
         "1" => 'Add',
         "2" => 'Edit',
         "3" => 'change Status',
+        "4" => 'Login',
+        "5" => 'Logout',
     ];
 
     protected $leadSource = [

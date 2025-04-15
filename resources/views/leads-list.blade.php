@@ -32,8 +32,12 @@
                                         <i class="bi bi-cloud-download me-1 align-middle me-1"></i> Export
                                     </form>
                                 </a>
-                                <a class="btn btn-info btn-sm" href="{{ route('leads.create') }}">
-                                    <i class="bi bi-plus me-1 align-middle me-1"></i> Add Lead</a>
+                                @if(checkRights('USER_LEAD_ROLE_CREATE'))
+                                    <a class="btn btn-info btn-sm" href="{{ route('leads.create') }}">
+                                        <i class="bi bi-plus me-1 align-middle me-1"></i> Add Lead</a>
+
+                                @endif
+
                             </div>
                         </div>
                         <div class="card-body">
@@ -157,7 +161,7 @@
 
         function leadList(filter = []) {
             $('#leadsTable').DataTable({
-                serverSide: true,
+                serverSide: false,
                 processing: true,
                 destroy: true,
                 responsive: true,
