@@ -43,7 +43,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Add User</h5>
+                    <h5 class="modal-title user-title" id="exampleModalLabel">Add User</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -136,6 +136,7 @@
 
         $(document).on('click', '#addNewUser', function() {
             $('#passwordDiv').removeClass('d-none');
+            $('.user-title').text('Add User');
             $('#addUserModal').modal('show');
         });
 
@@ -196,6 +197,7 @@
         });
 
         $(document).on('click', '.edit-user', function() {
+            $('.user-title').text('Edit User');
             let id = $(this).data('id');
 
             let url = '{{ route('admin.edit-user', ['id' => 'ID']) }}';
