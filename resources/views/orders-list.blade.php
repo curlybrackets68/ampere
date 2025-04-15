@@ -55,6 +55,17 @@
 
                                     </select>
                                 </div>
+                                <div class="col-md-3">
+                                    <label>Branch</label>
+                                    <select class="form-select" id="branchId">
+                                        <option value="0">All</option>
+
+                                        @forelse ($branch as $key => $value)
+                                            <option value="{{ $key }}">{{ $value }}</option>
+                                        @empty
+                                        @endforelse
+                                    </select>
+                                </div>
 
                                 <div class="col-md-2" style="margin-top: 31px;">
                                     <button type="button" class="btn btn-primary" id="searchReport">Search</button>
@@ -102,10 +113,7 @@
                             <input type="hidden" id="statusInquiryId">
                             <label>Status</label>
                             <select class="form-select" id="statusId">
-                                {{-- <option value="">Select</option> --}}
-                                {{-- <option value="4">Confirmed</option>
-                                <option value="2">Completed</option>
-                                <option value="3">Rejected</option> --}}
+
                             </select>
                             <div class="status_error"></div>
                         </div>
@@ -194,14 +202,14 @@
             let startDate = $('#datePeriod').data('daterangepicker').startDate.format('YYYY-MM-DD');
             let endDate = $('#datePeriod').data('daterangepicker').endDate.format('YYYY-MM-DD');
             let searchStatusId = $('#searchStatusId').val();
-            let searchBranchId = $('#searchBranchId').val();
+            let branchId = $('#branchId').val();
 
             let filterData = {
                 actionType: 'report',
                 startDate: '',
                 endDate: '',
                 statusId: searchStatusId,
-                searchBranchId: searchBranchId
+                branchId: branchId
             };
             await orderDetails(filterData);
         });
@@ -235,7 +243,7 @@
             let startDate = $('#datePeriod').data('daterangepicker').startDate.format('YYYY-MM-DD');
             let endDate = $('#datePeriod').data('daterangepicker').endDate.format('YYYY-MM-DD');
             let statusId = $('#searchStatusId').val();
-            let branchId = $('#searchBranchId').val();
+            let branchId = $('#branchId').val();
 
             $('#exportStartDate').val(startDate);
             $('#exportEndDate').val(endDate);
@@ -247,7 +255,7 @@
                 startDate: startDate,
                 endDate: endDate,
                 statusId: statusId,
-                searchBranchId: branchId
+                branchId: branchId
             };
             await orderDetails(data);
         });
@@ -360,14 +368,14 @@
             let startDate = $('#datePeriod').data('daterangepicker').startDate.format('YYYY-MM-DD');
             let endDate = $('#datePeriod').data('daterangepicker').endDate.format('YYYY-MM-DD');
             let searchStatusId = $('#searchStatusId').val();
-            let searchBranchId = $('#searchBranchId').val();
+            let branchId = $('#branchId').val();
 
             let filterData = {
                 actionType: 'report',
                 startDate: startDate,
                 endDate: endDate,
                 statusId: searchStatusId,
-                searchBranchId: searchBranchId,
+                branchId: branchId,
             };
 
             if (statusId == '') {

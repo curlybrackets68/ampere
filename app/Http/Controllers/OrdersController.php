@@ -26,11 +26,17 @@ class OrdersController extends Controller
                 if (! empty($request->statusId)) {
                     $order = $order->where('status_id', $request->statusId);
                 }
+                if (! empty($request->branchId)) {
+                    $order = $order->where('branch_id', $request->branchId);
+                }
             } else {
                 if (! empty($request->status)) {
                     $order = $order->where('status_id', $request->status);
                 } else {
                     $order = $order->where('status_id', '1');
+                }
+                if (! empty($request->branchId)) {
+                    $order = $order->where('branch_id', $request->branchId);
                 }
             }
             // dd($order->toRawSql());
@@ -71,7 +77,8 @@ class OrdersController extends Controller
                 ->make(true);
         }
         $status = $request->input('status');
-        return view('orders-list', compact('status'));
+        $branch = $this->branchArray;
+        return view('orders-list', compact('status', 'branch'));
     }
 
     public function changeStatus(Request $request)
