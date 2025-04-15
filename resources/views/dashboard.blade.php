@@ -97,7 +97,23 @@
                             <h5 class="card-title">Inquiry Chart</h5>
                         </div>
                         <div class="card-body">
-                            <canvas id="pieChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                            <div class="row mb-2">
+                                <div class="col-md-4">
+                                    <label>Date</label>
+                                    <input type="text" id="datePeriod" class="form-control">
+                                </div>
+                                <div class="col-md-6">
+                                    <label>Service Type</label>
+                                    <select class="form-select" id="serviceTypeId">
+                                        <option value="0" selected>All</option>
+                                        @forelse ($serviceType as $key => $value)
+                                            <option value="{{ $key }}">{{ $value }}</option>
+                                        @empty
+                                        @endforelse
+                                    </select>
+                                </div>
+                            </div>
+                            <canvas id="pieChart" style="min-height: 350px; height: 350px; max-height: 350px; max-width: 100%;"></canvas>
                         </div>
                     </div>
                 </div>
@@ -174,8 +190,26 @@
 @endsection
 
 @section('javascript')
+    <script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
     <script src="{{ asset('/dist/js/Chart.min.js') }}"></script>
     <script>
+        $(document).ready(function() {
+            $('#datePeriod').daterangepicker({
+                timePicker: false,
+                timePicker24Hour: true,
+                timePickerIncrement: 1,
+                locale: {
+                    format: 'DD-MM-YYYY'
+                },
+                startDate: moment().startOf('month'),
+                endDate: moment().endOf('month')
+            });
+
+
+            inquiryChart();
+
+        });
         $(document).on('input', '#mobileNumber', function() {
             this.value = this.value.replace(/\D/g, '');
         });
@@ -222,6 +256,13 @@
             }
         });
 
+
+    function  inquiryChart(){
+
+        var serviceTypeId = $('#serviceTypeId').val();
+        let startDate = $('#datePeriod').data('daterangepicker').startDate.format('YYYY-MM-DD');
+        let endDate = $('#datePeriod').data('daterangepicker').endDate.format('YYYY-MM-DD');
+
         var donutData        = {
             labels: [
                 'Chrome',
@@ -238,22 +279,21 @@
                 }
             ]
         }
-        //-------------
-        //- PIE CHART -
-        //-------------
-        // Get context with jQuery - using jQuery's .get() method.
+
         var pieChartCanvas = $('#pieChart').get(0).getContext('2d')
         var pieData        = donutData;
         var pieOptions     = {
             maintainAspectRatio : false,
             responsive : true,
         }
-        //Create pie or douhnut chart
+
         // You can switch between pie and douhnut using the method below.
         new Chart(pieChartCanvas, {
             type: 'pie',
             data: pieData,
             options: pieOptions
         })
+    }
+
     </script>
 @endsection

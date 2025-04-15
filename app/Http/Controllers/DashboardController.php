@@ -10,8 +10,9 @@ use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
 
-class DashboardController extends Controller
+class DashboardController
 {
+    use CommonFunctions;
     public function dashboard()
     {
         $inquiryCounts = InquiryDetails::select('status_id', DB::raw('count(*) as count'))
@@ -38,7 +39,9 @@ class DashboardController extends Controller
         $totalOrdersCancelled = $orders[8] ?? 0;
         $totalOrdersFitment = $orders[9] ?? 0;
 
-        return view('dashboard')->with(compact('pendingInquiry', 'completeInquiry', 'rejectedInquiry', 'confirmInquiry', 'workshopInquiry', 'totalOrdersPending', 'totalOrdersOrdered', 'totalOrdersReceived', 'totalOrdersCancelled', 'totalOrdersFitment'));
+        $serviceType = $this->serviceTypeArray;
+
+        return view('dashboard')->with(compact('pendingInquiry', 'completeInquiry', 'rejectedInquiry', 'confirmInquiry', 'workshopInquiry', 'totalOrdersPending', 'totalOrdersOrdered', 'totalOrdersReceived', 'totalOrdersCancelled', 'totalOrdersFitment','serviceType'));
     }
 
     public function inquiryDetails(Request $request)
