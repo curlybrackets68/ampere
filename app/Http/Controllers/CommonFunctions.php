@@ -212,6 +212,32 @@ trait CommonFunctions
 
         if ($module->count()) {
             foreach ($modules as $value) {
+                $rights = UserRight::query()->where('module_id', $value->id)->get();
+                if($rights){
+                    foreach ($rights as $rightRow) {
+                        if (!empty($value->config_key)) {
+                            if (!empty($rightRow->role_add)) {
+                                $userData .= "\r\n define('" . $value->config_key . "_ROLE_CREATE','1'); // constants for check rights";
+                            }
+                            if (!empty($rightRow->role_view)) {
+                                $userData .= "\r\n define('" . $value->config_key . "_ROLE_VIEW','1'); // constants for check rights";
+                            }
+                            if (!empty($rightRow->role_viewAll)) {
+                                $userData .= "\r\n define('" . $value->config_key . "_ROLE_VIEWONLY','1'); // constants for check rights";
+                            }
+                            if (!empty($rightRow->role_edit)) {
+                                $userData .= "\r\n define('" . $value->config_key . "_ROLE_EDIT','1'); // constants for check rights";
+                            }
+                            if (!empty($rightRow->role_delete)) {
+                                $userData .= "\r\n define('" . $value->config_key . "_ROLE_DELETE','1'); // constants for check rights";
+                            }
+
+                        }
+
+                    }
+
+                }
+
                 $userRightsData[$value->id] = [
                     'id' => $value->id,
                     'name' => $value->name,

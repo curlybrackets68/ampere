@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Exports\InquiryDetailsExport;
@@ -13,6 +14,7 @@ use Yajra\DataTables\Facades\DataTables;
 class DashboardController
 {
     use CommonFunctions;
+
     public function dashboard()
     {
         $inquiryCounts = InquiryDetails::select('status_id', DB::raw('count(*) as count'))
@@ -21,10 +23,10 @@ class DashboardController
             ->pluck('count', 'status_id')
             ->toArray();
 
-        $pendingInquiry  = $inquiryCounts[1] ?? 0;
+        $pendingInquiry = $inquiryCounts[1] ?? 0;
         $completeInquiry = $inquiryCounts[2] ?? 0;
         $rejectedInquiry = $inquiryCounts[3] ?? 0;
-        $confirmInquiry  = $inquiryCounts[4] ?? 0;
+        $confirmInquiry = $inquiryCounts[4] ?? 0;
         $workshopInquiry = $inquiryCounts[5] ?? 0;
 
         $orders = Order::select('status_id', DB::raw('count(*) as count'))
@@ -33,15 +35,32 @@ class DashboardController
             ->pluck('count', 'status_id')
             ->toArray();
 
-        $totalOrdersPending  = $orders[1] ?? 0;
-        $totalOrdersOrdered  = $orders[6] ?? 0;
+        $totalOrdersPending = $orders[1] ?? 0;
+        $totalOrdersOrdered = $orders[6] ?? 0;
         $totalOrdersReceived = $orders[7] ?? 0;
         $totalOrdersCancelled = $orders[8] ?? 0;
         $totalOrdersFitment = $orders[9] ?? 0;
 
         $serviceType = $this->serviceTypeArray;
+        $inquiryStatusArrayData = [
+            "1" => 'Pending',
+            "2" => 'Completed',
+            "3" => 'Rejected',
+            "4" => 'Confirmed',
+            "5" => 'In Workshop',
 
-        return view('dashboard')->with(compact('pendingInquiry', 'completeInquiry', 'rejectedInquiry', 'confirmInquiry', 'workshopInquiry', 'totalOrdersPending', 'totalOrdersOrdered', 'totalOrdersReceived', 'totalOrdersCancelled', 'totalOrdersFitment','serviceType'));
+        ];
+        $orderStatusArrayData = [
+            "1" => 'Pending',
+            "6" => 'Ordered',
+            "7" => 'Recieved',
+            "8" => 'Cancelled',
+            "9" => 'Fitment',
+
+        ];
+
+
+        return view('dashboard')->with(compact('pendingInquiry', 'completeInquiry', 'rejectedInquiry', 'confirmInquiry', 'workshopInquiry', 'totalOrdersPending', 'totalOrdersOrdered', 'totalOrdersReceived', 'totalOrdersCancelled', 'totalOrdersFitment', 'serviceType', 'inquiryStatusArrayData','orderStatusArrayData'));
     }
 
     public function inquiryDetails(Request $request)
@@ -50,24 +69,25 @@ class DashboardController
         if ($request->ajax()) {
             $inquiry = InquiryDetails::query();
             if (isset($request->actionType) && $request->actionType == 'report') {
-                if (! empty($request->startDate) && ! empty($request->endDate)) {
+                if (!empty($request->startDate) && !empty($request->endDate)) {
                     $inquiry = $inquiry->whereBetween(DB::raw('DATE(created_at)'), [$request->startDate, $request->endDate]);
                 }
 
-                if (! empty($request->statusId)) {
+                if (!empty($request->statusId)) {
                     $inquiry = $inquiry->where('status_id', $request->statusId);
                 }
 
-                if (! empty($request->searchBranchId)) {
+                if (!empty($request->searchBranchId)) {
                     $inquiry = $inquiry->where('branch_id', $request->searchBranchId);
                 }
             } else {
-                if (! empty($request->status)) {
+                if (!empty($request->status)) {
                     $inquiry = $inquiry->where('status_id', $request->status);
                 } else {
                     $inquiry = $inquiry->where('status_id', '1');
                 }
             }
+
 
             //return dd($inquiry->toRawSql());
             return DataTables::of($inquiry)
@@ -130,7 +150,7 @@ class DashboardController
     public function changeStatus(Request $request)
     {
         $statusId = $request->statusId;
-        $remark   = $request->statusRemark;
+        $remark = $request->statusRemark;
 
         $save = InquiryDetails::where('id', $request->id)->update(['status_id' => $statusId, 'status_remark' => $remark ?? '']);
 
@@ -140,7 +160,7 @@ class DashboardController
 
         if ($save) {
             $inquiryDetails = InquiryDetails::find($request->id);
-            $message        = '';
+            $message = '';
             if ($request->statusId == '2') { // Completed
                 $message = 'Your service completed for #' . $inquiryDetails->inquiry_no . "\n";
                 $message .= "Name: " . $inquiryDetails->name . "\n";
@@ -169,8 +189,8 @@ class DashboardController
                 'inquiry_id' => $request->id,
                 'type' => '1', // for Inq
                 'type_id' => $request->id, // for Inq
-                'remark'     => 'Status changed to ' . $this->getArrayNameById($this->statusArray, $request->statusId),
-                'action_id'  => 3,
+                'remark' => 'Status changed to ' . $this->getArrayNameById($this->statusArray, $request->statusId),
+                'action_id' => 3,
                 'created_by' => auth()->id(),
             ]);
             return response()->json(['code' => 1, 'message' => 'Status updated successfully']);
@@ -184,9 +204,9 @@ class DashboardController
     {
         try {
             $exportStartDate = $request->input('exportStartDate');
-            $exportEndDate   = $request->input('exportEndDate');
-            $exportStatusId  = $request->input('exportStatusId', '');
-            $exportBranchId  = $request->input('exportBranchId', '');
+            $exportEndDate = $request->input('exportEndDate');
+            $exportStatusId = $request->input('exportStatusId', '');
+            $exportBranchId = $request->input('exportBranchId', '');
             // dd($exportStartDate, $exportEndDate, $exportStatusId);
             return Excel::download(new InquiryDetailsExport($exportStartDate, $exportEndDate, $exportStatusId, $exportBranchId), 'inquiry.xlsx');
         } catch (\Exception $e) {
@@ -197,15 +217,91 @@ class DashboardController
     public function sendMessage(Request $request)
     {
         $message = 'Please enter Hi for inquiry';
-        $mobile  = $request->input('mobile');
+        $mobile = $request->input('mobile');
         $this->sendWhatsAppMessage($mobile, $message);
         SystemLogs::create([
             'inquiry_id' => 0,
-            'remark'     => 'WhatsApp message sent to ' . $mobile,
-            'action_id'  => 1,
+            'remark' => 'WhatsApp message sent to ' . $mobile,
+            'action_id' => 1,
             'created_by' => 1,
         ]);
         return response()->json(['code' => 1, 'message' => 'Message sent successfully']);
 
     }
+
+    public function getInquiryChart(Request $request)
+    {
+        $serviceTypeId = $request->serviceTypeId;
+        $statusId      = $request->statusId;
+        $startDate     = $request->startDate;
+        $endDate       = $request->endDate;
+
+        $query = InquiryDetails::query();
+
+        if (!empty($serviceTypeId)) {
+            $query->where('service_type_id', $serviceTypeId);
+        }
+
+        if (!empty($statusId)) {
+            $query->where('status_id', $statusId);
+        }
+
+//        if ($startDate && $endDate) {
+//            $query->whereBetween('inquiry_date', [$startDate, $endDate]);
+//        }
+
+
+        $data = $query->selectRaw('status_id, COUNT(*) as total')
+            ->groupBy('status_id')
+            ->get();
+
+        $labels = [];
+        $values = [];
+
+        foreach ($data as $row) {
+            $labels[] = $this->getArrayNameById($this->statusArray,$row->status_id); // Adjust accordingly
+            $values[] = $row->total;
+        }
+
+        return response()->json([
+            'labels' => $labels,
+            'data'   => $values
+        ]);
+    }
+    public function getOrderChart(Request $request)
+    {
+        $statusId      = $request->statusId;
+        $startDate     = $request->startDate;
+        $endDate       = $request->endDate;
+
+        $query = Order::query();
+
+
+        if (!empty($statusId)) {
+            $query->where('status_id', $statusId);
+        }
+
+//        if ($startDate && $endDate) {
+//            $query->whereBetween('order_name', [$startDate, $endDate]);
+//        }
+
+
+        $data = $query->selectRaw('status_id, COUNT(*) as total')
+            ->groupBy('status_id')
+            ->get();
+
+        $labels = [];
+        $values = [];
+
+        foreach ($data as $row) {
+            $labels[] = $this->getArrayNameById($this->statusArray,$row->status_id); // Adjust accordingly
+            $values[] = $row->total;
+        }
+
+        return response()->json([
+            'labels' => $labels,
+            'data'   => $values
+        ]);
+    }
+
 }
