@@ -2,8 +2,10 @@
 if (!function_exists('checkRights')) {
     function checkRights($rights)
     {
-        include_once base_path('app/Secrets/' . session('user_id') . '.php');
-        return defined($rights);
+        if (session('user_id') ) {
+            include_once base_path('app/Secrets/' . session('user_id') . '.php');
+            return defined($rights);
+        }
     }
 }
 
