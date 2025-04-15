@@ -103,16 +103,19 @@ class DashboardController
                     } else if ($row->status_id == '5') {
                         $class = 'primary';
                     }
-
+                    $checkEditRights = '';
+                    if(checkRights('USER_INQUIRY_ROLE_EDIT')){
+                        $checkEditRights = ' change-status ';
+                    }
                     // $html = '<span class="badge text-bg-' . $class . '">' . $this->getArrayNameById($this->statusArray, $row->status_id) . '</span>';
                     if ($row->status_id == '1' || $row->status_id == '4' || $row->status_id == '5') {
-                        $html = '<button type="button" class="btn btn-' . $class . ' btn-sm change-status" data-id="' . $row->id . '" data-status="' . $row->status_id . '">' . $this->getArrayNameById($this->statusArray, $row->status_id) . '</button>';
+                        $html = '<button type="button" class="btn btn-' . $class . $checkEditRights . ' btn-sm " data-id="' . $row->id . '" data-status="' . $row->status_id . '">' . $this->getArrayNameById($this->statusArray, $row->status_id) . '</button>';
                     } else {
                         $html = '<button type="button" class="btn btn-' . $class . ' btn-sm">' . $this->getArrayNameById($this->statusArray, $row->status_id) . '</button>';
                     }
                     if ($row->status_id == '4') {
                         $html .= '<br>
-                        <a class="link-primary confirmDateChange" data-id="' . $row->id . '" style="cursor: pointer;">' . $this->formatDateTime('d M, Y h:i A', $row->confirm_date) . '</a>';
+                        <a class="link-primary '.$checkEditRights.'" data-id="' . $row->id . '" style="cursor: pointer;">' . $this->formatDateTime('d M, Y h:i A', $row->confirm_date) . '</a>';
                     }
                     return $html;
                 })
