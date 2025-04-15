@@ -5,7 +5,7 @@
 @endsection
 @section('css')
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 @endsection
 
 @section('content')
@@ -18,7 +18,7 @@
                 <div class="col-md-4">
                     <div class="input-group">
                         <input type="text" name="mobileNumber" maxlength="10" id="mobileNumber"
-                               placeholder="Type Mobile Number..." class="form-control">
+                            placeholder="Type Mobile Number..." class="form-control">
                         <span class="input-group-append">
                             <button type="button" class="btn btn-primary" id="sendMessage">Send</button>
                         </span>
@@ -29,17 +29,17 @@
             </div>
 
             <div class="row mt-3"> <!--begin::Col-->
-                @if(checkRights('USER_INQUIRY_ROLE_VIEW') || checkRights('USER_INQUIRY_ROLE_VIEWONLY'))
+                @if (checkRights('USER_INQUIRY_ROLE_VIEW') || checkRights('USER_INQUIRY_ROLE_VIEWONLY'))
                     <div class="col-6">
-                        <div class="card h-100 " >
+                        <div class="card h-100 ">
                             <div class="card-header">
                                 <h5 class="card-title">Inquiry</h5>
                             </div>
-                            <div class="card-body">
-                                <div class="row ">
+                            <div class="card-body d-flex justify-content-center align-items-center">
+                                <div class="row d-flex justify-content-center mb-3">
                                     <div class="col-4 "> <!--begin::Small Box Widget 1-->
                                         <a href="{{ route('inquiry', ['status' => '1']) }}">
-                                            <div class="small-box text-bg-warning">
+                                            <div class="small-box text-bg-warning text-center">
                                                 <div class="inner">
                                                     <h3>{{ $pendingInquiry }}</h3>
                                                     <p>Pending</p>
@@ -49,7 +49,7 @@
                                     </div> <!--end::Col-->
                                     <div class="col-4 "> <!--begin::Small Box Widget 2-->
                                         <a href="{{ route('inquiry', ['status' => '2']) }}">
-                                            <div class="small-box text-bg-success">
+                                            <div class="small-box text-bg-success text-center">
                                                 <div class="inner">
                                                     <h3>{{ $completeInquiry }}</h3>
                                                     <p>Completed</p>
@@ -60,7 +60,7 @@
 
                                     <div class="col-4 "> <!--begin::Small Box Widget 4-->
                                         <a href="{{ route('inquiry', ['status' => '4']) }}">
-                                            <div class="small-box text-bg-primary">
+                                            <div class="small-box text-bg-primary text-center">
                                                 <div class="inner">
                                                     <h3>{{ $confirmInquiry }}</h3>
                                                     <p>Confirm</p>
@@ -71,7 +71,7 @@
 
                                     <div class="col-4 "> <!--begin::Small Box Widget 4-->
                                         <a href="{{ route('inquiry', ['status' => '5']) }}">
-                                            <div class="small-box text-bg-info">
+                                            <div class="small-box text-bg-info text-center">
                                                 <div class="inner">
                                                     <h3>{{ $workshopInquiry }}</h3>
                                                     <p>Workshop</p>
@@ -81,7 +81,7 @@
                                     </div> <!--end::Col-->
                                     <div class="col-4 "> <!--begin::Small Box Widget 3-->
                                         <a href="{{ route('inquiry', ['status' => '3']) }}">
-                                            <div class="small-box text-bg-danger">
+                                            <div class="small-box text-bg-danger text-center">
                                                 <div class="inner">
                                                     <h3>{{ $rejectedInquiry }}</h3>
                                                     <p>Rejected</p>
@@ -89,13 +89,12 @@
                                             </div> <!--end::Small Box Widget 3-->
                                         </a>
                                     </div> <!--end::Col-->
-
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="col-6">
-                        <div class="card">
+                        <div class="card h-100">
                             <div class="card-header">
                                 <h5 class="card-title">Inquiry Chart</h5>
                                 <div class="card-tools">
@@ -128,7 +127,7 @@
                                     </div>
                                 </div>
                                 <canvas id="inquiryChart"
-                                        style="min-height: 350px; height: 350px; max-height: 350px; max-width: 100%;"></canvas>
+                                    style="min-height: 350px; height: 350px; max-height: 350px; max-width: 100%;"></canvas>
                             </div>
                         </div>
                     </div>
@@ -137,73 +136,74 @@
             </div>
 
             <div class="row mt-3">
-                @if(checkRights('USER_ORDER_ROLE_VIEW') || checkRights('USER_ORDER_ROLE_VIEWONLY'))
-                    <div class="col-md-6 mt-3">
-                        <div class="card">
+                @if (checkRights('USER_ORDER_ROLE_VIEW') || checkRights('USER_ORDER_ROLE_VIEWONLY'))
+                    <div class="col-md-6">
+                        <div class="card h-100">
                             <div class="card-header">
                                 <h5 class="card-title">Orders</h5>
                             </div>
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-4"> <!--begin::Small Box Widget 1-->
-                                        <a href="{{ route('orders', ['status' => '1']) }}">
-                                            <div class="small-box text-bg-warning">
-                                                <div class="inner">
-                                                    <h3>{{ $totalOrdersPending }}</h3>
-                                                    <p>Pending</p>
+                            <div class="card-body d-flex justify-content-center align-items-center">
+                                <div>
+                                    <div class="row d-flex justify-content-center mb-3">
+                                        <div class="col-4">
+                                            <a href="{{ route('orders', ['status' => '1']) }}">
+                                                <div class="small-box text-bg-warning text-center">
+                                                    <div class="inner">
+                                                        <h3>{{ $totalOrdersPending }}</h3>
+                                                        <p>Pending</p>
+                                                    </div>
                                                 </div>
-                                            </div> <!--end::Small Box Widget 1-->
-                                        </a>
-                                    </div> <!--end::Col-->
-                                    <div class="col-4"> <!--begin::Small Box Widget 1-->
-                                        <a href="{{ route('orders', ['status' => '6']) }}">
-                                            <div class="small-box text-bg-primary">
-                                                <div class="inner">
-                                                    <h3>{{ $totalOrdersOrdered }}</h3>
-                                                    <p>Ordered</p>
+                                            </a>
+                                        </div>
+                                        <div class="col-4">
+                                            <a href="{{ route('orders', ['status' => '6']) }}">
+                                                <div class="small-box text-bg-primary text-center">
+                                                    <div class="inner">
+                                                        <h3>{{ $totalOrdersOrdered }}</h3>
+                                                        <p>Ordered</p>
+                                                    </div>
                                                 </div>
-                                            </div> <!--end::Small Box Widget 1-->
-                                        </a>
-                                    </div> <!--end::Col-->
-                                    <div class="col-4"> <!--begin::Small Box Widget 1-->
-                                        <a href="{{ route('orders', ['status' => '7']) }}">
-                                            <div class="small-box text-bg-info">
-                                                <div class="inner">
-                                                    <h3>{{ $totalOrdersReceived }}</h3>
-                                                    <p>Received</p>
+                                            </a>
+                                        </div>
+                                        <div class="col-4">
+                                            <a href="{{ route('orders', ['status' => '7']) }}">
+                                                <div class="small-box text-bg-info text-center">
+                                                    <div class="inner">
+                                                        <h3>{{ $totalOrdersReceived }}</h3>
+                                                        <p>Received</p>
+                                                    </div>
                                                 </div>
-                                            </div> <!--end::Small Box Widget 1-->
-                                        </a>
-                                    </div> <!--end::Col-->
-                                </div>
-                                <div class="row">
-                                    <div class="col-2"></div>
-                                    <div class="col-4"> <!--begin::Small Box Widget 1-->
-                                        <a href="{{ route('orders', ['status' => '8']) }}">
-                                            <div class="small-box text-bg-danger">
-                                                <div class="inner">
-                                                    <h3>{{ $totalOrdersCancelled }}</h3>
-                                                    <p>Cancelled</p>
+                                            </a>
+                                        </div>
+                                        <div class="col-4">
+                                            <a href="{{ route('orders', ['status' => '8']) }}">
+                                                <div class="small-box text-bg-danger text-center">
+                                                    <div class="inner">
+                                                        <h3>{{ $totalOrdersCancelled }}</h3>
+                                                        <p>Cancelled</p>
+                                                    </div>
                                                 </div>
-                                            </div> <!--end::Small Box Widget 1-->
-                                        </a>
-                                    </div> <!--end::Col-->
-                                    <div class="col-4"> <!--begin::Small Box Widget 1-->
-                                        <a href="{{ route('orders', ['status' => '9']) }}">
-                                            <div class="small-box text-bg-success">
-                                                <div class="inner">
-                                                    <h3>{{ $totalOrdersFitment }}</h3>
-                                                    <p>Fitment</p>
+                                            </a>
+                                        </div>
+                                        <div class="col-4">
+                                            <a href="{{ route('orders', ['status' => '9']) }}">
+                                                <div class="small-box text-bg-success text-center">
+                                                    <div class="inner">
+                                                        <h3>{{ $totalOrdersFitment }}</h3>
+                                                        <p>Fitment</p>
+                                                    </div>
                                                 </div>
-                                            </div> <!--end::Small Box Widget 1-->
-                                        </a>
-                                    </div> <!--end::Col-->
+                                            </a>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+
+
                     </div>
                     <div class="col-6">
-                        <div class="card">
+                        <div class="card h-100">
                             <div class="card-header">
                                 <h5 class="card-title">Order Chart</h5>
                                 <div class="card-tools">
@@ -227,7 +227,7 @@
                                     </div>
                                 </div>
                                 <canvas id="orderChart"
-                                        style="min-height: 350px; height: 350px; max-height: 350px; max-width: 100%;"></canvas>
+                                    style="min-height: 350px; height: 350px; max-height: 350px; max-width: 100%;"></canvas>
                             </div>
                         </div>
                     </div>
@@ -243,8 +243,7 @@
     <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
     <script src="{{ asset('/dist/js/Chart.min.js') }}"></script>
     <script>
-
-        $(document).ready(function () {
+        $(document).ready(function() {
             $('#inquiryDatePeriod').daterangepicker({
                 timePicker: false,
                 timePicker24Hour: true,
@@ -268,11 +267,11 @@
             inquiryChart();
             orderChart();
         });
-        $(document).on('input', '#mobileNumber', function () {
+        $(document).on('input', '#mobileNumber', function() {
             this.value = this.value.replace(/\D/g, '');
         });
 
-        $(document).on('click', '#sendMessage', function () {
+        $(document).on('click', '#sendMessage', function() {
             let mobileNumber = $('#mobileNumber').val();
             let errorMessage = '';
 
@@ -297,14 +296,14 @@
                         _token: '{{ csrf_token() }}',
                         mobile: mobileNumber,
                     },
-                    beforeSend: function () {
+                    beforeSend: function() {
                         loaderButton('sendMessage', true);
                     },
-                    complete: function () {
+                    complete: function() {
                         loaderButton('sendMessage', false);
                     },
                     crossDomain: true,
-                    success: function (response) {
+                    success: function(response) {
                         if (response) {
                             // $('#sendMessage').prop('disabled', false);
                             $('#mobileNumber').val('');
@@ -314,10 +313,10 @@
             }
         });
 
-        $(document).on('change', '#serviceTypeId,#inquiryStatusId', function () {
+        $(document).on('change', '#serviceTypeId,#inquiryStatusId', function() {
             inquiryChart();
         });
-        $(document).on('change', '#orderStatusId', function () {
+        $(document).on('change', '#orderStatusId', function() {
             orderChart();
         });
 
@@ -340,16 +339,18 @@
                     endDate: endDate,
                     statusId: statusId
                 },
-                success: function (response) {
+                success: function(response) {
                     const inquiryData = {
                         labels: response.labels,
                         datasets: [{
                             data: response.data,
-                            backgroundColor: ['#f56954', '#00a65a', '#f39c12', '#00c0ef', '#3c8dbc', '#d2d6de'],
+                            backgroundColor: ['#f56954', '#00a65a', '#f39c12', '#00c0ef', '#3c8dbc',
+                                '#d2d6de'
+                            ],
                         }]
                     };
 
-                   let ctx1 =  $('#inquiryChart').get(0).getContext('2d');
+                    let ctx1 = $('#inquiryChart').get(0).getContext('2d');
 
                     if (inquiryChatInstance) {
                         inquiryChatInstance.destroy();
@@ -365,11 +366,12 @@
                     });
 
                 },
-                error: function (xhr, status, error) {
+                error: function(xhr, status, error) {
                     console.error("Error fetching chart data:", error);
                 }
             });
         }
+
         function orderChart() {
             var statusId = $('#orderStatusId').val();
             var startDate = $('#orderDatePeriod').data('daterangepicker').startDate.format('YYYY-MM-DD');
@@ -383,12 +385,14 @@
                     endDate: endDate,
                     statusId: statusId
                 },
-                success: function (response) {
+                success: function(response) {
                     const orderChartData = {
                         labels: response.labels,
                         datasets: [{
                             data: response.data,
-                            backgroundColor: ['#f56954', '#00a65a', '#f39c12', '#00c0ef', '#3c8dbc', '#d2d6de'],
+                            backgroundColor: ['#f56954', '#00a65a', '#f39c12', '#00c0ef', '#3c8dbc',
+                                '#d2d6de'
+                            ],
                         }]
                     };
 
@@ -408,12 +412,10 @@
                     });
 
                 },
-                error: function (xhr, status, error) {
+                error: function(xhr, status, error) {
                     console.error("Error fetching chart data:", error);
                 }
             });
         }
-
-
     </script>
 @endsection

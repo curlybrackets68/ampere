@@ -47,7 +47,7 @@
             </div> <!--end::Container-->
         </nav> <!--end::Header--> <!--begin::Sidebar-->
         <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
-            <div class="sidebar-brand"> <!--begin::Brand Link--> <a href="./index.html" class="brand-link">
+            <div class="sidebar-brand"> <!--begin::Brand Link--> <a href="javascript:void(0)" class="brand-link">
                     <!--begin::Brand Image--> <img src="{{ asset('../../dist/assets/img/AdminLTELogo.png') }}"
                         alt="AdminLTE Logo" class="brand-image opacity-75 shadow"><span
                         class="brand-text fw-light">AMPERE</span></a>
