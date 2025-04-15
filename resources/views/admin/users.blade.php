@@ -82,13 +82,12 @@
 
 @section('javascript')
     <script>
-
-        $(document).on("keyup", ".form-control", function () {
+        $(document).on("keyup", ".form-control", function() {
             $(this).removeClass("error-message");
             $(this).next(".error-message").remove();
         });
 
-        $(document).ready(function () {
+        $(document).ready(function() {
             userList();
         });
 
@@ -102,31 +101,31 @@
                     url: '{{ route('admin.users') }}',
                 },
                 columns: [{
-                    data: 'DT_RowIndex',
-                    name: 'id',
-                    searchable: false
-                },
-                {
-                    data: 'user_name',
-                    name: 'user_name'
-                },
-                {
-                    data: 'mobile',
-                    name: 'mobile'
-                },
-                {
-                    data: 'email',
-                    name: 'email'
-                },
-                {
-                    data: 'action',
-                    name: 'action'
-                }
+                        data: 'DT_RowIndex',
+                        name: 'id',
+                        searchable: false
+                    },
+                    {
+                        data: 'user_name',
+                        name: 'user_name'
+                    },
+                    {
+                        data: 'mobile',
+                        name: 'mobile'
+                    },
+                    {
+                        data: 'email',
+                        name: 'email'
+                    },
+                    {
+                        data: 'action',
+                        name: 'action'
+                    }
                 ],
                 order: [
                     [0, 'asc']
                 ],
-                createdRow: function (row, data, index) {
+                createdRow: function(row, data, index) {
                     $('td', row).eq(0).css('text-align', 'left');
                     $('td', row).eq(1).css('text-align', 'left');
                     $('td', row).eq(2).css('text-align', 'left');
@@ -135,12 +134,12 @@
             });
         }
 
-        $(document).on('click', '#addNewUser', function () {
+        $(document).on('click', '#addNewUser', function() {
             $('#passwordDiv').removeClass('d-none');
             $('#addUserModal').modal('show');
         });
 
-        $(document).on('click', '#saveUserBtn', function () {
+        $(document).on('click', '#saveUserBtn', function() {
             let userId = $('#userId').val();
             let fullName = $('#user_name').val();
             let shortName = $('#name').val();
@@ -182,20 +181,21 @@
                     url: '{{ route('admin.add-edit-user') }}',
                     method: 'POST',
                     data: data,
-                    success: function (response) {
+                    success: function(response) {
                         if (response.status == '1') {
                             $('#addUserModal').modal('hide');
                             userList();
+                            showToast('success', response.msg);
                         }
                     },
-                    error: function (xhr) {
+                    error: function(xhr) {
                         alert('Update failed');
                     }
                 });
             }
         });
 
-        $(document).on('click', '.edit-user', function () {
+        $(document).on('click', '.edit-user', function() {
             let id = $(this).data('id');
 
             let url = '{{ route('admin.edit-user', ['id' => 'ID']) }}';
@@ -204,7 +204,7 @@
             $.ajax({
                 url: url,
                 method: 'GET',
-                success: function (response) {
+                success: function(response) {
                     $('#addUserModal').modal('show');
                     $('#userId').val(id);
                     $('#user_name').val(response.user_name);
@@ -213,10 +213,18 @@
                     $('#mobile').val(response.mobile);
                     $('#email').val(response.email);
                 },
-                error: function (xhr) {
+                error: function(xhr) {
                     alert('failed');
                 }
             });
+        });
+
+        $('#addUserModal').on('hidden.bs.modal', function(e) {
+            $('#userId').val('#addModuleModal');
+            $('#user_name').val('');
+            $('#name').val('');
+            $('#mobile').val('');
+            $('#email').val('');
         });
     </script>
 @endsection
