@@ -90,7 +90,7 @@
                                                 </div> --}}
                                             </div>
                                         </div>
-                                        <div class="form-group">
+                                        <div class="form-group d-none">
                                             <label>Salesman</label>
                                             <div class="row">
                                                 <div class="col-md-12">
@@ -247,10 +247,10 @@
                     '<small class="error-message text-danger">Lead source is required.</small>');
                 isValid = false;
             }
-            if (salesman === '') {
-                $('#salesman').after('<small class="error-message text-danger">Salesman is required.</small>');
-                isValid = false;
-            }
+            // if (salesman === '') {
+            //     $('#salesman').after('<small class="error-message text-danger">Salesman is required.</small>');
+            //     isValid = false;
+            // }
             if (notes === '') {
                 $('#notes').after('<small class="error-message text-danger">Notes cannot be empty.</small>');
                 isValid = false;

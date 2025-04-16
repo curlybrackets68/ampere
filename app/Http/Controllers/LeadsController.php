@@ -93,7 +93,7 @@ class LeadsController extends Controller
 
         $nameQuery = User::find($request->salesman);
         if ($nameQuery) {
-            $salesmanName = $nameQuery->name;
+            $salesmanName = $nameQuery->user_name;
             $salesmanMobile = $nameQuery->mobile;
         }
 
