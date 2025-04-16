@@ -51,6 +51,11 @@ class LeadsController extends Controller
                 $inquiry = $inquiry->where('leads.name', 'like', '%' . $request->customerName . '%');
             }
 
+
+            if (checkRights('USER_LEAD_ROLE_VIEWONLY') && !checkRights('USER_LEAD_ROLE_VIEW')){
+                $inquiry = $inquiry->where('created_by', Auth::id());
+            }
+
             return DataTables::of($inquiry)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
