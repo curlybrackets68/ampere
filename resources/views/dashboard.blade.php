@@ -308,6 +308,17 @@
             orderChart();
             leadChart();
         });
+
+        $('#inquiryDatePeriod').on('apply.daterangepicker', function(ev, picker) {
+            inquiryChart()
+        });
+        $('#orderDatePeriod').on('apply.daterangepicker', function(ev, picker) {
+            orderChart()
+        });
+        $('#leadDatePeriod').on('apply.daterangepicker', function(ev, picker) {
+            leadChart()
+        });
+
         $(document).on('input', '#mobileNumber', function() {
             this.value = this.value.replace(/\D/g, '');
         });
@@ -354,12 +365,13 @@
             }
         });
 
-        $(document).on('change', '#serviceTypeId,#inquiryStatusId', function() {
+        $(document).on('change', '#serviceTypeId,#inquiryStatusId,#inquiryDatePeriod', function() {
             inquiryChart();
         });
-        $(document).on('change', '#orderStatusId', function() {
+        $(document).on('change', '#orderStatusId,#orderDatePeriod', function() {
             orderChart();
-        }); $(document).on('change', '#salesPersonId', function() {
+        });
+        $(document).on('change', '#salesPersonId,#leadDatePeriod', function() {
             leadChart();
         });
 
