@@ -85,12 +85,9 @@ class AdminController extends Controller
             'user_name' => $fullName,
             'name' => $shortName,
             'mobile' => $mobile,
-            'email' => $email,
+            'email' => $email ?? '',
+            'password' => $password
         ];
-
-        if (!empty($password)) {
-            $data['password'] = $password;
-        }
 
         $save = User::updateOrCreate(['id' => $userId], $data);
 
