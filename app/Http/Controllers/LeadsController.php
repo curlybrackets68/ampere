@@ -74,7 +74,8 @@ class LeadsController extends Controller
         $vehicle = Vehicle::pluck('name', 'id');
         $salesman = User::pluck('user_name', 'id');
         $leadSource = LeadSource::pluck('name', 'id');
-        return view('add-update-leads')->with(compact('leadSource', 'vehicle', 'salesman'));
+        $authId = auth()->id();
+        return view('add-update-leads')->with(compact('leadSource', 'vehicle', 'salesman','authId'));
     }
 
     /**
@@ -140,7 +141,8 @@ class LeadsController extends Controller
         $vehicle = Vehicle::pluck('name', 'id');
         $salesman = User::pluck('user_name', 'id');
         $leadSource = LeadSource::pluck('name', 'id');
-        return view('add-update-leads')->with(compact('lead', 'leadSource', 'vehicle', 'salesman'));
+        $authId = auth()->id();
+        return view('add-update-leads')->with(compact('lead', 'leadSource', 'vehicle', 'salesman','authId'));
     }
 
     /**

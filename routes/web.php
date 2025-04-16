@@ -30,6 +30,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
     Route::get('get-inquiry-chart', [DashboardController::class, 'getInquiryChart'])->name('get-inquiry-chart');
     Route::get('get-order-chart', [DashboardController::class, 'getOrderChart'])->name('get-order-chart');
+    Route::get('get-lead-chart', [DashboardController::class, 'getLeadChart'])->name('get-lead-chart');
     Route::get('inquiry', [DashboardController::class, 'inquiryDetails'])->name('inquiry');
     Route::get('logout', [LoginController::class, 'logout'])->name('auth.logout');
     Route::post('change-status', [DashboardController::class, 'changeStatus'])->name('inquiry.change-status');

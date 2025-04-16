@@ -4,12 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Exports\InquiryDetailsExport;
 use App\Models\InquiryDetails;
+use App\Models\Lead;
 use App\Models\Order;
 use App\Models\SystemLogs;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
+use Carbon\Carbon;
 
 class DashboardController
 {
@@ -56,11 +59,11 @@ class DashboardController
             "7" => 'Recieved',
             "8" => 'Cancelled',
             "9" => 'Fitment',
-
         ];
+        $salesman = User::pluck('user_name', 'id');
 
 
-        return view('dashboard')->with(compact('pendingInquiry', 'completeInquiry', 'rejectedInquiry', 'confirmInquiry', 'workshopInquiry', 'totalOrdersPending', 'totalOrdersOrdered', 'totalOrdersReceived', 'totalOrdersCancelled', 'totalOrdersFitment', 'serviceType', 'inquiryStatusArrayData','orderStatusArrayData'));
+        return view('dashboard')->with(compact('pendingInquiry', 'completeInquiry', 'rejectedInquiry', 'confirmInquiry', 'workshopInquiry', 'totalOrdersPending', 'totalOrdersOrdered', 'totalOrdersReceived', 'totalOrdersCancelled', 'totalOrdersFitment', 'serviceType', 'inquiryStatusArrayData','orderStatusArrayData','salesman'));
     }
 
     public function inquiryDetails(Request $request)
@@ -249,10 +252,11 @@ class DashboardController
             $query->where('status_id', $statusId);
         }
 
-//        if ($startDate && $endDate) {
-//            $query->whereBetween('inquiry_date', [$startDate, $endDate]);
-//        }
-
+        if ($startDate && $endDate) {
+            $start = date('Y-m-d', strtotime(str_replace('-', '/', $startDate)));
+            $end   = date('Y-m-d', strtotime(str_replace('-', '/', $endDate)));
+            $query->whereBetween(DB::raw('DATE(created_at)'), [$start, $end]);
+        }
 
         $data = $query->selectRaw('status_id, COUNT(*) as total')
             ->groupBy('status_id')
@@ -284,9 +288,11 @@ class DashboardController
             $query->where('status_id', $statusId);
         }
 
-//        if ($startDate && $endDate) {
-//            $query->whereBetween('order_name', [$startDate, $endDate]);
-//        }
+        if ($startDate && $endDate) {
+            $start = date('Y-m-d', strtotime(str_replace('-', '/', $startDate)));
+            $end   = date('Y-m-d', strtotime(str_replace('-', '/', $endDate)));
+            $query->whereBetween(DB::raw('DATE(order_date)'), [$start, $end]);
+        }
 
 
         $data = $query->selectRaw('status_id, COUNT(*) as total')
@@ -298,6 +304,49 @@ class DashboardController
 
         foreach ($data as $row) {
             $labels[] = $this->getArrayNameById($this->statusArray,$row->status_id); // Adjust accordingly
+            $values[] = $row->total;
+        }
+
+        return response()->json([
+            'labels' => $labels,
+            'data'   => $values
+        ]);
+    }
+
+    public function getLeadChart(Request $request)
+    {
+        $salesPersonId      = $request->salesPersonId;
+        $startDate     = $request->startDate;
+        $endDate       = $request->endDate;
+
+        $query = Lead::query();
+
+
+        if (!empty($salesPersonId)) {
+            $query->where('salesman', $salesPersonId);
+        }
+
+        if ($startDate && $endDate) {
+            $start = date('Y-m-d', strtotime(str_replace('-', '/', $startDate)));
+            $end   = date('Y-m-d', strtotime(str_replace('-', '/', $endDate)));
+
+            $query->whereBetween(DB::raw('DATE(created_at)'), [$start, $end]);
+        }
+
+            $data = $query->selectRaw('salesman, COUNT(*) as total')
+            ->groupBy('salesman')
+            ->get();
+
+        $labels = [];
+        $values = [];
+
+        foreach ($data as $row) {
+            $salesPersonName = '';
+            $nameQuery = User::find($row->salesman);
+            if ($nameQuery) {
+                $salesPersonName = $nameQuery->user_name;
+            }
+            $labels[] =$salesPersonName;
             $values[] = $row->total;
         }
 

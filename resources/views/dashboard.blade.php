@@ -98,9 +98,7 @@
                             <div class="card-header">
                                 <h5 class="card-title">Inquiry Chart</h5>
                                 <div class="card-tools">
-                                    <div class="">
                                         <input type="text" id="inquiryDatePeriod" class="form-control">
-                                    </div>
                                 </div>
                             </div>
                             <div class="card-body">
@@ -134,7 +132,6 @@
                 @endif
 
             </div>
-
             <div class="row mt-3">
                 @if (checkRights('USER_ORDER_ROLE_VIEW') || checkRights('USER_ORDER_ROLE_VIEWONLY'))
                     <div class="col-md-6">
@@ -232,6 +229,39 @@
                         </div>
                     </div>
                 @endif
+            </div><div class="row mt-3">
+                @if (checkRights('USER_LEAD_ROLE_VIEW') || checkRights('USER_LEAD_ROLE_VIEWONLY'))
+
+                    <div class="col-6">
+                        <div class="card h-100">
+                            <div class="card-header">
+                                <h5 class="card-title">Lead Chart</h5>
+                                <div class="card-tools">
+                                    <div class="">
+                                        <input type="text" id="leadDatePeriod" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="row mb-2">
+
+                                    <div class="col-md-4">
+                                        <label>Sales Person</label>
+                                        <select class="form-select" id="salesPersonId">
+                                            <option value="0" selected>All</option>
+                                            @forelse ($salesman as $key => $value)
+                                                <option value="{{ $key }}">{{ $value }}</option>
+                                            @empty
+                                            @endforelse
+                                        </select>
+                                    </div>
+                                </div>
+                                <canvas id="leadChart"
+                                    style="min-height: 350px; height: 350px; max-height: 350px; max-width: 100%;"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                @endif
             </div>
         </div>
     </div>
@@ -264,8 +294,19 @@
                 startDate: moment().startOf('month'),
                 endDate: moment().endOf('month')
             });
+            $('#leadDatePeriod').daterangepicker({
+                timePicker: false,
+                timePicker24Hour: true,
+                timePickerIncrement: 1,
+                locale: {
+                    format: 'DD-MM-YYYY'
+                },
+                startDate: moment(),
+                endDate: moment()
+            });
             inquiryChart();
             orderChart();
+            leadChart();
         });
         $(document).on('input', '#mobileNumber', function() {
             this.value = this.value.replace(/\D/g, '');
@@ -318,11 +359,14 @@
         });
         $(document).on('change', '#orderStatusId', function() {
             orderChart();
+        }); $(document).on('change', '#salesPersonId', function() {
+            leadChart();
         });
 
 
         let inquiryChatInstance = null;
         let orderChatInstance = null;
+        let leadChatInstance = null;
 
         function inquiryChart() {
             var statusId = $('#statusId').val();
@@ -405,6 +449,52 @@
                     orderChatInstance = new Chart(ctx1, {
                         type: 'pie',
                         data: orderChartData,
+                        options: {
+                            maintainAspectRatio: false,
+                            responsive: true,
+                        }
+                    });
+
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error fetching chart data:", error);
+                }
+            });
+        }
+
+        function leadChart() {
+            var salesPersonId = $('#salesPersonId').val();
+            var startDate = $('#leadDatePeriod').data('daterangepicker').startDate.format('YYYY-MM-DD');
+            var endDate = $('#leadDatePeriod').data('daterangepicker').endDate.format('YYYY-MM-DD');
+
+            $.ajax({
+                url: "{{ route('get-lead-chart') }}",
+                method: 'GET',
+                data: {
+                    startDate: startDate,
+                    endDate: endDate,
+                    salesPersonId: salesPersonId
+                },
+                success: function(response) {
+                    const leadChartData = {
+                        labels: response.labels,
+                        datasets: [{
+                            data: response.data,
+                            backgroundColor: ['#f56954', '#00a65a', '#f39c12', '#00c0ef', '#3c8dbc',
+                                '#d2d6de'
+                            ],
+                        }]
+                    };
+
+                    const ctx1 = $('#leadChart').get(0).getContext('2d');
+
+                    if (leadChatInstance) {
+                        leadChatInstance.destroy();
+                    }
+
+                    leadChatInstance = new Chart(ctx1, {
+                        type: 'pie',
+                        data: leadChartData,
                         options: {
                             maintainAspectRatio: false,
                             responsive: true,
