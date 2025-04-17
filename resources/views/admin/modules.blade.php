@@ -17,19 +17,21 @@
                             </div>
                         </div>
                         <div class="card-body">
-                            <table class="table table-bordered table-hover" style="width:100%" id="moduleTable">
-                                <thead>
-                                    <tr>
-                                        <th style="text-align: left;">Sr. No</th>
-                                        <th style="text-align: left;">Name</th>
-                                        <th style="text-align: left;">Config Key</th>
-                                        <th style="text-align: left;">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-
-                                </tbody>
-                            </table>
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-hover" style="width:100%" id="moduleTable">
+                                    <thead>
+                                        <tr>
+                                            <th style="text-align: left;">Sr. No</th>
+                                            <th style="text-align: left;">Name</th>
+                                            <th style="text-align: left;">Config Key</th>
+                                            <th style="text-align: left;">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+    
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>

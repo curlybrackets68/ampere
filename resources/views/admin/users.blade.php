@@ -17,20 +17,22 @@
                             </div>
                         </div>
                         <div class="card-body">
-                            <table class="table table-bordered table-hover" style="width:100%" id="userTable">
-                                <thead>
-                                    <tr>
-                                        <th style="text-align: left;">Sr. No</th>
-                                        <th style="text-align: left;">Name</th>
-                                        <th style="text-align: left;">Mobile</th>
-                                        <th style="text-align: left;">Email</th>
-                                        <th style="text-align: left;">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-hover" style="width:100%" id="userTable">
+                                    <thead>
+                                        <tr>
+                                            <th style="text-align: left;">Sr. No</th>
+                                            <th style="text-align: left;">Name</th>
+                                            <th style="text-align: left;">Mobile</th>
+                                            <th style="text-align: left;">Email</th>
+                                            <th style="text-align: left;">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
 
-                                </tbody>
-                            </table>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
