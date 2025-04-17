@@ -18,7 +18,7 @@
                 <div class="col-md-4">
                     <div class="input-group">
                         <input type="text" name="mobileNumber" maxlength="10" id="mobileNumber"
-                            placeholder="Type Mobile Number..." class="form-control">
+                               placeholder="Type Mobile Number..." class="form-control">
                         <span class="input-group-append">
                             <button type="button" class="btn btn-primary" id="sendMessage">Send</button>
                         </span>
@@ -30,14 +30,14 @@
 
             <div class="row mt-3"> <!--begin::Col-->
                 @if (checkRights('USER_INQUIRY_ROLE_VIEW') || checkRights('USER_INQUIRY_ROLE_VIEWONLY'))
-                    <div class="col-6">
+                    <div class="col-md-6">
                         <div class="card h-100 ">
                             <div class="card-header">
                                 <h5 class="card-title">Inquiry</h5>
                             </div>
                             <div class="card-body d-flex justify-content-center align-items-center">
                                 <div class="row d-flex justify-content-center mb-3">
-                                    <div class="col-4 "> <!--begin::Small Box Widget 1-->
+                                    <div class="col-md-4 "> <!--begin::Small Box Widget 1-->
                                         <a href="{{ route('inquiry', ['status' => '1']) }}">
                                             <div class="small-box text-bg-warning text-center">
                                                 <div class="inner">
@@ -47,7 +47,7 @@
                                             </div> <!--end::Small Box Widget 1-->
                                         </a>
                                     </div> <!--end::Col-->
-                                    <div class="col-4 "> <!--begin::Small Box Widget 2-->
+                                    <div class="col-md-4 "> <!--begin::Small Box Widget 2-->
                                         <a href="{{ route('inquiry', ['status' => '2']) }}">
                                             <div class="small-box text-bg-success text-center">
                                                 <div class="inner">
@@ -58,7 +58,7 @@
                                         </a>
                                     </div> <!--end::Col-->
 
-                                    <div class="col-4 "> <!--begin::Small Box Widget 4-->
+                                    <div class="col-md-4 "> <!--begin::Small Box Widget 4-->
                                         <a href="{{ route('inquiry', ['status' => '4']) }}">
                                             <div class="small-box text-bg-primary text-center">
                                                 <div class="inner">
@@ -69,7 +69,7 @@
                                         </a>
                                     </div> <!--end::Col-->
 
-                                    <div class="col-4 "> <!--begin::Small Box Widget 4-->
+                                    <div class="col-md-4 "> <!--begin::Small Box Widget 4-->
                                         <a href="{{ route('inquiry', ['status' => '5']) }}">
                                             <div class="small-box text-bg-info text-center">
                                                 <div class="inner">
@@ -79,7 +79,7 @@
                                             </div> <!--end::Small Box Widget 4-->
                                         </a>
                                     </div> <!--end::Col-->
-                                    <div class="col-4 "> <!--begin::Small Box Widget 3-->
+                                    <div class="col-md-4 "> <!--begin::Small Box Widget 3-->
                                         <a href="{{ route('inquiry', ['status' => '3']) }}">
                                             <div class="small-box text-bg-danger text-center">
                                                 <div class="inner">
@@ -93,12 +93,12 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-6">
+                    <div class="col-md-6">
                         <div class="card h-100">
                             <div class="card-header">
                                 <h5 class="card-title">Inquiry Chart</h5>
                                 <div class="card-tools">
-                                        <input type="text" id="inquiryDatePeriod" class="form-control">
+                                    <input type="text" id="inquiryDatePeriod" class="form-control">
                                 </div>
                             </div>
                             <div class="card-body">
@@ -125,7 +125,7 @@
                                     </div>
                                 </div>
                                 <canvas id="inquiryChart"
-                                    style="min-height: 350px; height: 350px; max-height: 350px; max-width: 100%;"></canvas>
+                                        style="min-height: 350px; height: 350px; max-height: 350px; max-width: 100%;"></canvas>
                             </div>
                         </div>
                     </div>
@@ -142,7 +142,7 @@
                             <div class="card-body d-flex justify-content-center align-items-center">
                                 <div>
                                     <div class="row d-flex justify-content-center mb-3">
-                                        <div class="col-4">
+                                        <div class="col-md-4 ">
                                             <a href="{{ route('orders', ['status' => '1']) }}">
                                                 <div class="small-box text-bg-warning text-center">
                                                     <div class="inner">
@@ -152,7 +152,7 @@
                                                 </div>
                                             </a>
                                         </div>
-                                        <div class="col-4">
+                                        <div class="col-md-4 ">
                                             <a href="{{ route('orders', ['status' => '6']) }}">
                                                 <div class="small-box text-bg-primary text-center">
                                                     <div class="inner">
@@ -162,7 +162,7 @@
                                                 </div>
                                             </a>
                                         </div>
-                                        <div class="col-4">
+                                        <div class="col-md-4 ">
                                             <a href="{{ route('orders', ['status' => '7']) }}">
                                                 <div class="small-box text-bg-info text-center">
                                                     <div class="inner">
@@ -172,7 +172,7 @@
                                                 </div>
                                             </a>
                                         </div>
-                                        <div class="col-4">
+                                        <div class="col-md-4 ">
                                             <a href="{{ route('orders', ['status' => '8']) }}">
                                                 <div class="small-box text-bg-danger text-center">
                                                     <div class="inner">
@@ -182,7 +182,7 @@
                                                 </div>
                                             </a>
                                         </div>
-                                        <div class="col-4">
+                                        <div class="col-md-4 ">
                                             <a href="{{ route('orders', ['status' => '9']) }}">
                                                 <div class="small-box text-bg-success text-center">
                                                     <div class="inner">
@@ -199,7 +199,7 @@
 
 
                     </div>
-                    <div class="col-6">
+                    <div class="col-md-6">
                         <div class="card h-100">
                             <div class="card-header">
                                 <h5 class="card-title">Order Chart</h5>
@@ -224,7 +224,7 @@
                                     </div>
                                 </div>
                                 <canvas id="orderChart"
-                                    style="min-height: 350px; height: 350px; max-height: 350px; max-width: 100%;"></canvas>
+                                        style="min-height: 350px; height: 350px; max-height: 350px; max-width: 100%;"></canvas>
                             </div>
                         </div>
                     </div>
@@ -232,7 +232,7 @@
             </div><div class="row mt-3">
                 @if (checkRights('USER_LEAD_ROLE_VIEW') || checkRights('USER_LEAD_ROLE_VIEWONLY'))
 
-                    <div class="col-6">
+                    <div class="col-md-6">
                         <div class="card h-100">
                             <div class="card-header">
                                 <h5 class="card-title">Lead Chart</h5>
@@ -257,7 +257,7 @@
                                     </div>
                                 </div>
                                 <canvas id="leadChart"
-                                    style="min-height: 350px; height: 350px; max-height: 350px; max-width: 100%;"></canvas>
+                                        style="min-height: 350px; height: 350px; max-height: 350px; max-width: 100%;"></canvas>
                             </div>
                         </div>
                     </div>
@@ -309,15 +309,7 @@
             leadChart();
         });
 
-        $('#inquiryDatePeriod').on('apply.daterangepicker', function(ev, picker) {
-            inquiryChart()
-        });
-        $('#orderDatePeriod').on('apply.daterangepicker', function(ev, picker) {
-            orderChart()
-        });
-        $('#leadDatePeriod').on('apply.daterangepicker', function(ev, picker) {
-            leadChart()
-        });
+     
 
         $(document).on('input', '#mobileNumber', function() {
             this.value = this.value.replace(/\D/g, '');
@@ -365,16 +357,25 @@
             }
         });
 
-        $(document).on('change', '#serviceTypeId,#inquiryStatusId,#inquiryDatePeriod', function() {
+        $(document).on('change', '#serviceTypeId,#inquiryStatusId', function() {
             inquiryChart();
         });
-        $(document).on('change', '#orderStatusId,#orderDatePeriod', function() {
+        $(document).on('change', '#orderStatusId', function() {
             orderChart();
-        });
-        $(document).on('change', '#salesPersonId,#leadDatePeriod', function() {
+        }); $(document).on('change', '#salesPersonId', function() {
             leadChart();
         });
 
+
+        $('#inquiryDatePeriod').on('apply.daterangepicker', function(ev, picker) {
+            inquiryChart()
+        });
+        $('#orderDatePeriod').on('apply.daterangepicker', function(ev, picker) {
+            orderChart()
+        });
+        $('#leadDatePeriod').on('apply.daterangepicker', function(ev, picker) {
+            leadChart()
+        });
 
         let inquiryChatInstance = null;
         let orderChatInstance = null;
