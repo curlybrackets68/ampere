@@ -52,7 +52,7 @@ class LeadsController extends Controller
             }
 
 
-            if (checkRights('USER_LEAD_ROLE_VIEWONLY') && !checkRights('USER_LEAD_ROLE_VIEW')){
+            if (checkRights('USER_LEAD_ROLE_VIEW') && !checkRights('USER_LEAD_ROLE_VIEW_ALL')){
                 $inquiry = $inquiry->where('created_by', Auth::id());
             }
 

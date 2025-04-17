@@ -225,7 +225,7 @@ trait CommonFunctions
                                 $userData .= "\r\n define('" . $value->config_key . "_ROLE_VIEW','1'); // constants for check rights";
                             }
                             if (!empty($rightRow->role_viewAll)) {
-                                $userData .= "\r\n define('" . $value->config_key . "_ROLE_VIEWONLY','1'); // constants for check rights";
+                                $userData .= "\r\n define('" . $value->config_key . "_ROLE_VIEW_ALL','1'); // constants for check rights";
                             }
                             if (!empty($rightRow->role_edit)) {
                                 $userData .= "\r\n define('" . $value->config_key . "_ROLE_EDIT','1'); // constants for check rights";
