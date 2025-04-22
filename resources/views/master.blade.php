@@ -23,6 +23,7 @@
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.bootstrap4.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/3.0.3/css/responsive.bootstrap4.css">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 
     {{-- <link href="{{ asset('../../dist/css/datatables.min.css') }}" rel="stylesheet"> --}}
     @yield('css')
@@ -62,53 +63,53 @@
 
                         @forelse ($modules as $module)
                             <li class="nav-item">
-                                <a class="nav-link menu-link"
-                                   href="{{ Route::has($module['route_name']) ? route($module['route_name']) : '' }}">
-                                    <span data-key="t-widgets">{{ $module['name'] }}</span>
+                                <a href="{{ Route::has($module['route_name']) ? route($module['route_name']) : '' }}"
+                                    class="nav-link"> <i class="nav-icon bi bi-patch-check-fill"></i>
+                                    <p>{{ $module['name'] }}</p>
                                 </a>
                             </li>
 
                         @empty
                         @endforelse
-{{--                        <li class="nav-header">Dashboard</li>--}}
-{{--                        <li class="nav-item">--}}
-{{--                            <a href="{{ route('dashboard') }}" class="nav-link"> <i--}}
-{{--                                    class="nav-icon bi bi-grip-horizontal"></i>--}}
-{{--                                <p>Dashboard</p>--}}
-{{--                            </a>--}}
-{{--                        </li>--}}
-{{--                        <li class="nav-item">--}}
-{{--                            <a href="{{ route('inquiry') }}" class="nav-link"> <i class="nav-icon bi bi-star-half"></i>--}}
-{{--                                <p>Inquiry</p>--}}
-{{--                            </a>--}}
-{{--                        </li>--}}
+                        {{--                        <li class="nav-header">Dashboard</li> --}}
+                        {{--                        <li class="nav-item"> --}}
+                        {{--                            <a href="{{ route('dashboard') }}" class="nav-link"> <i --}}
+                        {{--                                    class="nav-icon bi bi-grip-horizontal"></i> --}}
+                        {{--                                <p>Dashboard</p> --}}
+                        {{--                            </a> --}}
+                        {{--                        </li> --}}
+                        {{--                        <li class="nav-item"> --}}
+                        {{--                            <a href="{{ route('inquiry') }}" class="nav-link"> <i class="nav-icon bi bi-star-half"></i> --}}
+                        {{--                                <p>Inquiry</p> --}}
+                        {{--                            </a> --}}
+                        {{--                        </li> --}}
 
-{{--                        <li class="nav-item">--}}
-{{--                            <a href="{{ route('leads.index') }}" class="nav-link"> <i class="nav-icon bi bi-table"></i>--}}
-{{--                                <p>Leads</p>--}}
-{{--                            </a>--}}
-{{--                        </li>--}}
-{{--                        </li>--}}
-{{--                        <li class="nav-item">--}}
-{{--                            <a href="{{ route('orders') }}" class="nav-link"> <i class="nav-icon bi bi-box-seam-fill"></i>--}}
-{{--                                <p>Orders</p>--}}
-{{--                            </a>--}}
-{{--                        </li>--}}
-{{--                        <li class="nav-item"> <a href="#" class="nav-link"> <i class="nav-icon bi bi-gear"></i>--}}
-{{--                                <p>--}}
-{{--                                    Settings--}}
-{{--                                    <i class="nav-arrow bi bi-chevron-right"></i>--}}
-{{--                                </p>--}}
-{{--                            </a>--}}
-{{--                            <ul class="nav nav-treeview">--}}
-{{--                                <li class="nav-item">--}}
-{{--                                    <a href="{{ route('salesman') }}" class="nav-link"> <i--}}
-{{--                                            class="nav-icon bi bi-circle"></i>--}}
-{{--                                        <p>Salesman</p>--}}
-{{--                                    </a>--}}
-{{--                                </li>--}}
-{{--                            </ul>--}}
-{{--                        </li>--}}
+                        {{--                        <li class="nav-item"> --}}
+                        {{--                            <a href="{{ route('leads.index') }}" class="nav-link"> <i class="nav-icon bi bi-table"></i> --}}
+                        {{--                                <p>Leads</p> --}}
+                        {{--                            </a> --}}
+                        {{--                        </li> --}}
+                        {{--                        </li> --}}
+                        {{--                        <li class="nav-item"> --}}
+                        {{--                            <a href="{{ route('orders') }}" class="nav-link"> <i class="nav-icon bi bi-box-seam-fill"></i> --}}
+                        {{--                                <p>Orders</p> --}}
+                        {{--                            </a> --}}
+                        {{--                        </li> --}}
+                        {{--                        <li class="nav-item"> <a href="#" class="nav-link"> <i class="nav-icon bi bi-gear"></i> --}}
+                        {{--                                <p> --}}
+                        {{--                                    Settings --}}
+                        {{--                                    <i class="nav-arrow bi bi-chevron-right"></i> --}}
+                        {{--                                </p> --}}
+                        {{--                            </a> --}}
+                        {{--                            <ul class="nav nav-treeview"> --}}
+                        {{--                                <li class="nav-item"> --}}
+                        {{--                                    <a href="{{ route('salesman') }}" class="nav-link"> <i --}}
+                        {{--                                            class="nav-icon bi bi-circle"></i> --}}
+                        {{--                                        <p>Salesman</p> --}}
+                        {{--                                    </a> --}}
+                        {{--                                </li> --}}
+                        {{--                            </ul> --}}
+                        {{--                        </li> --}}
                     </ul> <!--end::Sidebar Menu-->
                 </nav>
             </div> <!--end::Sidebar Wrapper-->
@@ -141,8 +142,44 @@
 
     <script src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
     <script src="https://cdn.datatables.net/2.1.8/js/dataTables.bootstrap4.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
     <script>
+        @if (Session::has('success'))
+            showToast('success', "{{ Session::get('success') }}");
+        @endif
+
+        @if (Session::has('error'))
+            showToast('error', "{{ Session::get('error') }}");
+        @endif
+
+        function showToast(type, message, title = '') {
+            toastr.options = {
+                "closeButton": true,
+                "progressBar": true,
+                "positionClass": "toast-top-center",
+                "timeOut": "4000",
+            };
+
+            switch (type) {
+                case 'success':
+                    toastr.success(message, title || 'Success');
+                    break;
+                case 'error':
+                    toastr.error(message, title || 'Error');
+                    break;
+                case 'warning':
+                    toastr.warning(message, title || 'Warning');
+                    break;
+                case 'info':
+                    toastr.info(message, title || 'Info');
+                    break;
+                default:
+                    toastr.info(message, title);
+                    break;
+            }
+        }
+
         const SELECTOR_SIDEBAR_WRAPPER = ".sidebar-wrapper";
         const Default = {
             scrollbarTheme: "os-theme-light",
