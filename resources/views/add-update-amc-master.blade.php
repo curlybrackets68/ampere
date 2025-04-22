@@ -35,7 +35,7 @@
                                                 value="{{ old('name', $amcMaster->chassis_number ?? '') }}">
                                         </div>
                                     </div>
-                                    <div class="col-md-3">
+                                    <div class="col-md-2">
                                         <div class="form-group">
                                             <label>Vehicle Type</label>
                                             <select class="form-select" name="vehicle_type" id="vehicle_type">
@@ -50,14 +50,6 @@
                                             </select>
                                         </div>
 
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label>Package Type</label>
-                                            <select class="form-select" name="amc_package_type_id" id="amc_package_type_id">
-                                                <option value="">Select Package</option>
-                                            </select>
-                                        </div>
                                     </div>
                                     <div class="col-md-3">
                                         <div class="form-group">
@@ -76,6 +68,15 @@
                                         </div>
 
                                     </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label>Package Type</label>
+                                            <select class="form-select" name="amc_package_type_id" id="amc_package_type_id">
+                                                <option value="">Select Package</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
 
 
                                 </div>
@@ -107,9 +108,10 @@
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label>AMC Start Date:</label>
-                                            <div class="input-group date" id="amc_start_date" data-target-input="nearest">
-                                                <input type="text" class="form-control datetimepicker-input"
-                                                    name="amc_start_date">
+                                            <div class="input-group date">
+                                                <input type="text" id="amc_start_date" name="amc_start_date"
+                                                    class="form-control">
+
 
                                             </div>
                                         </div>
@@ -143,6 +145,14 @@
     <script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
     <script>
+        $(function() {
+            flatpickr("#amc_start_date", {
+                dateFormat: "d-m-Y", // dd-mm-yyyy format
+                defaultDate: new Date() // set today's date
+            });
+        });
+
+
         $(document).on('change', '#vehicle_type', function() {
             let type_id = $(this).val();
             const dropdown = $('#amc_package_type_id');
