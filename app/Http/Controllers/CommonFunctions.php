@@ -35,6 +35,8 @@ trait CommonFunctions
         "7" => 'Recieved',
         "8" => 'Cancelled',
         "9" => 'Fitment',
+        "10" => 'Active',
+        "11" => 'Inactive',
     ];
 
     protected $actionLogsArray = [
@@ -50,6 +52,11 @@ trait CommonFunctions
         '2' => 'Existing Customer',
         '3' => 'Natural Walk-In',
         '4' => 'Reference',
+    ];
+
+    protected $vehicleTypeArray = [
+        '1'=>'New',
+        '2'=>'Old',
     ];
 
     // End fix constants for project
