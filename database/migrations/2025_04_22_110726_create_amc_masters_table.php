@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('amc_display_number')->nullable();
             $table->unsignedBigInteger('amc_reference_id')->nullable()->default(0)->comment('If AMC is renewed, parent AMC ID is here');
             $table->unsignedBigInteger('branch_id')->nullable();
+            $table->unsignedBigInteger('amc_package_type_id')->nullable();
             $table->string('chassis_number')->nullable();
             $table->tinyInteger('vehicle_type')->default(1)->comment('1 = New, 2 = Old');
             $table->unsignedBigInteger('vehicle_master_id');

@@ -24,6 +24,7 @@ class AmcMaster extends Model
 
     protected $fillable = [
         'amc_reference_id',
+        'amc_package_type_id',
         'amc_display_number',
         'chassis_number',
         'vehicle_type',

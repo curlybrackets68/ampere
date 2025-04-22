@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AmcPackageMaster;
 use App\Models\LeadSource;
 use App\Models\User;
 use App\Models\Vehicle;
@@ -71,5 +72,15 @@ class AmcMasterController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    public function getAmcPackageMaster(Request $request){
+        $amcPackageMaster = AmcPackageMaster::query()->where('vehicle_type', $request->type_id)->get();
+        if($amcPackageMaster->isNotEmpty()){
+            $data['data'] = array('amcPackageMaster' => $amcPackageMaster);
+            return $this->successResponse($data);
+        }else{
+            return  $this->failResponse();
+        }
     }
 }
