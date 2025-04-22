@@ -26,11 +26,17 @@ class OrdersController extends Controller
                 if (! empty($request->statusId)) {
                     $order = $order->where('status_id', $request->statusId);
                 }
+                if (! empty($request->branchId)) {
+                    $order = $order->where('branch_id', $request->branchId);
+                }
             } else {
                 if (! empty($request->status)) {
                     $order = $order->where('status_id', $request->status);
                 } else {
                     $order = $order->where('status_id', '1');
+                }
+                if (! empty($request->branchId)) {
+                    $order = $order->where('branch_id', $request->branchId);
                 }
             }
             // dd($order->toRawSql());
@@ -45,10 +51,13 @@ class OrdersController extends Controller
                     } else if ($row->status_id == '9') {
                         $class = 'info';
                     }
-
+                    $checkEditRights = '';
+                    if(checkRights('USER_DASHBOARD_ROLE_EDIT')){
+                        $checkEditRights = ' change-status ';
+                    }
                     // $html = '<span class="badge text-bg-' . $class . '">' . $this->getArrayNameById($this->statusArray, $row->status_id) . '</span>';
                     if ($row->status_id == '1' || $row->status_id == '6' || $row->status_id == '7' || $row->status_id == '6') {
-                        $html = '<button type="button" class="btn btn-' . $class . ' btn-sm change-status" data-id="' . $row->id . '" data-status="' . $row->status_id . '">' . $this->getArrayNameById($this->statusArray, $row->status_id) . '</button>';
+                        $html = '<button type="button" class="btn btn-' . $class . $checkEditRights. ' btn-sm " data-id="' . $row->id . '" data-status="' . $row->status_id . '">' . $this->getArrayNameById($this->statusArray, $row->status_id) . '</button>';
                     } else {
                         $html = '<button type="button" class="btn btn-' . $class . ' btn-sm">' . $this->getArrayNameById($this->statusArray, $row->status_id) . '</button>';
                     }
@@ -71,7 +80,8 @@ class OrdersController extends Controller
                 ->make(true);
         }
         $status = $request->input('status');
-        return view('orders-list', compact('status'));
+        $branch = $this->branchArray;
+        return view('orders-list', compact('status', 'branch'));
     }
 
     public function changeStatus(Request $request)

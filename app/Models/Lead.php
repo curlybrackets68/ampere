@@ -21,7 +21,7 @@ class Lead extends Model
             $model->modified_by = Auth::id();
         });
     }
-    
+
     protected $fillable = [
         'name',
         'vehicle',
@@ -33,4 +33,6 @@ class Lead extends Model
         'created_by',
         'modified_by',
     ];
+
+
 }

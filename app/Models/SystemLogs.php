@@ -20,4 +20,19 @@ class SystemLogs extends Model
         'created_at',
         'updated_at'
     ];
+
+    protected $appends = ['created_by_name'];
+
+
+    public function getCreatedByNameAttribute()
+    {
+        $createdByName = "";
+
+        $nameQuery = User::find($this->created_by);
+        if ($nameQuery) {
+            $createdByName = $nameQuery->user_name;
+        }
+
+        return $createdByName;
+    }
 }

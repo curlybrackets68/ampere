@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\SystemLogs;
+use App\Models\Module;
+use App\Models\UserRight;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
 
 trait CommonFunctions
@@ -16,7 +18,7 @@ trait CommonFunctions
         "2" => 'Vehicle Off Road',
         "3" => 'Insurance Repair',
         //"4" => 'MINOR SERVICE',
-      //  "5" => 'Other',
+        //  "5" => 'Other',
     ];
     protected $branchArray = [
         "1" => "KALALI",
@@ -39,6 +41,8 @@ trait CommonFunctions
         "1" => 'Add',
         "2" => 'Edit',
         "3" => 'change Status',
+        "4" => 'Login',
+        "5" => 'Logout',
     ];
 
     protected $leadSource = [
@@ -183,6 +187,70 @@ trait CommonFunctions
                 return false;
             }
         }
+    }
+
+    public function generateSecretFile($id)
+    {
+        $secretPath = base_path('app/Secrets/');
+
+        if (!File::exists($secretPath)) {
+            File::makeDirectory($secretPath, 0777, true, true);
+        }
+
+
+        $userFile = $secretPath . '/'.$id.'.php';
+        if (File::exists($userFile)) {
+            File::delete($userFile);
+        }
+
+        $userData = "<?php\n";
+
+        $rights = UserRight::query()->where('user_id', $id)->get();
+        $module = Module::query()->get();
+
+        $userRightsData = [];
+
+        $modules = Module::query()->whereIn('id', $rights->pluck('module_id'))->get();
+
+        if ($module->count()) {
+            foreach ($modules as $value) {
+                $rights = UserRight::query()->where('module_id', $value->id)->where('user_id', $id)->get();
+                if($rights){
+                    foreach ($rights as $rightRow) {
+                        if (!empty($value->config_key)) {
+                            if (!empty($rightRow->role_add)) {
+                                $userData .= "\r\n define('" . $value->config_key . "_ROLE_CREATE','1'); // constants for check rights";
+                            }
+                            if (!empty($rightRow->role_view)) {
+                                $userData .= "\r\n define('" . $value->config_key . "_ROLE_VIEW','1'); // constants for check rights";
+                            }
+                            if (!empty($rightRow->role_viewAll)) {
+                                $userData .= "\r\n define('" . $value->config_key . "_ROLE_VIEW_ALL','1'); // constants for check rights";
+                            }
+                            if (!empty($rightRow->role_edit)) {
+                                $userData .= "\r\n define('" . $value->config_key . "_ROLE_EDIT','1'); // constants for check rights";
+                            }
+                            if (!empty($rightRow->role_delete)) {
+                                $userData .= "\r\n define('" . $value->config_key . "_ROLE_DELETE','1'); // constants for check rights";
+                            }
+
+                        }
+
+                    }
+
+                }
+
+                $userRightsData[$value->id] = [
+                    'id' => $value->id,
+                    'name' => $value->name,
+                    'config_key' => $value->config_key,
+                    'route_name' => $value->route_name??'',
+                ];
+            }
+        }
+        $userData .= "\n\ndefine('USER_MODULE_DATA', '" . serialize($userRightsData) . "')";
+        $userData .= "\n\n?>";
+        File::put($userFile, $userData);
     }
 
 }

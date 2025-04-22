@@ -17,20 +17,22 @@
                             </div>
                         </div>
                         <div class="card-body">
-                            <table class="table table-bordered table-hover" style="width:100%" id="userTable">
-                                <thead>
-                                    <tr>
-                                        <th style="text-align: left;">Sr. No</th>
-                                        <th style="text-align: left;">Name</th>
-                                        <th style="text-align: left;">Mobile</th>
-                                        <th style="text-align: left;">Email</th>
-                                        <th style="text-align: left;">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-hover" style="width:100%" id="userTable">
+                                    <thead>
+                                        <tr>
+                                            <th style="text-align: left;">Sr. No</th>
+                                            <th style="text-align: left;">Name</th>
+                                            <th style="text-align: left;">Mobile</th>
+                                            <th style="text-align: left;">Email</th>
+                                            <th style="text-align: left;">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
 
-                                </tbody>
-                            </table>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -135,7 +137,6 @@
         }
 
         $(document).on('click', '#addNewUser', function() {
-            $('#passwordDiv').removeClass('d-none');
             $('.user-title').text('Add User');
             $('#addUserModal').modal('show');
         });
@@ -210,8 +211,8 @@
                     $('#addUserModal').modal('show');
                     $('#userId').val(id);
                     $('#user_name').val(response.user_name);
+                    $('#password').val(response.password);
                     $('#name').val(response.name);
-                    $('#passwordDiv').addClass('d-none');
                     $('#mobile').val(response.mobile);
                     $('#email').val(response.email);
                 },
@@ -225,6 +226,7 @@
             $('#userId').val('#addModuleModal');
             $('#user_name').val('');
             $('#name').val('');
+            $('#password').val('');
             $('#mobile').val('');
             $('#email').val('');
         });
