@@ -145,7 +145,17 @@ class AmcMasterController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $vehicle = Vehicle::pluck('name', 'id');
+        $branch = $this->branchArray;
+        $action = 'update';
+        $salesman = User::pluck('user_name', 'id');
+        $leadSource = LeadSource::pluck('name', 'id');
+        $vehicleTypeArray = $this->vehicleTypeArray;
+        $paymentTypeArray = $this->paymentTypeArray;
+        $amcDisplayNumber = AmcMaster::select('amc_display_number')->orderBy('amc_display_number', 'DESC')->first()->amc_display_number + 1 ?? 1;
+        $amcMaster = AmcMaster::find($id);
+        $authId = auth()->id();
+        return view('add-update-amc-master')->with(compact('amcMaster','leadSource', 'vehicle', 'branch', 'salesman', 'authId', 'vehicleTypeArray', 'paymentTypeArray', 'amcDisplayNumber'));
     }
 
     /**
