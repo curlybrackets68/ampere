@@ -55,6 +55,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('orders-change-status', [OrdersController::class, 'changeStatus'])->name('orders.change-status');
 
     Route::get('get-history/{type_id?}', [OrdersController::class, 'getHistory'])->name('orders.get-history');
+
+    Route::get('/amc/pdf/{id}', [LeadsController::class, 'amcPdf'])->name('amc.download');
 });
 
 
