@@ -41,6 +41,7 @@ class AmcMaster extends Model
         'no_of_service',
         'branch_id',
         'status',
+        'renew_status',
         'created_by',
         'modified_by',
     ];

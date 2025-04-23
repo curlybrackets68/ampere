@@ -59,7 +59,8 @@ Route::middleware(['auth'])->group(function () {
 
     //amc
     Route::resource('amc-master', AmcMasterController::class);
-    Route::get('get-amc-package-master}', [AmcMasterController::class, 'getAmcPackageMaster'])->name('amc-master.get-amc-package-master');
+    Route::get('get-amc-package-master', [AmcMasterController::class, 'getAmcPackageMaster'])->name('amc-master.get-amc-package-master');
+    Route::get('amc-master/renew/{amc_id}', [AmcMasterController::class, 'renew'])->name('amc-master.renew');
 });
 
 

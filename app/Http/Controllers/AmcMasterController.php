@@ -33,25 +33,26 @@ class AmcMasterController extends Controller
                 ->addIndexColumn()
                 ->addColumn('display_amc_start_date', function ($row) {
                     return $this->formatDateTime('d-m-Y', $row->amc_start_date);
-                }) 
+                })
                 ->addColumn('display_amc_end_date', function ($row) {
                     return $this->formatDateTime('d-m-Y', $row->amc_end_date);
                 })
-               ->addColumn('action', function ($row) {
-    return '
-        <div class="dropdown">
-            <button class="btn btn-sm btn-secondary dropdown-toggle" type="button"
-                id="dropdownMenuButton' . $row->id . '" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <i class="fas fa-ellipsis-v"></i>
-            </button>
-            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton' . $row->id . '">
-                <a class="dropdown-item" href="' . route('amc-master.edit', $row->id) . '">Edit</a>
-                <a class="dropdown-item" href="#">View</a>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item text-danger" href="#">Delete</a>
-            </div>
-        </div>';
-})
+                ->addColumn('action', function ($row) {
+                    $html = '';
+                    $html .= '<div class="btn-group">';
+                    $html .= '<button type="button" class="btn btn-tool dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">';
+                    $html .= '<i class="bi bi-wrench"></i>';
+                    $html .= '</button>';
+                    $html .= '<div class="dropdown-menu dropdown-menu-end" role="menu" style="">';
+                    if (checkRights('USER_AMC_ROLE_EDIT') ) {
+                        $html .= '<a href="' . route('amc-master.edit', $row->id) . '"  class="dropdown-item">Edit</a>';
+                        $html .= '<a href="' . route('amc-master.renew', $row->id) . '" class="dropdown-item">Renew</a>';
+                    }
+                    $html .= '<a href="' . route('amc-master.edit', $row->id) . '" class="dropdown-item">View</a>';
+                    $html .= '</div>';
+                    $html .= '</div>';
+                    return $html;
+                })
 
                 ->make(true);
         }
@@ -84,6 +85,7 @@ class AmcMasterController extends Controller
         $data = $request->all();
         $data['amc_start_date'] = $this->formatDateTime('Y-m-d H:i:s', $request->amc_start_date);
         $data['amc_end_date'] = $this->formatDateTime('Y-m-d H:i:s', $request->amc_end_date);
+        $data['renew_status'] = $this->getArrayIdByName($this->statusArray,'New');
         $amcMaster = AmcMaster::create($data);
         if ($amcMaster) {
             $amcMasterId = $amcMaster->id;
@@ -171,5 +173,23 @@ class AmcMasterController extends Controller
         } else {
             return  $this->failResponse();
         }
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function renew(string $id)
+    {
+        $vehicle = Vehicle::pluck('name', 'id');
+        $branch = $this->branchArray;
+        $action = 'Renew AMC';
+        $salesman = User::pluck('user_name', 'id');
+        $leadSource = LeadSource::pluck('name', 'id');
+        $vehicleTypeArray = $this->vehicleTypeArray;
+        $paymentTypeArray = $this->paymentTypeArray;
+        $amcDisplayNumber = AmcMaster::select('amc_display_number')->orderBy('amc_display_number', 'DESC')->first()->amc_display_number + 1 ?? 1;
+        $amcMaster = AmcMaster::find($id);
+        $authId = auth()->id();
+        return view('add-update-amc-master')->with(compact('amcMaster','leadSource', 'vehicle', 'branch', 'salesman', 'authId', 'vehicleTypeArray', 'paymentTypeArray', 'amcDisplayNumber'));
     }
 }

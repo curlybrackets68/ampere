@@ -37,6 +37,8 @@ trait CommonFunctions
         "9" => 'Fitment',
         "10" => 'Active',
         "11" => 'Inactive',
+        "12" => 'New',
+        "13" => 'Renew',
     ];
 
     protected $actionLogsArray = [
