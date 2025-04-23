@@ -221,6 +221,7 @@
                                 `<option value="${item.id}" data-time-period="${item.time_period}">${text}</option>`
                             );
                         });
+                        $('#amc_package_type_id').trigger('change');
                     }
 
                 },
@@ -284,10 +285,33 @@
                 $('form[name="amcMasterForm"]').submit();
             }
         });
-        
 
-        function setEndDateOfAmc() {
-            $('#amc_package_type_id');
+
+        function calculateAmcEndDate() {
+            let timePeriod = parseInt($('#amc_package_type_id option:selected').data('time-period'));
+            let startDateStr = $('#amc_start_date').val();
+
+            if (timePeriod && startDateStr) {
+                let [day, month, year] = startDateStr.split('-');
+                let startDate = new Date(`${year}-${month}-${day}`);
+
+                if (isNaN(startDate.getTime())) return;
+
+                let endDate = new Date(startDate.setMonth(startDate.getMonth() + timePeriod));
+
+                // Format as dd-mm-yyyy
+                let formatted = ("0" + endDate.getDate()).slice(-2) + "-" +
+                    ("0" + (endDate.getMonth() + 1)).slice(-2) + "-" +
+                    endDate.getFullYear();
+
+                $('#amc_end_date').val(formatted);
+            } else {
+                $('#amc_end_date').val('');
+            }
         }
+
+        $(document).on('change', '#amc_package_type_id', calculateAmcEndDate);
+
+        $(document).on('change', '#amc_start_date', calculateAmcEndDate);
     </script>
 @endsection
