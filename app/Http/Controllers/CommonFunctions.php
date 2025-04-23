@@ -55,8 +55,14 @@ trait CommonFunctions
     ];
 
     protected $vehicleTypeArray = [
-        '1'=>'New',
-        '2'=>'Old',
+        '1' => 'New',
+        '2' => 'Old',
+    ];
+
+    protected $paymentTypeArray = [
+        '1' => 'Cash',
+        '2' => 'Online',
+        '3' => 'Cheque',
     ];
 
     // End fix constants for project
@@ -205,7 +211,7 @@ trait CommonFunctions
         }
 
 
-        $userFile = $secretPath . '/'.$id.'.php';
+        $userFile = $secretPath . '/' . $id . '.php';
         if (File::exists($userFile)) {
             File::delete($userFile);
         }
@@ -222,7 +228,7 @@ trait CommonFunctions
         if ($module->count()) {
             foreach ($modules as $value) {
                 $rights = UserRight::query()->where('module_id', $value->id)->where('user_id', $id)->get();
-                if($rights){
+                if ($rights) {
                     foreach ($rights as $rightRow) {
                         if (!empty($value->config_key)) {
                             if (!empty($rightRow->role_add)) {
@@ -240,18 +246,15 @@ trait CommonFunctions
                             if (!empty($rightRow->role_delete)) {
                                 $userData .= "\r\n define('" . $value->config_key . "_ROLE_DELETE','1'); // constants for check rights";
                             }
-
                         }
-
                     }
-
                 }
 
                 $userRightsData[$value->id] = [
                     'id' => $value->id,
                     'name' => $value->name,
                     'config_key' => $value->config_key,
-                    'route_name' => $value->route_name??'',
+                    'route_name' => $value->route_name ?? '',
                 ];
             }
         }
@@ -259,5 +262,4 @@ trait CommonFunctions
         $userData .= "\n\n?>";
         File::put($userFile, $userData);
     }
-
 }

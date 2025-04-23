@@ -14,7 +14,7 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12">
-                    <form name="leadsForm"
+                    <form name="amcMasterForm"
                         action="{{ isset($amcMaster) ? route('amc-master.update', @$amcMaster->id) : route('amc-master.store') }}"
                         method="post">
                         @csrf
@@ -24,6 +24,14 @@
                         <div class="card mb-4">
                             <div class="card-header">
                                 <h5 class="card-title">{{ isset($amcMaster) ? 'Update AMC Master' : 'Add AMC Master' }}</h5>
+                                <div class="card-tools">
+                                    <div class="input-group date">
+                                        <input type="text" id="amc_display_number" name="amc_display_number"
+                                            class="form-control"
+                                            value="{{ old('name', $amcMaster->amc_display_number ?? $amcDisplayNumber) }}">
+                                    </div>
+                                </div>
+
                             </div>
                             <div class="card-body">
                                 <div class="row">
@@ -76,12 +84,9 @@
                                             </select>
                                         </div>
                                     </div>
-
-
-
                                 </div>
                                 <div class="row mt-2">
-                                    <div class="col-md-3">
+                                    <div class="col-md-2">
                                         <div class="form-group">
                                             <label>Vehicle Number</label>
                                             <input type="text" class="form-control" id="vehicle_number"
@@ -97,7 +102,7 @@
                                                 value="{{ old('contact_number', $amcMaster->contact_number ?? '') }}">
                                         </div>
                                     </div>
-                                    <div class="col-md-3">
+                                    <div class="col-md-2">
                                         <div class="form-group">
                                             <label>Contact Number</label>
                                             <input type="text" class="form-control" id="contact_number"
@@ -105,7 +110,7 @@
                                                 value="{{ old('contact_number', $amcMaster->contact_number ?? '') }}">
                                         </div>
                                     </div>
-                                    <div class="col-md-3">
+                                    <div class="col-md-2">
                                         <div class="form-group">
                                             <label>AMC Start Date:</label>
                                             <div class="input-group date">
@@ -116,7 +121,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-3">
+                                    <div class="col-md-2">
                                         <div class="form-group">
                                             <label>AMC End Date</label>
                                             <input type="text" class="form-control" id="amc_end_date"
@@ -125,11 +130,48 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="row mt-2">
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label>Payment Type</label>
+                                            <select class="form-select" name="payment_type" id="payment_type">
+                                                <option value="">Select Payment Type</option>
+                                                @forelse (@$paymentTypeArray as $key => $value)
+                                                    <option value="{{ $key }}"
+                                                        {{ @$amcMaster && $key == $amcMaster->payment_type ? 'selected' : '' }}>
+                                                        {{ $value }}</option>
+                                                @empty
+                                                @endforelse
+
+                                            </select>
+                                        </div>
+
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label>Transaction Details</label>
+                                            <input type="text" class="form-control" id="transaction_details"
+                                                placeholder="Transaction Details" name="transaction_details"
+                                                value="{{ old('name', $amcMaster->transaction_details ?? '') }}">
+                                        </div>
+
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label>Amount</label>
+                                            <input type="text" class="form-control" id="amc_basic_price"
+                                                placeholder="Amount" name="amc_basic_price"
+                                                value="{{ old('amc_basic_price', $amcMaster->amc_basic_price ?? '') }}">
+                                        </div>
+
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
 
                         <div class="card-footer">
-                            <button type="submit" class="btn btn-primary btn-sm" id="addUpdateLeads">Submit</button>
+                            <button type="submit" class="btn btn-primary btn-sm" id="addUpdateAmcMaster">Submit</button>
                             <button type="reset" class="btn btn-light btn-sm">Cancel</button>
                         </div>
                     </form>
@@ -151,8 +193,12 @@
                 defaultDate: new Date() // set today's date
             });
         });
-
-
+        $(function() {
+            flatpickr("#amc_end_date", {
+                dateFormat: "d-m-Y", // dd-mm-yyyy format
+                defaultDate: new Date() // set today's date
+            });
+        });
         $(document).on('change', '#vehicle_type', function() {
             let type_id = $(this).val();
             const dropdown = $('#amc_package_type_id');
@@ -171,7 +217,9 @@
                         $.each(packages, function(index, item) {
                             const text =
                                 `${item.service_count} Services`;
-                            dropdown.append(`<option value="${item.id}">${text}</option>`);
+                            dropdown.append(
+                                `<option value="${item.id}" data-time-period="${item.time_period}">${text}</option>`
+                            );
                         });
                     }
 
@@ -181,5 +229,65 @@
                 }
             });
         });
+
+        $(document).on('click', '#addUpdateAmcMaster', function(e) {
+            e.preventDefault();
+
+            $('.error-message').remove();
+            let chassis_number = $('#chassis_number').val();
+            let vehicle_type = $('#vehicle_type').val();
+            let vehicle_master_id = $('#vehicle_master_id').val();
+            let amc_package_type_id = $('#amc_package_type_id').val();
+            let contact_number = $('#contact_number').val();
+            let customer_name = $('#customer_name').val();
+
+            let isValid = true;
+
+            if (chassis_number === '') {
+                $('#chassis_number').after(
+                    '<small class="error-message text-danger">Chassis number is required.</small>');
+                isValid = false;
+            }
+            if (vehicle_type === '') {
+                $('#vehicle_type').after(
+                    '<small class="error-message text-danger">Please select a vehicle type.</small>');
+                isValid = false;
+            }
+            if (vehicle_master_id === '') {
+                $('#vehicle_master_id').after(
+                    '<small class="error-message text-danger">Please select a vehicle.</small>');
+                isValid = false;
+            }
+            if (amc_package_type_id === '') {
+                $('#amc_package_type_id').after(
+                    '<small class="error-message text-danger">Please select package.</small>');
+                isValid = false;
+            }
+            if (contact_number === '') {
+                $('#contact_number').after(
+                    '<small class="error-message text-danger">Mobile number is required.</small>');
+                isValid = false;
+            } else if (!/^\d{10}$/.test(contact_number)) {
+                $('#contact_number').after(
+                    '<small class="error-message text-danger">Enter a valid 10-digit mobile number.</small>');
+                isValid = false;
+            }
+
+            if (customer_name === '') {
+                $('#customer_name').after(
+                    '<small class="error-message text-danger">Customer name is required.</small>');
+                isValid = false;
+            }
+
+            if (isValid) {
+                loaderButton('addUpdateAmcMaster', true);
+                $('form[name="amcMasterForm"]').submit();
+            }
+        });
+        
+
+        function setEndDateOfAmc() {
+            $('#amc_package_type_id');
+        }
     </script>
 @endsection

@@ -43,15 +43,15 @@
                         <div class="card-body">
 
                             <div class="row mt-3">
-                                <table class="table table-bordered table-hover" style="width:100%" id="leadsTable">
+                                <table class="table table-bordered table-hover" style="width:100%" id="amcMasterTable">
                                     <thead>
                                     <tr>
                                         <th style="text-align: left;">Sr. No</th>
-                                        <th style="text-align: left;">Name</th>
-                                        <th style="text-align: left;">Vehicle</th>
-                                        <th style="text-align: left;">Mobile</th>
-                                        <th style="text-align: left;">Lead Source</th>
-                                        <th style="text-align: left;">Salesman</th>
+                                        <th style="text-align: left;">Customer Name</th>
+                                        <th style="text-align: left;">Customer Number</th>
+                                        <th style="text-align: left;">AMC Number</th>
+                                        <th style="text-align: left;">AMC Start Date</th>
+                                        <th style="text-align: left;">AMC End Date</th>
                                         <th style="text-align: left;">Action</th>
                                     </tr>
                                     </thead>
@@ -85,7 +85,7 @@
                 endDate: moment().endOf('month')
             });
 
-            leadList();
+            amcMasterList();
         });
 
         $(document).on('input', '#mobile', function() {
@@ -118,18 +118,18 @@
                 customerName: customerName
             };
 
-            leadList(filter);
+            amcMasterList(filter);
             $('#exportExcel').removeClass('d-none');
         });
 
-        function leadList(filter = []) {
-            $('#leadsTable').DataTable({
+        function amcMasterList(filter = []) {
+            $('#amcMasterTable').DataTable({
                 serverSide: false,
                 processing: true,
                 destroy: true,
                 responsive: true,
                 ajax: {
-                    url: '{{ route('leads.index') }}',
+                    url: '{{ route('amc-master.index') }}',
                     data: filter
                 },
                 columns: [{
@@ -138,24 +138,24 @@
                     searchable: false
                 },
                     {
-                        data: 'name',
-                        name: 'name'
+                        data: 'customer_name',
+                        name: 'customer_name'
                     },
                     {
-                        data: 'vehicleName',
-                        name: 'vehicle.name'
+                        data: 'contact_number',
+                        name: 'contact_number'
                     },
                     {
-                        data: 'mobile',
-                        name: 'mobile'
+                        data: 'amc_display_number',
+                        name: 'amc_display_number'
                     },
                     {
-                        data: 'leadSourceName',
-                        name: 'lead_sources.name'
+                        data: 'display_amc_start_date',
+                        name: 'display_amc_start_date'
                     },
                     {
-                        data: 'salesmanName',
-                        name: 'salesman.name'
+                        data: 'display_amc_start_date',
+                        name: 'display_amc_start_date'
                     },
                     {
                         data: 'action',
@@ -176,6 +176,9 @@
             });
         }
 
+        $('#amcMasterTable').on('draw.dt', function () {
+    $('[data-toggle="dropdown"]').dropdown();
+});
         $(document).on('click', '#exportExcel', function() {
             $('#exportExcelForm').submit();
         });
