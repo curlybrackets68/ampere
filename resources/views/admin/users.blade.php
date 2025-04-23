@@ -21,11 +21,11 @@
                                 <table class="table table-bordered table-hover" style="width:100%" id="userTable">
                                     <thead>
                                         <tr>
-                                            <th style="text-align: left;">Sr. No</th>
-                                            <th style="text-align: left;">Name</th>
-                                            <th style="text-align: left;">Mobile</th>
-                                            <th style="text-align: left;">Email</th>
-                                            <th style="text-align: left;">Action</th>
+                                            <th style="text-align: left; width: 10%;">Sr. No</th>
+                                            <th style="text-align: left; width: 20%;">Name</th>
+                                            <th style="text-align: left; width: 20%;">Mobile</th>
+                                            <th style="text-align: left; width: 20%;">Email</th>
+                                            <th style="text-align: left; width: 20%;">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -83,6 +83,7 @@
 @endsection
 
 @section('javascript')
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         $(document).on("keyup", ".form-control", function() {
             $(this).removeClass("error-message");
@@ -229,6 +230,40 @@
             $('#password').val('');
             $('#mobile').val('');
             $('#email').val('');
+        });
+
+        $(document).on('click', '.delete-user', function() {
+            let userId = $(this).data('id');
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "This will delete the user!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '{{ route('admin.user.delete') }}',
+                        type: 'POST',
+                        data: {
+                            _token: '{{ csrf_token() }}',
+                            id: userId
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                Swal.fire('Deleted!', 'User has been deleted.', 'success');
+                                userList();
+                                showToast('success', response.msg);
+                            } else {
+                                Swal.fire('Error!', response.msg, 'error');
+                            }
+                        }
+                    });
+                }
+            });
         });
     </script>
 @endsection

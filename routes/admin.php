@@ -20,6 +20,8 @@ Route::prefix("admin")->group(function () {
         Route::get('users', [AdminController::class, 'userList'])->name('admin.users');
         Route::get('edit-user/{id}', [AdminController::class, 'editUser'])->name('admin.edit-user');
         Route::post('add-edit-user', [AdminController::class, 'addEditUser'])->name('admin.add-edit-user');
+        Route::post('/admin/user/delete', [AdminController::class, 'deleteUser'])->name('admin.user.delete');
+
         Route::get('modules', [AdminController::class, 'modules'])->name('admin.modules');
         Route::post('add-edit-module', [AdminController::class, 'addEditModule'])->name('admin.add-edit-modules');
 
