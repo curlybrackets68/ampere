@@ -4,7 +4,7 @@
     <title>AMC</title>
 </head>
 <body>
-    <h1>AMC #{{ $invoiceId }}</h1>
-    <p>Customer Name: {{ $customerName }}</p>
+    <h1>AMC #{{ $amc->name }}</h1>
+    <p>Mobile: {{ $amc->mobile }}</p>
 </body>
 </html>

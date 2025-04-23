@@ -255,12 +255,14 @@ class LeadsController extends Controller
 
     public function amcPdf($id)
     {
-        $data = [
-            'invoiceId' => $id,
-            'customerName' => 'Mihir Patel',
-        ];
+        $data = [];
 
-        $pdf = Pdf::loadView('pdf.amc-pdf', $data);
+        $query = Lead::find($id);
+        if ($query) {
+            $data = $query;
+        }
+
+        $pdf = Pdf::loadView('pdf.amc-pdf', ['amc' => $data]);
 
         return $pdf->stream('amc.pdf');
     }
