@@ -5,6 +5,7 @@ use App\Http\Controllers\LeadsController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\OrdersController;
 use App\Http\Controllers\AmcMasterController;
+use App\Http\Controllers\ServiceController;
 use App\Models\Order;
 use Illuminate\Support\Facades\Route;
 
@@ -61,6 +62,10 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('amc-master', AmcMasterController::class);
     Route::get('get-amc-package-master', [AmcMasterController::class, 'getAmcPackageMaster'])->name('amc-master.get-amc-package-master');
     Route::get('amc-master/renew/{amc_id}', [AmcMasterController::class, 'renew'])->name('amc-master.renew');
+    Route::post('amc-master/renew-handel', [AmcMasterController::class, 'renewHandel'])->name('amc-master.renew-handel');
+    
+    Route::resource('amc-master-service', ServiceController::class);
+    Route::get('amc-master-service/change-status/{service_id}', [AmcMasterController::class, 'renew'])->name('amc-master-service.change-status');
 });
 
 

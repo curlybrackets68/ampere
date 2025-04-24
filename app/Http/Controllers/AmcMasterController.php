@@ -45,10 +45,14 @@ class AmcMasterController extends Controller
                     $html .= '</button>';
                     $html .= '<div class="dropdown-menu dropdown-menu-end" role="menu" style="">';
                     if (checkRights('USER_AMC_ROLE_EDIT')) {
-                        $html .= '<a href="' . route('amc-master.edit', $row->id) . '"  class="dropdown-item">Edit</a>';
+                        $notPendingServiceCount = ServiceDetail::query()->where('amc_id',$row->id)->where('status','!=',$this->getArrayIdByName($this->statusArray,'Pending'))->get();
+
+                        if($notPendingServiceCount->count() == 0){
+                            $html .= '<a href="' . route('amc-master.edit', $row->id) . '"  class="dropdown-item">Edit</a>';
+                        }
                         $html .= '<a href="' . route('amc-master.renew', $row->id) . '" class="dropdown-item">Renew</a>';
                     }
-                    $html .= '<a href="' . route('amc-master.edit', $row->id) . '" class="dropdown-item">View</a>';
+                    $html .= '<a href="#" class="dropdown-item">History</a>';
                     $html .= '</div>';
                     $html .= '</div>';
                     return $html;
@@ -252,6 +256,57 @@ class AmcMasterController extends Controller
         $amcDisplayNumber = AmcMaster::select('amc_display_number')->orderBy('amc_display_number', 'DESC')->first()->amc_display_number + 1 ?? 1;
         $amcMaster = AmcMaster::find($id);
         $authId = auth()->id();
-        return view('add-update-amc-master')->with(compact('amcMaster', 'leadSource', 'vehicle', 'branch', 'salesman', 'authId', 'vehicleTypeArray', 'paymentTypeArray', 'amcDisplayNumber'));
+        return view('renew-amc-master')->with(compact('amcMaster', 'leadSource', 'vehicle', 'branch', 'salesman', 'authId', 'vehicleTypeArray', 'paymentTypeArray', 'amcDisplayNumber'));
+    }
+
+    public function renewHandel(Request $request){
+        $data = $request->all();
+        $data['amc_start_date'] = $this->formatDateTime('Y-m-d H:i:s', $request->amc_start_date);
+        $data['amc_end_date'] = $this->formatDateTime('Y-m-d H:i:s', $request->amc_end_date);
+        $data['renew_status'] = $this->getArrayIdByName($this->statusArray, 'New');
+        $amcMaster = AmcMaster::create($data);
+        if ($amcMaster) {
+            $amcMasterId = $amcMaster->id;
+            $amcPackageTypeId = $amcMaster->amc_package_type_id;
+
+            if ($amcPackageTypeId) {
+                $amcPackageMasterData = AmcPackageMaster::find($amcPackageTypeId);
+                if ($amcPackageMasterData) {
+                    $contractStartDate = Carbon::parse($amcMaster->amc_start_date);
+                    $serviceDates = [];
+
+                    $firstServiceDays = $amcPackageMasterData->vehicle_type == '1' ? 30 : 120; // for new vehicale first serve after 30days
+                    $firstServiceDate = $contractStartDate->copy()->addDays($firstServiceDays);
+
+                    $serviceDates[] = $firstServiceDate;
+                    $totalServices = $amcPackageMasterData->service_count;
+                    $lastServiceDate = $firstServiceDate;
+                    for ($i = 1; $i < $totalServices; $i++) {
+                        $nextServiceDate = $lastServiceDate->copy()->addDays(120);
+                        $serviceDates[] = $nextServiceDate;
+                        $lastServiceDate = $nextServiceDate;
+                    }
+
+                    foreach ($serviceDates as $serviceDate) {
+                        $serviceData = [
+                            'amc_id' => $amcMasterId,
+                            'service_date' => $serviceDate->format('Y-m-d H:i:s'),
+                            'created_by' => auth()->id(),
+                        ];
+
+                        ServiceDetail::create($serviceData);
+                    }
+                }
+            }
+            SystemLogs::create([
+                'inquiry_id' => 0,
+                'type' => '5', // AMC master Module ID
+                'type_id' => $amcMasterId,
+                'remark'     => 'Add AMC Master ',
+                'action_id'  => 1,
+                'created_by' => auth()->id(),
+            ]);
+        }
+        return redirect()->route('amc-master.index')->with('success', 'AMC Master added successfully!');
     }
 }
