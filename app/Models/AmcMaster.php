@@ -71,12 +71,12 @@ class AmcMaster extends Model
 
     function getDisplayAmcStartDateAttribute()
     {
-        return Carbon::parse($this->amc_start_date)->format('d/m/Y');
+        return Carbon::parse($this->amc_start_date)->format('d-M-Y');
     }
 
     function getDisplayAmcEndDateAttribute()
     {
-        return Carbon::parse($this->amc_end_date)->format('d/m/Y');
+        return Carbon::parse($this->amc_end_date)->format('d-M-Y');
     }
 
     function getVehicleNameAttribute()

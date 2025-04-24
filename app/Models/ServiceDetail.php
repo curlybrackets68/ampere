@@ -23,7 +23,7 @@ class ServiceDetail extends Model
 
     function getDisplayServiceDateAttribute()
     {
-        return Carbon::parse($this->service_date)->format('d-m-Y');
+        return Carbon::parse($this->service_date)->format('d-M-Y');
     }
 
     function getStatusNameAttribute()
