@@ -168,12 +168,12 @@ class AmcMasterController extends Controller
         $amcMaster = AmcMaster::find($id);
         if ($amcMaster) {
             if ($amcMaster) {
-                $amcMaster->update($data); // $data = ['column' => 'value', ...]
+                $amcMaster->update($data); 
             }
             ServiceDetail::where('amc_id', $id)
-                ->update(['deleted_by' => auth()->id()]); // set deleted_by
+                ->update(['deleted_by' => auth()->id()]); 
 
-            ServiceDetail::where('amc_id', $id)->delete(); // soft delete
+            ServiceDetail::where('amc_id', $id)->delete(); 
             $amcMasterId = $amcMaster->id;
             $amcPackageTypeId = $amcMaster->amc_package_type_id;
 
@@ -215,7 +215,7 @@ class AmcMasterController extends Controller
                 'created_by' => auth()->id(),
             ]);
         }
-        return redirect()->route('amc-master.index')->with('success', 'AMC Master added successfully!');
+        return redirect()->route('amc-master.index')->with('success', 'AMC Master Update successfully!');
     }
 
     /**
