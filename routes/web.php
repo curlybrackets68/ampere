@@ -4,6 +4,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LeadsController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\OrdersController;
+use App\Http\Controllers\AmcMasterController;
 use App\Models\Order;
 use Illuminate\Support\Facades\Route;
 
@@ -57,6 +58,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('get-history/{type_id?}', [OrdersController::class, 'getHistory'])->name('orders.get-history');
 
     Route::get('/amc/pdf/{id}', [LeadsController::class, 'amcPdf'])->name('amc.download');
+
+    //amc
+    Route::resource('amc-master', AmcMasterController::class);
+    Route::get('get-amc-package-master', [AmcMasterController::class, 'getAmcPackageMaster'])->name('amc-master.get-amc-package-master');
+    Route::get('amc-master/renew/{amc_id}', [AmcMasterController::class, 'renew'])->name('amc-master.renew');
 });
 
 
