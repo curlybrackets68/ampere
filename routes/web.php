@@ -57,7 +57,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('get-history/{type_id?}', [OrdersController::class, 'getHistory'])->name('orders.get-history');
 
-    Route::get('/amc/pdf/{id}', [LeadsController::class, 'amcPdf'])->name('amc.download');
+    Route::get('/amc/pdf/{id}', [AmcMasterController::class, 'amcPdf'])->name('amc.download');
 
     //amc
     Route::resource('amc-master', AmcMasterController::class);
