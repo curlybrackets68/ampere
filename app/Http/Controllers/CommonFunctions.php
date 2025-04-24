@@ -36,7 +36,7 @@ trait CommonFunctions
         "8" => 'Cancelled',
         "9" => 'Fitment',
         "10" => 'Active',
-        "11" => 'Inactive',
+        "11" => 'Deactive',
         "12" => 'New',
         "13" => 'Renew',
     ];

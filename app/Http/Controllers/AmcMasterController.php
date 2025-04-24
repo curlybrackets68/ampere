@@ -45,12 +45,15 @@ class AmcMasterController extends Controller
                     $html .= '<i class="bi bi-wrench"></i>';
                     $html .= '</button>';
                     $html .= '<div class="dropdown-menu dropdown-menu-end" role="menu" style="">';
-                    if (checkRights('USER_AMC_ROLE_EDIT') ) {
+                    if (checkRights('USER_AMC_ROLE_EDIT')) {
                         $html .= '<a href="' . route('amc-master.edit', $row->id) . '"  class="dropdown-item">Edit</a>';
                         $html .= '<a href="' . route('amc-master.renew', $row->id) . '" class="dropdown-item">Renew</a>';
                     }
                     $html .= '<a href="' . route('amc-master.edit', $row->id) . '" class="dropdown-item">View</a>';
                     $html .= '<a href="' . route('amc.download', $row->id) . '" class="dropdown-item" target="_blank">PDF</a>';
+                    if (Carbon::parse($row->amc_end_date)->isFuture()) {
+                        $html .= '<a href="javascript:void()" class="dropdown-item change-status" data-id="' . $row->id . '" data-status="' . $row->status . '">Status</a>';
+                    }
                     $html .= '</div>';
                     $html .= '</div>';
                     return $html;
@@ -91,7 +94,7 @@ class AmcMasterController extends Controller
         $data = $request->all();
         $data['amc_start_date'] = $this->formatDateTime('Y-m-d H:i:s', $request->amc_start_date);
         $data['amc_end_date'] = $this->formatDateTime('Y-m-d H:i:s', $request->amc_end_date);
-        $data['renew_status'] = $this->getArrayIdByName($this->statusArray,'New');
+        $data['renew_status'] = $this->getArrayIdByName($this->statusArray, 'New');
         $amcMaster = AmcMaster::create($data);
         if ($amcMaster) {
             $amcMasterId = $amcMaster->id;
@@ -196,7 +199,7 @@ class AmcMasterController extends Controller
         $amcDisplayNumber = AmcMaster::select('amc_display_number')->orderBy('amc_display_number', 'DESC')->first()->amc_display_number + 1 ?? 1;
         $amcMaster = AmcMaster::find($id);
         $authId = auth()->id();
-        return view('add-update-amc-master')->with(compact('amcMaster','leadSource', 'vehicle', 'branch', 'salesman', 'authId', 'vehicleTypeArray', 'paymentTypeArray', 'amcDisplayNumber'));
+        return view('add-update-amc-master')->with(compact('amcMaster', 'leadSource', 'vehicle', 'branch', 'salesman', 'authId', 'vehicleTypeArray', 'paymentTypeArray', 'amcDisplayNumber'));
     }
 
     public function amcPdf($id)
@@ -208,5 +211,26 @@ class AmcMasterController extends Controller
         $pdf = Pdf::loadView('pdf.amc-pdf', ['amc' => $data]);
 
         return $pdf->stream('amc.pdf');
+    }
+
+    function changeStatus(Request $request)
+    {
+        $amcId = $request->amcId;
+        $statusId = $request->statusId;
+        $statusRemark = $request->statusRemark;
+
+        $save = AmcMaster::where('id', $amcId)->update(['status' => $statusId, 'status_remark' => $statusRemark ?? '']);
+        if ($save) {
+            SystemLogs::create([
+                'type' => '5',
+                'type_id' => $amcId,
+                'remark' => 'Status changed to ' . $this->getArrayNameById($this->statusArray, $statusId),
+                'action_id' => 3,
+                'created_by' => auth()->id(),
+            ]);
+            return response()->json(['code' => 1, 'message' => 'Status updated successfully']);
+        } else {
+            return response()->json(['code' => 0, 'message' => 'Failed to update status']);
+        }
     }
 }
