@@ -71,7 +71,11 @@ class AmcMasterController extends Controller
         $leadSource = LeadSource::pluck('name', 'id');
         $vehicleTypeArray = $this->vehicleTypeArray;
         $paymentTypeArray = $this->paymentTypeArray;
-        $amcDisplayNumber = AmcMaster::select('amc_display_number')->orderBy('amc_display_number', 'DESC')->first()->amc_display_number + 1 ?? 1;
+        $amcDisplayQuery = AmcMaster::select('amc_display_number')->orderBy('amc_display_number', 'DESC')->first();
+        $amcDisplayNumber = 1;
+        if ($amcDisplayQuery) {
+            $amcDisplayNumber = $amcDisplayQuery->amc_display_number + 1;
+        }
         $authId = auth()->id();
         return view('add-update-amc-master')->with(compact('leadSource', 'vehicle', 'branch', 'salesman', 'authId', 'vehicleTypeArray', 'paymentTypeArray', 'amcDisplayNumber'));
     }
