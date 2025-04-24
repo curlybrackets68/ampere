@@ -201,30 +201,11 @@ class AmcMasterController extends Controller
 
     public function amcPdf($id)
     {
-        $data = [
-            'contract_start' => '21/04/2025',
-            'contract_end' => '17/05/2026',
-            'vehicle_model' => 'NEXUS',
-            'chassis_number' => '225MC02502250',
-            'customer_name' => 'Sachin Kumar Nayak',
-            'customer_mobile' => '+91 96018 32207',
-            'customer_address' => 'B-302 Rudra Enclave Dumad Rd, Amin Nagar Society, Chhani, Vadodara, Gujarat 391740',
-            'package' => '4 services - 1700 duration 17 months',
-            'services_count' => 4,
-            'services' => [
-                ['date' => '22-05-2025'],
-                ['date' => '19-09-2025'],
-                ['date' => '17-01-2026'],
-                ['date' => '17-05-2026'],
-            ],
-        ];
-
-        // $query = Lead::find($id);
-        // if ($query) {
-        //     $data = $query;
-        // }
-
-        $pdf = Pdf::loadView('pdf.amc-pdf', $data);
+        $query = AmcMaster::with('services')->find($id);
+        if ($query) {
+            $data = $query;
+        }
+        $pdf = Pdf::loadView('pdf.amc-pdf', ['amc' => $data]);
 
         return $pdf->stream('amc.pdf');
     }

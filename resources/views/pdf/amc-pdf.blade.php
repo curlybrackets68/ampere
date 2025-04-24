@@ -67,19 +67,20 @@
     <div class="section">Vehicle Details</div>
     <table>
         <tr>
-            <td>Vehicle Category: [Old/New]</td>
+            <td>Vehicle Category: {{ $amc->vehicle_type_name }}</td>
             <td class="contract-dates">
-                <strong>Contract Start Date:</strong> {{ $contract_start }}
+                <strong>Contract Start Date:</strong> {{ $amc->display_amc_start_date }}
             </td>
         </tr>
         <tr>
-            <td>Vehicle Make & Model: {{ $vehicle_model }}</td>
+            <td>Vehicle Make & Model: {{ $amc->vehicle_name }}</td>
             <td class="contract-dates">
-                <span style="color: red;"><strong>Contract End Date:</strong> {{ $contract_end }}</strong></span>
+                <span style="color: red;"><strong>Contract End Date:</strong>
+                    {{ $amc->display_amc_end_date }}</strong></span>
             </td>
         </tr>
         <tr>
-            <td>Chassis Number: {{ $chassis_number }}</td>
+            <td>Chassis Number: {{ $amc->chassis_number }}</td>
             <td></td>
         </tr>
     </table>
@@ -87,13 +88,13 @@
     <div class="section">Customer Details</div>
     <table>
         <tr>
-            <td style="width: 60%">Name: <strong>{{ $customer_name }}</strong></td>
+            <td style="width: 60%">Name: <strong>{{ $amc->customer_name }}</strong></td>
             <td style="float: right; text-align: right; width: 40%">Mobile Number:
-                <strong>{{ $customer_mobile }}</strong>
+                <strong>{{ $amc->contact_number }}</strong>
             </td>
         </tr>
         <tr>
-            <td>Address: <strong>{{ $customer_address }}</strong></td>
+            <td>Address: <strong></strong></td>
             <td></td>
         </tr>
     </table>
@@ -103,7 +104,7 @@
     <table style="text-align: center;">
         <tr>
             <th colspan="4" style="text-align: right;">
-                <div style="display: inline-block;">Package: <strong>{{ $package }}</strong></div>
+                <div style="display: inline-block;">Package: <strong>{{ $amc->amc_package_type_name }}</strong></div>
             </th>
         </tr>
         <tr>
@@ -112,36 +113,44 @@
             <th class="serviceTh" style="width: 60%;">Service Remark</th>
             <th class="serviceTh" style="width: 10%;">Status</th>
         </tr>
-        @foreach ($services as $index => $service)
+        @foreach ($amc->services as $index => $service)
             <tr>
                 <td class="serviceTd">{{ $index + 1 }}</td>
-                <td class="serviceTd">{{ $service['date'] }}</td>
-                <td class="serviceTd">{{ $service['remark'] ?? '' }}</td>
-                <td class="serviceTd">{{ $service['status'] ?? '' }}</td>
+                <td class="serviceTd">{{ $service['display_service_date'] }}</td>
+                <td class="serviceTd">{{ $service['service_remark'] ?? '' }}</td>
+                <td class="serviceTd">{{ $service['status_name'] ?? '' }}</td>
             </tr>
         @endforeach
     </table>
 
     <div class="section">Terms & Conditions</div>
     <ol class="terms">
-        <li>This contract includes <strong>{{ $services_count }} paid services</strong>...</li>
-        <li>The contract will expire on the End Date...</li>
-        <li>If all 4 services are availed before the contract end date...</li>
-        <li>Any unutilized services will lapse...</li>
-        <li>The cost of spare parts, additional labour...</li>
-        <li>Services must be availed only at authorized centers...</li>
+        <li>This contract includes<strong> {{ $amc->no_of_service }} paid services </strong>which can be availed
+            <strong>any time within the contract duration. </strong>
+        </li>
+        <li><strong>The contract will expire</strong> on the <strong>End Date mentioned above, </strong>irrespective
+            of the number of services availed.
+        </li>
+        <li>If all {{ $amc->no_of_service }} services are availed before the contract end date, <strong>the contract
+                shall terminate automatically</strong> upon the completion of last service.</li>
+        <li><strong>Any unutilized services will lapse </strong>after the expiry date</li>
+        <li>The cost of <strong>spare parts, additional labour, and consumables </strong>is<strong> not covered
+            </strong>under this contract and will be
+            <strong>charged separately </strong>as per actuals
+        </li>
+        <li>Services under this contract must be availed only at authorized service centers (as applicable)</li>
     </ol>
 
     <div class="section">Payment Details</div>
     <table>
         <tr>
-            <td style="text-align: left;">Payment Type: <strong> Online </strong></td>
+            <td style="text-align: left;">Payment Type: <strong> {{ $amc->payment_type_name }} </strong></td>
             <td style="text-align: right;">
-                AMC Amount: <strong>2000 </strong>
+                AMC Amount: <strong>{{ $amc->amc_basic_price }} </strong>
             </td>
         </tr>
         <tr>
-            <td colspan="2">Transaction No: <strong>0250255336482121</strong></td>
+            <td colspan="2">Transaction No: <strong>{{ $amc->transaction_details }}</strong></td>
         </tr>
     </table>
 
@@ -162,10 +171,11 @@
                 </td>
             </tr>
         </table>
-    
+
         <p style="text-align: center; margin-top: 30px; font-style: italic;">
             This is a computer-generated print and does not require a physical signature.
         </p>
     </footer>
 </body>
+
 </html>

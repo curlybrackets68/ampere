@@ -32,7 +32,7 @@ trait CommonFunctions
         "4" => 'Confirmed',
         "5" => 'In Workshop',
         "6" => 'Ordered',
-        "7" => 'Recieved',
+        "7" => 'Received',
         "8" => 'Cancelled',
         "9" => 'Fitment',
         "10" => 'Active',

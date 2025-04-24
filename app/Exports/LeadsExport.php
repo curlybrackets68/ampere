@@ -29,17 +29,17 @@ class LeadsExport implements FromCollection, WithHeadings
 
     public function collection()
     {
-        $query = Lead::query()->select('leads.*', 'vehicle.name AS vehicleName', 'salesman.name AS salesmanName', 'lead_sources.name AS leadSourceName')
+        $query = Lead::query()->select('leads.*', 'vehicle.name AS vehicleName', 'users.user_name AS salesmanName', 'lead_sources.name AS leadSourceName')
             ->leftJoin('vehicle', 'vehicle.id', '=', 'leads.vehicle')
             ->leftJoin('lead_sources', 'lead_sources.id', '=', 'leads.lead_source')
-            ->leftJoin('salesman', 'salesman.id', '=', 'leads.salesman');
+            ->leftJoin('users', 'users.id', '=', 'leads.salesman');
 
         if (! empty($this->startDate) && ! empty($this->endDate)) {
             $query = $query->whereBetween(DB::raw('DATE(leads.created_at)'), [$this->startDate, $this->endDate]);
         }
 
         if (! empty($this->salesmanId)) {
-            $query = $query->where('salesman.id', $this->salesmanId);
+            $query = $query->where('users.id', $this->salesmanId);
         }
 
         if (! empty($this->leadSourceId)) {
