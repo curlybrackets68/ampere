@@ -12,9 +12,7 @@
         .section {
             background-color: #8eb4e3;
             padding: 5px;
-            margin-bottom: 5px;
             font-weight: bold;
-            margin-top: 5px;
         }
 
         table {
@@ -94,8 +92,7 @@
             </td>
         </tr>
         <tr>
-            <td>Address: <strong></strong></td>
-            <td></td>
+            <td colspan="2">Address: <strong></strong></td>
         </tr>
     </table>
 
@@ -123,7 +120,7 @@
         @endforeach
     </table>
 
-    <div class="section">Terms & Conditions</div>
+    <div class="section" style="margin-top: 5px;">Terms & Conditions</div>
     <ol class="terms">
         <li>This contract includes<strong> {{ $amc->no_of_service }} paid services </strong>which can be availed
             <strong>any time within the contract duration. </strong>
