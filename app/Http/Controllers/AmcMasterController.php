@@ -211,7 +211,7 @@ class AmcMasterController extends Controller
                 'type' => '5', // AMC master Module ID
                 'type_id' => $amcMasterId,
                 'remark'     => 'Update AMC Master ',
-                'action_id'  => 1,
+                'action_id'  => 2,
                 'created_by' => auth()->id(),
             ]);
         }
