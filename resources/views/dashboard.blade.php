@@ -615,7 +615,7 @@
                     };
 
                     const ctx1 = $('#amcChart').get(0).getContext('2d');
-
+                    
                     if (amcChatInstance) {
                         amcChatInstance.destroy();
                     }
@@ -647,7 +647,7 @@
                     endDate: endDate,
                 },
                 success: function(response) {
-                    const amcChartData = {
+                    const serviceChartData = {
                         labels: response.labels,
                         datasets: [{
                             data: response.data,
@@ -657,13 +657,13 @@
 
                     const ctx1 = $('#serviceChart').get(0).getContext('2d');
 
-                    if (amcChatInstance) {
-                        amcChatInstance.destroy();
+                    if (serviceChatInstance) {
+                        serviceChatInstance.destroy();
                     }
 
-                    amcChatInstance = new Chart(ctx1, {
+                    serviceChatInstance = new Chart(ctx1, {
                         type: 'pie',
-                        data: amcChartData,
+                        data: serviceChartData,
                         options: {
                             maintainAspectRatio: false,
                             responsive: true,
