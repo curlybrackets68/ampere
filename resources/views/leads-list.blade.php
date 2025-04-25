@@ -32,6 +32,21 @@
                                         <i class="bi bi-cloud-download me-1 align-middle me-1"></i> Export
                                     </form>
                                 </a>
+
+                                {{-- <a href="javascript:void(0);" class="btn btn-primary btn-sm me-2" id="exportExcel">
+                                    <i class="bi bi-cloud-download me-1 align-middle me-1"></i> Export
+                                </a>
+
+                                <form action="{{ route('user.leads.excel.export') }}" method="POST" id="exportExcelForm"
+                                    style="display: none;">
+                                    @csrf
+                                    {{ Form::hidden('exportStartDate', null, ['id' => 'exportStartDate', 'name' => 'exportStartDate']) }}
+                                    {{ Form::hidden('exportEndDate', null, ['id' => 'exportEndDate', 'name' => 'exportEndDate']) }}
+                                    {{ Form::hidden('exportSalesmanId', null, ['id' => 'exportSalesmanId', 'name' => 'exportSalesmanId']) }}
+                                    {{ Form::hidden('exportLeadSourceId', null, ['id' => 'exportLeadSourceId', 'name' => 'exportLeadSourceId']) }}
+                                    {{ Form::hidden('exportMobileNumber', null, ['id' => 'exportMobileNumber', 'name' => 'exportMobileNumber']) }}
+                                    {{ Form::hidden('exportCustomerName', null, ['id' => 'exportCustomerName', 'name' => 'exportCustomerName']) }}
+                                </form> --}}
                                 @if(checkRights('USER_LEAD_ROLE_CREATE'))
                                     <a class="btn btn-info btn-sm" href="{{ route('leads.create') }}">
                                         <i class="bi bi-plus me-1 align-middle me-1"></i> Add Lead</a>
@@ -216,5 +231,24 @@
         $(document).on('click', '#exportExcel', function() {
             $('#exportExcelForm').submit();
         });
+
+        // $(document).on('click', '#exportExcel', function(e) {
+        //     e.preventDefault();
+
+        //     let form = $('#exportExcelForm');
+        //     let formData = form.serialize();
+
+        //     $.ajax({
+        //         url: form.attr('action'),
+        //         method: 'POST',
+        //         data: formData,
+        //         success: function(response) {
+        //             showToast('success', 'Export started. You’ll be notified once it’s ready.');
+        //         },
+        //         error: function(xhr) {
+        //             showToast('error', 'Something went wrong while exporting.');
+        //         }
+        //     });
+        // });
     </script>
 @endsection

@@ -236,6 +236,25 @@ class LeadsController extends Controller
         }
     }
 
+    // public function export(Request $request)
+    // {
+    //     try {
+    //         ExportLeadsToExcel::dispatch([
+    //             'startDate' => $request->input('exportStartDate'),
+    //             'endDate' => $request->input('exportEndDate'),
+    //             'salesmanId' => $request->input('exportSalesmanId'),
+    //             'leadSourceId' => $request->input('exportLeadSourceId'),
+    //             'mobileNumber' => $request->input('exportMobileNumber'),
+    //             'customerName' => $request->input('exportCustomerName'),
+    //             'userId' => auth()->id(),
+    //         ]);
+
+    //         return response()->json(['success' => 'Export started. You’ll be notified once it’s ready.']);
+    //     } catch (\Exception $e) {
+    //         return response()->json(['error' => $e->getMessage()], 500);
+    //     }
+    // }
+
     public function salesmanIndex(Request $request)
     {
         if ($request->ajax()) {
