@@ -14,7 +14,6 @@ class AmcPackageMaster extends Model
         'service_count',
         'duration',
         'time_period',
-        'time_period',
         'created_by',
         'modified_by',
     ];

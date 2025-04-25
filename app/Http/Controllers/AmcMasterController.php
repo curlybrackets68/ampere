@@ -31,7 +31,7 @@ class AmcMasterController extends Controller
 
             return DataTables::of($amcMasterList)
                 ->addIndexColumn()
-                
+
                 ->addColumn('customer_details', function ($row) {
                     return $row->customer_name . "<br>" . $row->contact_number;
                 })
@@ -39,8 +39,8 @@ class AmcMasterController extends Controller
                     return $this->formatDateTime('d-m-Y', $row->amc_start_date) . "<br>" . $this->formatDateTime('d-m-Y', $row->amc_end_date);
                 })
                 ->addColumn('vehicle_model', function ($row) {
-                    $vehicleName  = Vehicle::find($row->vehicle_master_id)->first()->name??'';
-                    return $this->getArrayNameById($this->vehicleTypeArray, $row->vehicle_type).'<br>'.$vehicleName;
+                    $vehicleName  = Vehicle::find($row->vehicle_master_id)->first()->name ?? '';
+                    return $this->getArrayNameById($this->vehicleTypeArray, $row->vehicle_type) . '<br>' . $vehicleName;
                 })->addColumn('vehicle_data', function ($row) {
                     return $row->chassis_number . "<br>" . $row->vehicle_number;
                 })
@@ -69,7 +69,7 @@ class AmcMasterController extends Controller
                     $html .= '</div>';
                     return $html;
                 })
-                ->rawColumns(['action', 'customer_details','contact_date','vehicle_data','display_status','vehicle_model'])
+                ->rawColumns(['action', 'customer_details', 'contact_date', 'vehicle_data', 'display_status', 'vehicle_model'])
                 ->make(true);
         }
         return view('amc-master-list');
@@ -131,7 +131,27 @@ class AmcMasterController extends Controller
 
                         ServiceDetail::create($serviceData);
                     }
+                    $vehicleTypeName = $this->getArrayNameById($this->vehicleTypeArray, $amcMaster->vehicle_type);
+                    $startDate = $this->formatDateTime('d-M-Y', $amcMaster->amc_start_date);
+                    $endDate = $this->formatDateTime('d-M-Y', $amcMaster->amc_end_date);
+                    $vehicleName  = Vehicle::find($amcMaster->vehicle_master_id)->first()->name ?? '';
+                    $packageString = $amcPackageMasterData->service_count . ' Sevices - ' . $amcPackageMasterData->duration . ' duration ' . $amcPackageMasterData->time_period . 'months';
+                    $whatsAppMsg = "Hi $amcMaster->customer_name \n \n";
+
+                    $whatsAppMsg .= "Your AMC contract has been successfully generated for your vehicle $amcMaster->vehicle_number \n";
+                    $whatsAppMsg .= "Contract ID: *$amcMaster->amc_display_number* \n";
+                    $whatsAppMsg .= "Vehicle Category: *$vehicleTypeName* \n";
+                    $whatsAppMsg .= "Contract Start Date: *$startDate* \n";
+                    $whatsAppMsg .= "Valid Till: *$endDate* \n";
+                    $whatsAppMsg .= "Vehicle Model: *$vehicleName* \n";
+                    $whatsAppMsg .= "Service Details: *$packageString* \n";
+                    $whatsAppMsg .= "You can now enjoy hassle-free service and priority support under your AMC plan. \n \n";
+                    $whatsAppMsg .= "Thank you for choosing Ampere! \n";
+                    $whatsAppMsg .= "For queries, contact us at +91 90233 42463.";
+                    $this->sendWhatsAppMessage($amcMaster->contact_number, $whatsAppMsg);
                 }
+
+                // $this->sendWhatsAppMessageWithFile($request->mobile, $whatsAppMsg, $pdfUrl);
             }
             SystemLogs::create([
                 'inquiry_id' => 0,
@@ -142,6 +162,8 @@ class AmcMasterController extends Controller
                 'created_by' => auth()->id(),
             ]);
         }
+
+
         return redirect()->route('amc-master.index')->with('success', 'AMC Master added successfully!');
     }
 
@@ -252,7 +274,7 @@ class AmcMasterController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function renew(Request $request,string $id)
+    public function renew(Request $request, string $id)
     {
 
         $vehicle = Vehicle::pluck('name', 'id');
