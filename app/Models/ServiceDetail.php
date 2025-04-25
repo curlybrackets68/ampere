@@ -20,7 +20,7 @@ class ServiceDetail extends Model
         'status',
     ];
 
-    protected $appends = ['display_service_date', 'status_name'];
+    protected $appends = ['display_service_date', 'status_name','amc_master_details'];
 
     function getDisplayServiceDateAttribute()
     {
@@ -32,7 +32,6 @@ class ServiceDetail extends Model
         return $this->statusArray[$this->status];
     }
 
-    protected $appends = ['amc_master_details'];
 
     //amc_master_details
     public function getAmcMasterDetailsAttribute(){
