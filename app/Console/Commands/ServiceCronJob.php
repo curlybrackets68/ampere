@@ -7,6 +7,7 @@ use App\Models\AmcMaster;
 use App\Models\ServiceDetail;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\File;
 
 class ServiceCronJob extends Command
 {
@@ -46,6 +47,8 @@ class ServiceCronJob extends Command
                 $amcQuery = AmcMaster::find($service->amc_id);
                 $daysLeft = now()->diffInDays(Carbon::parse($service->amc_end_date), false);
 
+                $pdfUrl = $this->generateAndStorePdf('pdf.amc-pdf', ['amc' => $amcQuery], 'amc_pdfs');
+
                 if (in_array($daysLeft, [7, 5, 3, 1])) {
                     // $message = $daysLeft === 0
                     //     ? "Your AMC is expiring today"
@@ -61,7 +64,10 @@ class ServiceCronJob extends Command
                     $message .= "Thank you for choosing Ampere! \n";
                     $message .= "For assistance, call us at +91 90233 42463.\n";
 
-                    $this->sendWhatsAppMessage($amcQuery->contact_number, $message);
+                    $sent = $this->sendWhatsAppMessageWithFile($amcQuery->contact_number, $message, $pdfUrl['full_path']);
+                    if ($sent && File::exists($pdfUrl['full_path'])) {
+                        File::delete($pdfUrl['full_path']);
+                    }
                     $this->info($message);
                     \Log::info($message);
                 }
@@ -83,6 +89,8 @@ class ServiceCronJob extends Command
                 $amcQuery = AmcMaster::find($service->amc_id);
                 $daysLeft = now()->diffInDays(Carbon::parse($service->amc_end_date), false);
 
+                $pdfUrl = $this->generateAndStorePdf('pdf.amc-pdf', ['amc' => $amcQuery], 'amc_pdfs');
+
                 $messageOnDue = "Dear $amcQuery->customer_name, \n\n";
                 $messageOnDue .= "We noticed that your AMC service for vehicle *$amcQuery->vehicle_number* was due on $service->display_service_date but hasn't been completed yet. \n";
                 $messageOnDue .= " \n";
@@ -95,7 +103,10 @@ class ServiceCronJob extends Command
                 $messageOnDue .= "Thank you for choosing Ampere.   \n";
                 $messageOnDue .= "For assistance, call +91 90233 42463. \n";
 
-                $this->sendWhatsAppMessage($amcQuery->contact_number, $messageOnDue);
+                $sent = $this->sendWhatsAppMessageWithFile($amcQuery->contact_number, $messageOnDue, $pdfUrl['full_path']);
+                if ($sent && File::exists($pdfUrl['full_path'])) {
+                    File::delete($pdfUrl['full_path']);
+                }
                 $this->info($messageOnDue);
                 \Log::info($messageOnDue);
             }
@@ -113,7 +124,8 @@ class ServiceCronJob extends Command
         if ($serviceRecordsDue->isNotEmpty()) {
             foreach ($serviceRecordsDue as $service) {
                 $amcQuery = AmcMaster::find($service->amc_id);
-
+                $pdfUrl = $this->generateAndStorePdf('pdf.amc-pdf', ['amc' => $amcQuery], 'amc_pdfs');
+                
                 $messageDue = "Dear $amcQuery->customer_name, \n\n";
                 $messageDue .= "This is a final reminder regarding your pending AMC service for vehicle *$amcQuery->vehicle_number* under Contract ID: *$amcQuery->amc_display_number*. \n\n";
                 $messageDue .= "Your scheduled service date *$service->display_service_date* has passed, and timely maintenance is essential to keep your vehicle running smoothly and to ensure AMC benefits remain valid. \n\n";
@@ -121,8 +133,11 @@ class ServiceCronJob extends Command
                 $messageDue .= "Note: Delay in service may impact your AMC coverage. \n\n";
                 $messageDue .= "Thank you for choosing Ampere.   \n";
                 $messageDue .= "Support: +91 90233 42463  \n";
+                $sent = $this->sendWhatsAppMessageWithFile($amcQuery->contact_number, $messageDue, $pdfUrl['full_path']);
 
-                $this->sendWhatsAppMessage($amcQuery->contact_number, $messageDue);
+                if ($sent && File::exists($pdfUrl['full_path'])) {
+                    File::delete($pdfUrl['full_path']);
+                }
                 $this->info($messageDue);
                 \Log::info($messageDue);
             }

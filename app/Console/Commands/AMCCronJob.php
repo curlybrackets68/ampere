@@ -2,12 +2,15 @@
 
 namespace App\Console\Commands;
 
+use App\Http\Controllers\CommonFunctions;
 use App\Models\AmcMaster;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\File;
 
 class AMCCronJob extends Command
 {
+    use CommonFunctions;
     /**
      * The name and signature of the console command.
      *
@@ -42,7 +45,7 @@ class AMCCronJob extends Command
         if ($amcRecords->isNotEmpty()) {
             foreach ($amcRecords as $amc) {
                 $daysLeft = now()->diffInDays(Carbon::parse($amc->amc_end_date), false);
-
+                $pdfUrl = $this->generateAndStorePdf('pdf.amc-pdf', ['amc' => $amc], 'amc_pdfs');
                 if (in_array($daysLeft, [7, 5, 3, 1, 0])) {
                     // $message = $daysLeft === 0
                     //     ? "Your AMC is expiring today"
@@ -57,7 +60,10 @@ class AMCCronJob extends Command
                     $message .= "To renew your AMC, reply to this message or call us at +91 90233 42463. \n\n";
                     $message .= "Thank you for trusting Ampere! \n";
 
-                    $this->sendWhatsAppMessage($amc->contact_number, $message);
+                    $sent = $this->sendWhatsAppMessageWithFile($amc->contact_number, $message, $pdfUrl['full_path']);
+                    if ($sent && File::exists($pdfUrl['full_path'])) {
+                        File::delete($pdfUrl['full_path']);
+                    }
                     $this->info($message);
                     \Log::info($message);
                 }
@@ -76,6 +82,7 @@ class AMCCronJob extends Command
             ->get();
         if ($amcRecordsDue->isNotEmpty()) {
             foreach ($amcRecordsDue as $amcDue) {
+                $pdfUrl = $this->generateAndStorePdf('pdf.amc-pdf', ['amc' => $amcDue], 'amc_pdfs');
 
                 $messageDue = "Dear $amcDue->customer_name,\n";
                 $messageDue .= "Just a friendly reminder — your AMC contract *$amcDue->amc_display_number* for vehicle *$amcDue->vehicle_number* is expiring soon on \n";
@@ -91,7 +98,10 @@ class AMCCronJob extends Command
                 $messageDue .= "\n";
                 $messageDue .= "Thank you for trusting Ampere!\n";
 
-                $this->sendWhatsAppMessage($amcDue->contact_number, $messageDue);
+                $sent = $this->sendWhatsAppMessageWithFile($amcDue->contact_number, $messageDue, $pdfUrl['full_path']);
+                if ($sent && File::exists($pdfUrl['full_path'])) {
+                    File::delete($pdfUrl['full_path']);
+                }
                 $this->info($messageDue);
                 \Log::info($messageDue);
             }

@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Module;
 use App\Models\UserRight;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
+use Str;
 
 trait CommonFunctions
 {
@@ -263,5 +266,28 @@ trait CommonFunctions
         $userData .= "\n\ndefine('USER_MODULE_DATA', '" . serialize($userRightsData) . "')";
         $userData .= "\n\n?>";
         File::put($userFile, $userData);
+    }
+
+    public function generateAndStorePdf($view = '', $data = null, $folder = 'amc_pdfs', $fileName = null)
+    {
+        $pdf = Pdf::loadView($view, $data);
+
+        if (!$fileName) {
+            $fileName = 'amc_' . now()->format('Ymd_His') . '_' . $data['amc']->id . '.pdf';
+        }
+
+        $publicFolder = public_path($folder);
+
+        if (!file_exists($publicFolder)) {
+            mkdir($publicFolder, 0775, true);
+        }
+
+        $fullPath = "{$publicFolder}/{$fileName}";
+        file_put_contents($fullPath, $pdf->output());
+
+        return [
+            'full_path' => $fullPath,
+            'public_url' => url("{$folder}/{$fileName}")
+        ];
     }
 }
