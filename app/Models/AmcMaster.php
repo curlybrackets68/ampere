@@ -54,7 +54,8 @@ class AmcMaster extends Model
         'vehicle_name',
         'amc_package_type_name',
         'vehicle_type_name',
-        'payment_type_name'
+        'payment_type_name',
+        'status_name'
     ];
     /**
      * @param string[] $fillable
@@ -109,5 +110,10 @@ class AmcMaster extends Model
     {
         $name = $this->paymentTypeArray[$this->payment_type];
         return $name;
+    }
+
+    function getStatusNameAttribute()
+    {
+        return $this->statusArray[$this->status];
     }
 }

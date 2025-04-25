@@ -68,6 +68,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('get-service-chart', [DashboardController::class, 'serviceChart'])->name('get-service-chart');
     
     Route::post('change-amc-status', [AmcMasterController::class, 'changeStatus'])->name('amc.change-status');
+
+    Route::post('export-amc', [AmcMasterController::class, 'export'])->name('user.amc.excel.export');
+
 });
 
 

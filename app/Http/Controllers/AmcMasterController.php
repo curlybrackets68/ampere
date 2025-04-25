@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\AmcExport;
 use App\Models\AmcMaster;
 use App\Models\AmcPackageMaster;
 use App\Models\LeadSource;
@@ -13,6 +14,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
 
 class AmcMasterController extends Controller
@@ -231,6 +233,18 @@ class AmcMasterController extends Controller
             return response()->json(['code' => 1, 'message' => 'Status updated successfully']);
         } else {
             return response()->json(['code' => 0, 'message' => 'Failed to update status']);
+        }
+    }
+
+    public function export(Request $request)
+    {
+        try {
+            $exportStartDate = $request->input('exportStartDate');
+            $exportEndDate = $request->input('exportEndDate');
+
+            return Excel::download(new AmcExport($exportStartDate, $exportEndDate), 'amc.xlsx');
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 }

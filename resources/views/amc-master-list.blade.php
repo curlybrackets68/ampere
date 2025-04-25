@@ -18,16 +18,12 @@
                         <div class="card-header">
                             <h5 class="card-title">AMC Master</h5>
                             <div class="d-flex justify-content-end">
-                                <a href="javascript:void(0);" class="btn btn-primary btn-sm me-2 d-none" id="exportExcel">
-                                    <form action="{{ route('user.leads.excel.export') }}" method="POST"
+                                <a href="javascript:void(0);" class="btn btn-primary btn-sm me-2" id="exportExcel">
+                                    <form action="{{ route('user.amc.excel.export') }}" method="POST"
                                         id="exportExcelForm">
                                         @csrf
                                         {{ Form::hidden('exportStartDate', null, ['id' => 'exportStartDate']) }}
                                         {{ Form::hidden('exportEndDate', null, ['id' => 'exportEndDate']) }}
-                                        {{ Form::hidden('exportSalesmanId', null, ['id' => 'exportSalesmanId']) }}
-                                        {{ Form::hidden('exportLeadSourceId', null, ['id' => 'exportLeadSourceId']) }}
-                                        {{ Form::hidden('exportMobileNumber', null, ['id' => 'exportMobileNumber']) }}
-                                        {{ Form::hidden('exportCustomerName', null, ['id' => 'exportCustomerName']) }}
 
                                         <i class="bi bi-cloud-download me-1 align-middle me-1"></i> Export
                                     </form>
