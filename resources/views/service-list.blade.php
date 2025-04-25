@@ -20,7 +20,7 @@
                             <div class="d-flex justify-content-end">
                                 <a href="javascript:void(0);" class="btn btn-primary btn-sm me-2 d-none" id="exportExcel">
                                     <form action="{{ route('user.leads.excel.export') }}" method="POST"
-                                          id="exportExcelForm">
+                                        id="exportExcelForm">
                                         @csrf
                                         {{ Form::hidden('exportStartDate', null, ['id' => 'exportStartDate']) }}
                                         {{ Form::hidden('exportEndDate', null, ['id' => 'exportEndDate']) }}
@@ -32,11 +32,11 @@
                                         <i class="bi bi-cloud-download me-1 align-middle me-1"></i> Export
                                     </form>
                                 </a>
-                                {{-- @if(checkRights('USER_AMC_ROLE_CREATE'))
-                                    <a class="btn btn-info btn-sm" href="{{ route('amc-master-service.change-status',$service_id->id) }}">
+                                @if (checkRights('USER_AMC_ROLE_CREATE'))
+                                    <a class="btn btn-info btn-sm" href="{{ route('amc-master-service.service') }}">
                                         <i class="bi bi-plus me-1 align-middle me-1"></i> Add Service</a>
 
-                                @endif --}}
+                                @endif
 
                             </div>
                         </div>
@@ -45,15 +45,15 @@
                             <div class="row mt-3">
                                 <table class="table table-bordered table-hover" style="width:100%" id="amcMasterTable">
                                     <thead>
-                                    <tr>
-                                        <th style="text-align: left;">Sr. No</th>
-                                        <th style="text-align: left;">Customer Name</th>
-                                        <th style="text-align: left;">Customer Number</th>
-                                        <th style="text-align: left;">AMC Number</th>
-                                        <th style="text-align: left;">AMC Start Date</th>
-                                        <th style="text-align: left;">AMC End Date</th>
-                                        <th style="text-align: left;">Action</th>
-                                    </tr>
+                                        <tr>
+                                            <th style="text-align: left;">Sr. No</th>
+                                            <th style="text-align: left;">Customer Name</th>
+                                            <th style="text-align: left;">Customer Number</th>
+                                            <th style="text-align: left;">AMC Number</th>
+                                            <th style="text-align: left;">AMC Start Date</th>
+                                            <th style="text-align: left;">AMC End Date</th>
+                                            <th style="text-align: left;">Action</th>
+                                        </tr>
                                     </thead>
                                     <tbody>
 
@@ -133,10 +133,10 @@
                     data: filter
                 },
                 columns: [{
-                    data: 'DT_RowIndex',
-                    name: 'id',
-                    searchable: false
-                },
+                        data: 'DT_RowIndex',
+                        name: 'id',
+                        searchable: false
+                    },
                     {
                         data: 'customer_name',
                         name: 'customer_name'
@@ -176,9 +176,9 @@
             });
         }
 
-        $('#amcMasterTable').on('draw.dt', function () {
-    $('[data-toggle="dropdown"]').dropdown();
-});
+        $('#amcMasterTable').on('draw.dt', function() {
+            $('[data-toggle="dropdown"]').dropdown();
+        });
         $(document).on('click', '#exportExcel', function() {
             $('#exportExcelForm').submit();
         });

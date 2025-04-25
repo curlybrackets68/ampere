@@ -244,7 +244,7 @@ class AmcMasterController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function renew(string $id)
+    public function renew(Request $request)
     {
         $vehicle = Vehicle::pluck('name', 'id');
         $branch = $this->branchArray;
