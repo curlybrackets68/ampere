@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Http\Controllers\CommonFunctions;
 use App\Models\AmcMaster;
 use App\Models\ServiceDetail;
 use Carbon\Carbon;
@@ -9,6 +10,7 @@ use Illuminate\Console\Command;
 
 class ServiceCronJob extends Command
 {
+    use CommonFunctions;
     /**
      * The name and signature of the console command.
      *
@@ -59,7 +61,7 @@ class ServiceCronJob extends Command
                     $message .= "Thank you for choosing Ampere! \n";
                     $message .= "For assistance, call us at +91 90233 42463.\n";
 
-
+                    $this->sendWhatsAppMessage($amcQuery->contact_number, $message);
                     $this->info($message);
                     \Log::info($message);
                 }
@@ -93,7 +95,7 @@ class ServiceCronJob extends Command
                 $messageOnDue .= "Thank you for choosing Ampere.   \n";
                 $messageOnDue .= "For assistance, call +91 90233 42463. \n";
 
-
+                $this->sendWhatsAppMessage($amcQuery->contact_number, $messageOnDue);
                 $this->info($messageOnDue);
                 \Log::info($messageOnDue);
             }
@@ -120,7 +122,7 @@ class ServiceCronJob extends Command
                 $messageDue .= "Thank you for choosing Ampere.   \n";
                 $messageDue .= "Support: +91 90233 42463  \n";
 
-
+                $this->sendWhatsAppMessage($amcQuery->contact_number, $messageDue);
                 $this->info($messageDue);
                 \Log::info($messageDue);
             }

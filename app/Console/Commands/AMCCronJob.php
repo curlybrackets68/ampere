@@ -56,6 +56,8 @@ class AMCCronJob extends Command
                     $message .= "Renew now to continue enjoying priority service, hassle-free maintenance, and peace of mind. \n\n";
                     $message .= "To renew your AMC, reply to this message or call us at +91 90233 42463. \n\n";
                     $message .= "Thank you for trusting Ampere! \n";
+
+                    $this->sendWhatsAppMessage($amc->contact_number, $message);
                     $this->info($message);
                     \Log::info($message);
                 }
@@ -89,6 +91,7 @@ class AMCCronJob extends Command
                 $messageDue .= "\n";
                 $messageDue .= "Thank you for trusting Ampere!\n";
 
+                $this->sendWhatsAppMessage($amcDue->contact_number, $messageDue);
                 $this->info($messageDue);
                 \Log::info($messageDue);
             }
