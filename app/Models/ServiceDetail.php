@@ -17,4 +17,13 @@ class ServiceDetail extends Model
         'attachment',
         'status',
     ];
+
+    protected $appends = ['amc_master_details'];
+
+    //amc_master_details
+    public function getAmcMasterDetailsAttribute(){
+        return AmcMaster::find($this->amc_id);
+    }
+    
+    
 }
