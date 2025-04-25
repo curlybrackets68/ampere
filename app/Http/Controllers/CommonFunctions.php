@@ -169,7 +169,7 @@ trait CommonFunctions
             'message' => $message,
             'isUrgent' => true,
         ];
-        $response = Http::post($url, $data);
+        $response = Http::withOptions(['verify' => false])->post($url, $data);
         if ($response->successful()) {
             $responseDecode = $response->json();
             if ($responseDecode['ErrorCode'] === '000') {

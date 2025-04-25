@@ -50,9 +50,9 @@ class AMCCronJob extends Command
 
                     $message = "Dear $amc->customer_name,\n\n";
                     $message .= "We hope your experience with Ampere AMC service has been smooth and satisfying.\n\n";
-                    $message .= "Your AMC contract ID : $amc->amc_display_number for vehicle $amc->vehicle_number is due for renewal:\n\n";
-                    $message .= "Expiry Date: $amc->display_amc_end_date \n";
-                    $message .= "Vehicle Model: $amc->vehicle_name   \n\n";
+                    $message .= "Your AMC contract ID : $amc->amc_display_number for vehicle *$amc->vehicle_number* is due for renewal:\n\n";
+                    $message .= "Expiry Date: *$amc->display_amc_end_date* \n";
+                    $message .= "Vehicle Model: *$amc->vehicle_name*   \n\n";
                     $message .= "Renew now to continue enjoying priority service, hassle-free maintenance, and peace of mind. \n\n";
                     $message .= "To renew your AMC, reply to this message or call us at +91 90233 42463. \n\n";
                     $message .= "Thank you for trusting Ampere! \n";
@@ -78,8 +78,8 @@ class AMCCronJob extends Command
             foreach ($amcRecordsDue as $amcDue) {
 
                 $messageDue = "Dear $amcDue->customer_name,\n";
-                $messageDue .= "Just a friendly reminder — your AMC contract $amcDue->amc_display_number for vehicle $amcDue->vehicle_number is expiring soon on \n";
-                $messageDue .= "$amcDue->display_amc_end_date.\n";
+                $messageDue .= "Just a friendly reminder — your AMC contract *$amcDue->amc_display_number* for vehicle *$amcDue->vehicle_number* is expiring soon on \n";
+                $messageDue .= "*$amcDue->display_amc_end_date*.\n";
                 $messageDue .= "\n";
                 $messageDue .= "Renew now to avoid service interruptions and keep your vehicle in top condition.\n";
                 $messageDue .= "\n";

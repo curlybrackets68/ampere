@@ -53,11 +53,11 @@ class ServiceCronJob extends Command
 
                     $message = "Dear $amcQuery->customer_name,\n";
                     $message .= "This is a gentle reminder that your next AMC service is due soon for your vehicle ($amcQuery->vehicle_number).\n";
-                    $message .= "Scheduled Date: $service->display_service_date \n";
-                    $message .= "AMC Contract ID: $amcQuery->amc_display_number\n";
-                    $message .= "Location: Ampere Service Center, Vadodara \n";
-                    $message .= "Please send “Hi” on the number mentioned to book your appointment\n";
-                    $message .= "9023342463 \n";
+                    $message .= "Scheduled Date: *$service->display_service_date* \n";
+                    $message .= "AMC Contract ID: *$amcQuery->amc_display_number*\n";
+                    $message .= "Location: *Ampere Service Center, Vadodara* \n";
+                    $message .= "Please send “*Hi*” on the number mentioned to book your appointment\n";
+                    $message .= "*9023342463* \n";
                     $message .= "Thank you for choosing Ampere! \n";
                     $message .= "For assistance, call us at +91 90233 42463.\n";
 
@@ -84,9 +84,9 @@ class ServiceCronJob extends Command
                 $daysLeft = now()->diffInDays(Carbon::parse($service->amc_end_date), false);
 
                 $messageOnDue = "Dear $amcQuery->customer_name, \n\n";
-                $messageOnDue .= "We noticed that your AMC service for vehicle $amcQuery->vehicle_number was due on $service->display_service_date but hasn't been completed yet. \n";
+                $messageOnDue .= "We noticed that your AMC service for vehicle *$amcQuery->vehicle_number* was due on $service->display_service_date but hasn't been completed yet. \n";
                 $messageOnDue .= " \n";
-                $messageOnDue .= "Your AMC Contract 1001 is still active, and we want to ensure your vehicle receives timely maintenance for optimal performance. \n";
+                $messageOnDue .= "Your AMC Contract *$amcQuery->amc_display_number* is still active, and we want to ensure your vehicle receives timely maintenance for optimal performance. \n";
                 $messageOnDue .= " \n";
                 $messageOnDue .= "Please note that irregular servicing can cause lapse of warranty benefits and AMC benefits \n";
                 $messageOnDue .= " \n";
@@ -115,8 +115,8 @@ class ServiceCronJob extends Command
                 $amcQuery = AmcMaster::find($service->amc_id);
 
                 $messageDue = "Dear $amcQuery->customer_name, \n\n";
-                $messageDue .= "This is a final reminder regarding your pending AMC service for vehicle $amcQuery->vehicle_number under Contract ID: $amcQuery->amc_display_number. \n\n";
-                $messageDue .= "Your scheduled service date $service->display_service_date has passed, and timely maintenance is essential to keep your vehicle running smoothly and to ensure AMC benefits remain valid. \n\n";
+                $messageDue .= "This is a final reminder regarding your pending AMC service for vehicle *$amcQuery->vehicle_number* under Contract ID: *$amcQuery->amc_display_number*. \n\n";
+                $messageDue .= "Your scheduled service date *$service->display_service_date* has passed, and timely maintenance is essential to keep your vehicle running smoothly and to ensure AMC benefits remain valid. \n\n";
                 $messageDue .= "Please contact us immediately to schedule your service  \n\n";
                 $messageDue .= "Note: Delay in service may impact your AMC coverage. \n\n";
                 $messageDue .= "Thank you for choosing Ampere.   \n";
