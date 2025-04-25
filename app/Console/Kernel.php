@@ -13,6 +13,8 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
         // $schedule->command('inspire')->hourly();
+        $schedule->command('send:amc-cronjob')->dailyAt('07:00'); // example: run daily at 7 AM
+        $schedule->command('send:service-cronjob')->dailyAt('07:00'); // example: run daily at 7 AM
     }
 
     /**

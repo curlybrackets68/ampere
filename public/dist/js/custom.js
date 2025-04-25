@@ -21,3 +21,30 @@ function loaderButton(buttonId, isLoading, loadingText = 'Saving...', defaultTex
         buttonText.text(defaultText);
     }
 }
+
+function showToast(type, message, title = '') {
+    toastr.options = {
+        "closeButton": true,
+        "progressBar": true,
+        "positionClass": "toast-top-center",
+        "timeOut": "4000",
+    };
+
+    switch (type) {
+        case 'success':
+            toastr.success(message, title || 'Success');
+            break;
+        case 'error':
+            toastr.error(message, title || 'Error');
+            break;
+        case 'warning':
+            toastr.warning(message, title || 'Warning');
+            break;
+        case 'info':
+            toastr.info(message, title || 'Info');
+            break;
+        default:
+            toastr.info(message, title);
+            break;
+    }
+}

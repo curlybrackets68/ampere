@@ -153,33 +153,6 @@
             showToast('error', "{{ Session::get('error') }}");
         @endif
 
-        function showToast(type, message, title = '') {
-            toastr.options = {
-                "closeButton": true,
-                "progressBar": true,
-                "positionClass": "toast-top-center",
-                "timeOut": "4000",
-            };
-
-            switch (type) {
-                case 'success':
-                    toastr.success(message, title || 'Success');
-                    break;
-                case 'error':
-                    toastr.error(message, title || 'Error');
-                    break;
-                case 'warning':
-                    toastr.warning(message, title || 'Warning');
-                    break;
-                case 'info':
-                    toastr.info(message, title || 'Info');
-                    break;
-                default:
-                    toastr.info(message, title);
-                    break;
-            }
-        }
-
         const SELECTOR_SIDEBAR_WRAPPER = ".sidebar-wrapper";
         const Default = {
             scrollbarTheme: "os-theme-light",

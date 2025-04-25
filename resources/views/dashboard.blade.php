@@ -18,7 +18,7 @@
                 <div class="col-md-4">
                     <div class="input-group">
                         <input type="text" name="mobileNumber" maxlength="10" id="mobileNumber"
-                               placeholder="Type Mobile Number..." class="form-control">
+                            placeholder="Type Mobile Number..." class="form-control">
                         <span class="input-group-append">
                             <button type="button" class="btn btn-primary" id="sendMessage">Send</button>
                         </span>
@@ -125,7 +125,7 @@
                                     </div>
                                 </div>
                                 <canvas id="inquiryChart"
-                                        style="min-height: 350px; height: 350px; max-height: 350px; max-width: 100%;"></canvas>
+                                    style="min-height: 350px; height: 350px; max-height: 350px; max-width: 100%;"></canvas>
                             </div>
                         </div>
                     </div>
@@ -224,14 +224,14 @@
                                     </div>
                                 </div>
                                 <canvas id="orderChart"
-                                        style="min-height: 350px; height: 350px; max-height: 350px; max-width: 100%;"></canvas>
+                                    style="min-height: 350px; height: 350px; max-height: 350px; max-width: 100%;"></canvas>
                             </div>
                         </div>
                     </div>
                 @endif
-            </div><div class="row mt-3">
+            </div>
+            <div class="row mt-3">
                 @if (checkRights('USER_LEAD_ROLE_VIEW') || checkRights('USER_LEAD_ROLE_VIEWONLY'))
-
                     <div class="col-md-6">
                         <div class="card h-100">
                             <div class="card-header">
@@ -257,7 +257,47 @@
                                     </div>
                                 </div>
                                 <canvas id="leadChart"
-                                        style="min-height: 350px; height: 350px; max-height: 350px; max-width: 100%;"></canvas>
+                                    style="min-height: 350px; height: 350px; max-height: 350px; max-width: 100%;"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+                @if (checkRights('USER_AMC_ROLE_VIEW') || checkRights('USER_AMC_ROLE_VIEWONLY'))
+                    <div class="col-md-6">
+                        <div class="card h-100">
+                            <div class="card-header">
+                                <h5 class="card-title">AMC Chart</h5>
+                                <div class="card-tools">
+                                    <div class="">
+                                        <input type="text" id="amcDatePeriod" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="amcChart"
+                                    style="min-height: 350px; height: 350px; max-height: 350px; max-width: 100%;">
+                                </canvas>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+            </div>
+            <div class="row mt-3">
+                @if (checkRights('USER_SERVICE_ROLE_VIEW') || checkRights('USER_SERVICE_ROLE_VIEWONLY'))
+                    <div class="col-md-6">
+                        <div class="card h-100">
+                            <div class="card-header">
+                                <h5 class="card-title">Service Chart</h5>
+                                <div class="card-tools">
+                                    <div class="">
+                                        <input type="text" id="serviceDatePeriod" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="serviceChart"
+                                    style="min-height: 350px; height: 350px; max-height: 350px; max-width: 100%;">
+                                </canvas>
                             </div>
                         </div>
                     </div>
@@ -304,12 +344,34 @@
                 startDate: moment(),
                 endDate: moment()
             });
+            $('#amcDatePeriod').daterangepicker({
+                timePicker: false,
+                timePicker24Hour: true,
+                timePickerIncrement: 1,
+                locale: {
+                    format: 'DD-MM-YYYY'
+                },
+                startDate: moment().startOf('month'),
+                endDate: moment().endOf('month')
+            });
+            $('#serviceDatePeriod').daterangepicker({
+                timePicker: false,
+                timePicker24Hour: true,
+                timePickerIncrement: 1,
+                locale: {
+                    format: 'DD-MM-YYYY'
+                },
+                startDate: moment().startOf('month'),
+                endDate: moment().endOf('month')
+            });
             inquiryChart();
             orderChart();
             leadChart();
+            amcChart();
+            serviceChart();
         });
 
-     
+
 
         $(document).on('input', '#mobileNumber', function() {
             this.value = this.value.replace(/\D/g, '');
@@ -362,7 +424,8 @@
         });
         $(document).on('change', '#orderStatusId', function() {
             orderChart();
-        }); $(document).on('change', '#salesPersonId', function() {
+        });
+        $(document).on('change', '#salesPersonId', function() {
             leadChart();
         });
 
@@ -377,9 +440,19 @@
             leadChart()
         });
 
+        $('#amcDatePeriod').on('apply.daterangepicker', function(ev, picker) {
+            amcChart()
+        });
+
+        $('#serviceDatePeriod').on('apply.daterangepicker', function(ev, picker) {
+            serviceChart()
+        });
+
         let inquiryChatInstance = null;
         let orderChatInstance = null;
         let leadChatInstance = null;
+        let amcChatInstance = null;
+        let serviceChatInstance = null;
 
         function inquiryChart() {
             var statusId = $('#statusId').val();
@@ -514,6 +587,88 @@
                         }
                     });
 
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error fetching chart data:", error);
+                }
+            });
+        }
+
+        function amcChart() {
+            var startDate = $('#amcDatePeriod').data('daterangepicker').startDate.format('YYYY-MM-DD');
+            var endDate = $('#amcDatePeriod').data('daterangepicker').endDate.format('YYYY-MM-DD');
+
+            $.ajax({
+                url: "{{ route('get-amc-chart') }}",
+                method: 'GET',
+                data: {
+                    startDate: startDate,
+                    endDate: endDate,
+                },
+                success: function(response) {
+                    const amcChartData = {
+                        labels: response.labels,
+                        datasets: [{
+                            data: response.data,
+                            backgroundColor: ['#00c0ef', '#3c8dbc'],
+                        }]
+                    };
+
+                    const ctx1 = $('#amcChart').get(0).getContext('2d');
+                    
+                    if (amcChatInstance) {
+                        amcChatInstance.destroy();
+                    }
+
+                    amcChatInstance = new Chart(ctx1, {
+                        type: 'pie',
+                        data: amcChartData,
+                        options: {
+                            maintainAspectRatio: false,
+                            responsive: true,
+                        }
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error fetching chart data:", error);
+                }
+            });
+        }
+
+        function serviceChart() {
+            var startDate = $('#serviceDatePeriod').data('daterangepicker').startDate.format('YYYY-MM-DD');
+            var endDate = $('#serviceDatePeriod').data('daterangepicker').endDate.format('YYYY-MM-DD');
+
+            $.ajax({
+                url: "{{ route('get-service-chart') }}",
+                method: 'GET',
+                data: {
+                    startDate: startDate,
+                    endDate: endDate,
+                },
+                success: function(response) {
+                    const serviceChartData = {
+                        labels: response.labels,
+                        datasets: [{
+                            data: response.data,
+                            backgroundColor: ['#00c0ef', '#3c8dbc', '#f56954'],
+                        }]
+                    };
+
+                    const ctx1 = $('#serviceChart').get(0).getContext('2d');
+
+                    if (serviceChatInstance) {
+                        serviceChatInstance.destroy();
+                    }
+
+                    serviceChatInstance = new Chart(ctx1, {
+                        type: 'pie',
+                        data: serviceChartData,
+                        options: {
+                            maintainAspectRatio: false,
+                            responsive: true,
+                        }
+                    });
                 },
                 error: function(xhr, status, error) {
                     console.error("Error fetching chart data:", error);

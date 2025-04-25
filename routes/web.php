@@ -58,12 +58,22 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('get-history/{type_id?}', [OrdersController::class, 'getHistory'])->name('orders.get-history');
 
+    Route::get('/amc/pdf/{id}', [AmcMasterController::class, 'amcPdf'])->name('amc.download');
+
     //amc
     Route::resource('amc-master', AmcMasterController::class);
     Route::get('get-amc-package-master', [AmcMasterController::class, 'getAmcPackageMaster'])->name('amc-master.get-amc-package-master');
     Route::get('amc-master/renew/{amc_id}', [AmcMasterController::class, 'renew'])->name('amc-master.renew');
+
+    Route::get('get-amc-chart', [DashboardController::class, 'amcChart'])->name('get-amc-chart');
+    Route::get('get-service-chart', [DashboardController::class, 'serviceChart'])->name('get-service-chart');
+
+    Route::post('change-amc-status', [AmcMasterController::class, 'changeStatus'])->name('amc.change-status');
+
+    Route::post('export-amc', [AmcMasterController::class, 'export'])->name('user.amc.excel.export');
+
     Route::post('amc-master/renew-handel', [AmcMasterController::class, 'renewHandel'])->name('amc-master.renew-handel');
-    
+
    // Route::resource('amc-master-service', ServiceController::class);
     Route::get('amc-master-service', [ServiceController::class, 'index'])->name('amc-master-service.index');
     Route::get('amc-master-service/service', [ServiceController::class, 'addService'])->name('amc-master-service.service');

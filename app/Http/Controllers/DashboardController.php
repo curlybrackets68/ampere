@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Exports\InquiryDetailsExport;
+use App\Models\AmcMaster;
 use App\Models\InquiryDetails;
 use App\Models\Lead;
 use App\Models\Order;
+use App\Models\ServiceDetail;
 use App\Models\SystemLogs;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -63,7 +65,7 @@ class DashboardController
         $salesman = User::pluck('user_name', 'id');
 
 
-        return view('dashboard')->with(compact('pendingInquiry', 'completeInquiry', 'rejectedInquiry', 'confirmInquiry', 'workshopInquiry', 'totalOrdersPending', 'totalOrdersOrdered', 'totalOrdersReceived', 'totalOrdersCancelled', 'totalOrdersFitment', 'serviceType', 'inquiryStatusArrayData','orderStatusArrayData','salesman'));
+        return view('dashboard')->with(compact('pendingInquiry', 'completeInquiry', 'rejectedInquiry', 'confirmInquiry', 'workshopInquiry', 'totalOrdersPending', 'totalOrdersOrdered', 'totalOrdersReceived', 'totalOrdersCancelled', 'totalOrdersFitment', 'serviceType', 'inquiryStatusArrayData', 'orderStatusArrayData', 'salesman'));
     }
 
     public function inquiryDetails(Request $request)
@@ -107,7 +109,7 @@ class DashboardController
                         $class = 'primary';
                     }
                     $checkEditRights = '';
-                    if(checkRights('USER_INQUIRY_ROLE_EDIT')){
+                    if (checkRights('USER_INQUIRY_ROLE_EDIT')) {
                         $checkEditRights = ' change-status ';
                     }
                     // $html = '<span class="badge text-bg-' . $class . '">' . $this->getArrayNameById($this->statusArray, $row->status_id) . '</span>';
@@ -118,7 +120,7 @@ class DashboardController
                     }
                     if ($row->status_id == '4') {
                         $html .= '<br>
-                        <a class="link-primary '.$checkEditRights.'" data-id="' . $row->id . '" style="cursor: pointer;">' . $this->formatDateTime('d M, Y h:i A', $row->confirm_date) . '</a>';
+                        <a class="link-primary ' . $checkEditRights . '" data-id="' . $row->id . '" style="cursor: pointer;">' . $this->formatDateTime('d M, Y h:i A', $row->confirm_date) . '</a>';
                     }
                     return $html;
                 })
@@ -143,7 +145,6 @@ class DashboardController
                     } else {
                         return '';
                     }
-
                 })
                 ->rawColumns(['display_status', 'action', 'display_inquiry_date', 'branch_name', 'service_type'])
                 ->make(true);
@@ -203,7 +204,6 @@ class DashboardController
         } else {
             return response()->json(['code' => 0, 'message' => 'Failed to update status']);
         }
-
     }
 
     public function export(Request $request)
@@ -232,7 +232,6 @@ class DashboardController
             'created_by' => 1,
         ]);
         return response()->json(['code' => 1, 'message' => 'Message sent successfully']);
-
     }
 
     public function getInquiryChart(Request $request)
@@ -266,7 +265,7 @@ class DashboardController
         $values = [];
 
         foreach ($data as $row) {
-            $labels[] = $this->getArrayNameById($this->statusArray,$row->status_id); // Adjust accordingly
+            $labels[] = $this->getArrayNameById($this->statusArray, $row->status_id); // Adjust accordingly
             $values[] = $row->total;
         }
 
@@ -303,7 +302,7 @@ class DashboardController
         $values = [];
 
         foreach ($data as $row) {
-            $labels[] = $this->getArrayNameById($this->statusArray,$row->status_id); // Adjust accordingly
+            $labels[] = $this->getArrayNameById($this->statusArray, $row->status_id); // Adjust accordingly
             $values[] = $row->total;
         }
 
@@ -333,7 +332,7 @@ class DashboardController
             $query->whereBetween(DB::raw('DATE(created_at)'), [$start, $end]);
         }
 
-            $data = $query->selectRaw('salesman, COUNT(*) as total')
+        $data = $query->selectRaw('salesman, COUNT(*) as total')
             ->groupBy('salesman')
             ->get();
 
@@ -346,7 +345,7 @@ class DashboardController
             if ($nameQuery) {
                 $salesPersonName = $nameQuery->user_name;
             }
-            $labels[] =$salesPersonName;
+            $labels[] = $salesPersonName;
             $values[] = $row->total;
         }
 
@@ -356,4 +355,57 @@ class DashboardController
         ]);
     }
 
+    public function amcChart(Request $request)
+    {
+        $startDate = $request->startDate;
+        $endDate = $request->endDate;
+
+        $start = $startDate ? date('Y-m-d', strtotime(str_replace('-', '/', $startDate))) : null;
+        $end   = $endDate ? date('Y-m-d', strtotime(str_replace('-', '/', $endDate))) : null;
+
+        $totalQuery = AmcMaster::query();
+        if ($start && $end) {
+            $totalQuery->whereBetween(DB::raw('DATE(created_at)'), [$start, $end]);
+        }
+        $total = $totalQuery->where('status', 10)->where('renew_status', 12)->count();
+
+        $dueQuery = AmcMaster::query();
+        if ($start && $end) {
+            $dueQuery->whereBetween(DB::raw('DATE(amc_end_date)'), [$start, $end]);
+        }
+        $due = $dueQuery->where('status', 10)->where('renew_status', 12)->count();
+
+        return response()->json([
+            'labels' => ['Total AMC', 'Due AMC'],
+            'data'   => [$total, $due],
+        ]);
+    }
+
+    public function serviceChart(Request $request)
+    {
+        $startDate = $request->startDate;
+        $endDate = $request->endDate;
+
+        $start = $startDate ? date('Y-m-d', strtotime(str_replace('-', '/', $startDate))) : null;
+        $end   = $endDate ? date('Y-m-d', strtotime(str_replace('-', '/', $endDate))) : null;
+
+        $totalQuery = ServiceDetail::query();
+        if ($start && $end) {
+            $totalQuery->whereBetween(DB::raw('DATE(service_date)'), [$start, $end]);
+        }
+        $total = $totalQuery->count();
+
+        $dueQuery = ServiceDetail::query();
+        if ($start && $end) {
+            $dueQuery->whereBetween(DB::raw('DATE(service_date)'), [$start, $end]);
+        }
+        $due = $dueQuery->where('status', 1)->count();
+
+        $completed = $totalQuery->where('status', '2')->count();
+
+        return response()->json([
+            'labels' => ['Total Service', 'Completed Service', 'Due Service'],
+            'data'   => [$total, $completed, $due],
+        ]);
+    }
 }

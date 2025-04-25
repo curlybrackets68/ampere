@@ -64,6 +64,7 @@ class AdminController extends Controller
                 ->addColumn('action', function ($row) {
                     return '<button class="btn btn-sm btn-primary edit-user" data-id="' . $row->id . '">Edit</button>
                         <a href="' . route('admin.rights', ['id' => $row->id]) . '" class="btn btn-sm btn-success">Assign</a>
+                        <button class="btn btn-sm btn-danger delete-user" data-id="' . $row->id . '">Delete</button>
                     ';
                 })
                 ->make(true);
@@ -150,5 +151,17 @@ class AdminController extends Controller
         }
 
         return redirect()->route('admin.users')->withSuccess("Rights Assigned Successfully");
+    }
+
+    public function deleteUser(Request $request)
+    {
+        $user = User::find($request->id);
+
+        if ($user) {
+            $user->delete();
+            return response()->json(['success' => true, 'msg' => 'User has been deleted.']);
+        }
+
+        return response()->json(['success' => false, 'msg' => 'User not found']);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\AmcExport;
 use App\Models\AmcMaster;
 use App\Models\AmcPackageMaster;
 use App\Models\LeadSource;
@@ -9,9 +10,11 @@ use App\Models\ServiceDetail;
 use App\Models\SystemLogs;
 use App\Models\User;
 use App\Models\Vehicle;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
 
 class AmcMasterController extends Controller
@@ -64,7 +67,11 @@ class AmcMasterController extends Controller
                         }
                         $html .= '<a href="' . route('amc-master.renew', $row->id) . '" class="dropdown-item">Renew</a>';
                     }
-                    $html .= '<a href="#" class="dropdown-item">History</a>';
+                    $html .= '<a href="' . route('amc-master.edit', $row->id) . '" class="dropdown-item">View</a>';
+                    $html .= '<a href="' . route('amc.download', $row->id) . '" class="dropdown-item" target="_blank">PDF</a>';
+                    if (Carbon::parse($row->amc_end_date)->isFuture()) {
+                        $html .= '<a href="javascript:void()" class="dropdown-item change-status" data-id="' . $row->id . '" data-status="' . $row->status . '">Status</a>';
+                    }
                     $html .= '</div>';
                     $html .= '</div>';
                     return $html;
@@ -336,5 +343,49 @@ class AmcMasterController extends Controller
             ]);
         }
         return redirect()->route('amc-master.index')->with('success', 'AMC Master Renew successfully!');
+    }
+
+    public function amcPdf($id)
+    {
+        $query = AmcMaster::with('services')->find($id);
+        if ($query) {
+            $data = $query;
+        }
+        $pdf = Pdf::loadView('pdf.amc-pdf', ['amc' => $data]);
+
+        return $pdf->stream('amc.pdf');
+    }
+
+    function changeStatus(Request $request)
+    {
+        $amcId = $request->amcId;
+        $statusId = $request->statusId;
+        $statusRemark = $request->statusRemark;
+
+        $save = AmcMaster::where('id', $amcId)->update(['status' => $statusId, 'status_remark' => $statusRemark ?? '']);
+        if ($save) {
+            SystemLogs::create([
+                'type' => '5',
+                'type_id' => $amcId,
+                'remark' => 'Status changed to ' . $this->getArrayNameById($this->statusArray, $statusId),
+                'action_id' => 3,
+                'created_by' => auth()->id(),
+            ]);
+            return response()->json(['code' => 1, 'message' => 'Status updated successfully']);
+        } else {
+            return response()->json(['code' => 0, 'message' => 'Failed to update status']);
+        }
+    }
+
+    public function export(Request $request)
+    {
+        try {
+            $exportStartDate = $request->input('exportStartDate');
+            $exportEndDate = $request->input('exportEndDate');
+
+            return Excel::download(new AmcExport($exportStartDate, $exportEndDate), 'amc.xlsx');
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 }

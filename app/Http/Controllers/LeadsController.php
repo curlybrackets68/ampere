@@ -52,21 +52,21 @@ class LeadsController extends Controller
             }
 
 
-            if (checkRights('USER_LEAD_ROLE_VIEW') && !checkRights('USER_LEAD_ROLE_VIEW_ALL')){
+            if (checkRights('USER_LEAD_ROLE_VIEW') && !checkRights('USER_LEAD_ROLE_VIEW_ALL')) {
                 $inquiry = $inquiry->where('created_by', Auth::id());
             }
 
             return DataTables::of($inquiry)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
-                    if (checkRights('USER_LEAD_ROLE_EDIT')){
-                        return '<a href="' . route('leads.edit', $row->id) . '" class="btn btn-sm btn-primary">Edit</a>';
-                    }else{
-                        return '';
+                    $html = '';
+                    if (checkRights('USER_LEAD_ROLE_EDIT')) {
+                        $html .= '<a href="' . route('leads.edit', $row->id) . '" class="btn btn-sm btn-primary me-2">Edit</a>';
+                        $html .= '<a href="' . route('amc.download', $row->id) . '" class="btn btn-sm btn-primary" target="_blank">PDF</a>';
                     }
+                    return $html;
                 })
                 ->make(true);
-
         }
         return view('leads-list')->with(compact('leadSource', 'salesman'));
     }
@@ -80,7 +80,7 @@ class LeadsController extends Controller
         $salesman = User::pluck('user_name', 'id');
         $leadSource = LeadSource::pluck('name', 'id');
         $authId = auth()->id();
-        return view('add-update-leads')->with(compact('leadSource', 'vehicle', 'salesman','authId'));
+        return view('add-update-leads')->with(compact('leadSource', 'vehicle', 'salesman', 'authId'));
     }
 
     /**
@@ -147,7 +147,7 @@ class LeadsController extends Controller
         $salesman = User::pluck('user_name', 'id');
         $leadSource = LeadSource::pluck('name', 'id');
         $authId = auth()->id();
-        return view('add-update-leads')->with(compact('lead', 'leadSource', 'vehicle', 'salesman','authId'));
+        return view('add-update-leads')->with(compact('lead', 'leadSource', 'vehicle', 'salesman', 'authId'));
     }
 
     /**
@@ -235,6 +235,25 @@ class LeadsController extends Controller
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
+
+    // public function export(Request $request)
+    // {
+    //     try {
+    //         ExportLeadsToExcel::dispatch([
+    //             'startDate' => $request->input('exportStartDate'),
+    //             'endDate' => $request->input('exportEndDate'),
+    //             'salesmanId' => $request->input('exportSalesmanId'),
+    //             'leadSourceId' => $request->input('exportLeadSourceId'),
+    //             'mobileNumber' => $request->input('exportMobileNumber'),
+    //             'customerName' => $request->input('exportCustomerName'),
+    //             'userId' => auth()->id(),
+    //         ]);
+
+    //         return response()->json(['success' => 'Export started. You’ll be notified once it’s ready.']);
+    //     } catch (\Exception $e) {
+    //         return response()->json(['error' => $e->getMessage()], 500);
+    //     }
+    // }
 
     public function salesmanIndex(Request $request)
     {

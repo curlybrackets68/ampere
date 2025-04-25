@@ -18,16 +18,12 @@
                         <div class="card-header">
                             <h5 class="card-title">AMC Master</h5>
                             <div class="d-flex justify-content-end">
-                                <a href="javascript:void(0);" class="btn btn-primary btn-sm me-2 d-none" id="exportExcel">
-                                    <form action="{{ route('user.leads.excel.export') }}" method="POST"
+                                <a href="javascript:void(0);" class="btn btn-primary btn-sm me-2" id="exportExcel">
+                                    <form action="{{ route('user.amc.excel.export') }}" method="POST"
                                         id="exportExcelForm">
                                         @csrf
                                         {{ Form::hidden('exportStartDate', null, ['id' => 'exportStartDate']) }}
                                         {{ Form::hidden('exportEndDate', null, ['id' => 'exportEndDate']) }}
-                                        {{ Form::hidden('exportSalesmanId', null, ['id' => 'exportSalesmanId']) }}
-                                        {{ Form::hidden('exportLeadSourceId', null, ['id' => 'exportLeadSourceId']) }}
-                                        {{ Form::hidden('exportMobileNumber', null, ['id' => 'exportMobileNumber']) }}
-                                        {{ Form::hidden('exportCustomerName', null, ['id' => 'exportCustomerName']) }}
 
                                         <i class="bi bi-cloud-download me-1 align-middle me-1"></i> Export
                                     </form>
@@ -62,6 +58,35 @@
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="statusModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true"
+        data-bs-backdrop="static">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Status</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <input type="hidden" id="statusAmcId">
+                            <label>Status</label>
+                            <select class="form-select" id="statusId">
+                            </select>
+                        </div>
+                        <div class="col-md-12 mt-3" id="remarkDiv">
+                            <label>Remark</label>
+                            <textarea rows="3" id="statusRemark" class="form-control"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="changeStatusBtn">Save changes</button>
                 </div>
             </div>
         </div>
@@ -185,6 +210,61 @@
         });
         $(document).on('click', '#exportExcel', function() {
             $('#exportExcelForm').submit();
+        });
+
+        $(document).on('click', '.change-status', function() {
+            let amcId = $(this).data('id');
+            $('#statusAmcId').val(amcId);
+            let status = $(this).data('status');
+            let html = '<option value="">Select</option>';
+            if (status == '10') {
+                html += '<option value="11">Deactive</option>';
+            } else if (status == '11') {
+                html += '<option value="10">Active</option>';
+            }
+            $('#statusId').html(html);
+            $('#statusRemark').val('');
+            $('#statusModal').modal('show');
+        });
+
+        $(document).on('click', '#changeStatusBtn', function() {
+            let amcId = $('#statusAmcId').val();
+            let statusRemark = $('#statusRemark').val();
+            let statusId = $('#statusId').val();
+
+            if (statusId == '') {
+                $('#statusId').after('<small class="error-message text-danger">Please select a status</small>');
+                return false;
+            }
+            $.ajax({
+                url: '{{ route('amc.change-status') }}',
+                type: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    amcId: amcId,
+                    statusId: statusId,
+                    statusRemark: statusRemark,
+                },
+                beforeSend: function() {
+                    loaderButton('changeStatusBtn', true);
+                },
+                complete: function() {
+                    loaderButton('changeStatusBtn', false);
+                },
+                success: async function(response) {
+                    if (response.code == '1') {
+                        $('#statusModal').modal('hide');
+                        await amcMasterList();
+                        showToast('success', response.message);
+                    } else {
+                        showToast('error', response.message);
+                    }
+                }
+            });
+        });
+
+        $(document).on('keyup change', 'input, textarea, select', function() {
+            $(this).siblings('.error-message').remove();
         });
     </script>
 @endsection

@@ -2,13 +2,15 @@
 
 namespace App\Models;
 
+use App\Http\Controllers\CommonFunctions;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 
 class AmcMaster extends Model
 {
-    use HasFactory;
+    use HasFactory, CommonFunctions;
     protected static function boot()
     {
         parent::boot();
@@ -46,6 +48,15 @@ class AmcMaster extends Model
         'modified_by',
     ];
 
+    protected $appends = [
+        'display_amc_start_date',
+        'display_amc_end_date',
+        'vehicle_name',
+        'amc_package_type_name',
+        'vehicle_type_name',
+        'payment_type_name',
+        'status_name'
+    ];
     /**
      * @param string[] $fillable
      */
@@ -54,4 +65,55 @@ class AmcMaster extends Model
         $this->fillable = $fillable;
     }
 
+    function services()
+    {
+        return $this->hasMany(ServiceDetail::class, 'amc_id', 'id');
+    }
+
+    function getDisplayAmcStartDateAttribute()
+    {
+        return Carbon::parse($this->amc_start_date)->format('d-M-Y');
+    }
+
+    function getDisplayAmcEndDateAttribute()
+    {
+        return Carbon::parse($this->amc_end_date)->format('d-M-Y');
+    }
+
+    function getVehicleNameAttribute()
+    {
+        $name = '';
+        $query = Vehicle::find($this->vehicle_master_id, ['name']);
+        if ($query) {
+            $name = $query->name;
+        }
+        return $name;
+    }
+
+    function getAmcPackageTypeNameAttribute()
+    {
+        $name = '';
+        $query = AmcPackageMaster::find($this->amc_package_type_id);
+        if ($query) {
+            $name = "$query->service_count services - $query->duration duration $query->time_period months";
+        }
+        return $name;
+    }
+
+    function getVehicleTypeNameAttribute()
+    {
+        $name = $this->vehicleTypeArray[$this->vehicle_type];
+        return $name;
+    }
+
+    function getPaymentTypeNameAttribute()
+    {
+        $name = $this->paymentTypeArray[$this->payment_type];
+        return $name;
+    }
+
+    function getStatusNameAttribute()
+    {
+        return $this->statusArray[$this->status];
+    }
 }
