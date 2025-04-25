@@ -193,7 +193,7 @@ trait CommonFunctions
             "url" => $file,
             "filename" => "brochure.pdf"
         ];
-        $response = Http::post($url, $data);
+        $response = Http::withOptions(['verify' => false])->post($url, $data);
         if ($response->successful()) {
             $responseDecode = $response->json();
             if ($responseDecode['ErrorCode'] === '000') {
