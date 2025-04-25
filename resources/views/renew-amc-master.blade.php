@@ -90,7 +90,7 @@
                                             <label>Vehicle Number</label>
                                             <input type="text" class="form-control" id="vehicle_number"
                                                 placeholder="Enter Vehicle Number" name="vehicle_number"
-                                                value="{{ old('name', $amcMaster->vehicle_number ?? '') }}">
+                                                value="{{ old('name', $amcMaster->vehicle_number ?? '') }}" readonly>
                                         </div>
                                     </div>
                                     
@@ -99,7 +99,7 @@
                                             <label>Contact Number</label>
                                             <input type="text" class="form-control" id="contact_number"
                                                 placeholder="Enter Contact Number" name="contact_number"
-                                                value="{{ old('contact_number', $amcMaster->contact_number ?? '') }}">
+                                                value="{{ old('contact_number', $amcMaster->contact_number ?? '') }}" >
                                         </div>
                                     </div>
                                     <div class="col-md-3">
@@ -114,7 +114,7 @@
                                         <div class="form-group">
                                             <label>Address</label>
                                             <textarea class="form-control" rows="2"  id="contact_address"
-                                            placeholder="Enter Address" name="contact_address"></textarea>
+                                            placeholder="Enter Address" name="contact_address">{{$amcMaster->contact_address}}</textarea>
                                            
                                         </div>
                                     </div>
@@ -194,7 +194,11 @@
     <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
     <script>
          $(document).ready(async function() {
-           
+            let amcMaster = @json($amcMaster);
+            if(amcMaster){
+                $('#vehicle_type').val(2).trigger('change');
+            }
+            console.log(amcMaster)
         });
         $(function() {
             flatpickr("#amc_start_date", {

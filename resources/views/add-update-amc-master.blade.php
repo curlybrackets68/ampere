@@ -115,7 +115,7 @@
                                         <div class="form-group">
                                             <label>Address</label>
                                             <textarea class="form-control" rows="2"  id="contact_address"
-                                            placeholder="Enter Address" name="contact_address"></textarea>
+                                            placeholder="Enter Address" name="contact_address">{{$amcMaster->contact_address}}</textarea>
                                            
                                         </div>
                                     </div>
@@ -194,6 +194,13 @@
     <script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
     <script>
+          $(document).ready(async function() {
+            let amcMaster = @json($amcMaster);
+            if(amcMaster){
+                $('#vehicle_type').trigger('change');
+            }
+            console.log(amcMaster)
+        });
         $(function() {
             flatpickr("#amc_start_date", {
                 dateFormat: "d-m-Y", // dd-mm-yyyy format

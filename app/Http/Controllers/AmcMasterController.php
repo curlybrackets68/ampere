@@ -40,7 +40,7 @@ class AmcMasterController extends Controller
                 })
                 ->addColumn('vehicle_model', function ($row) {
                     $vehicleName  = Vehicle::find($row->vehicle_master_id)->first()->name??'';
-                    return $this->getArrayNameById($this->statusArray, $row->status).'<br>'.$vehicleName;
+                    return $this->getArrayNameById($this->vehicleTypeArray, $row->vehicle_type).'<br>'.$vehicleName;
                 })->addColumn('vehicle_data', function ($row) {
                     return $row->chassis_number . "<br>" . $row->vehicle_number;
                 })
