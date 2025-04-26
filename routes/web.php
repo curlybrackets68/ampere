@@ -74,7 +74,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::post('amc-master/renew-handel', [AmcMasterController::class, 'renewHandel'])->name('amc-master.renew-handel');
 
-   // Route::resource('amc-master-service', ServiceController::class);
+   
     Route::get('amc-master-service', [ServiceController::class, 'index'])->name('amc-master-service.index');
     Route::get('amc-master-service/service', [ServiceController::class, 'addService'])->name('amc-master-service.service');
     Route::get('amc-master-service/get-service-details-by-chassis-number', [ServiceController::class, 'getServiceDetailsByChassisNumber'])->name('amc-master-service.get-service-details-by-chassis-number');

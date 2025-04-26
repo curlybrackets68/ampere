@@ -14,7 +14,7 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12">
-                    <form name="amcMasterForm" action="{{ route('amc-master.store') }}" enctype="multipart/form-data">
+                    <form name="amcMasterForm" action="{{ route('amc-master-service.handle') }}" enctype="multipart/form-data"
                         method="post">
                         @csrf
 
@@ -57,10 +57,11 @@
                                 </div>
 
                                 <div class="row mt-2">
-
+                                    <input type="hidden" value="" id="amc_id" name="amc_id" />
+                                    <input type="hidden" value="" id="service_id" name="service_id" />
                                     <div class="col-md-3">
                                         <label>Status</label>
-                                        <select class="form-select" id="statusId">
+                                        <select class="form-select" id="status_id" name="status_id">
                                             <option value="2">Completed</option>
                                         </select>
                                     </div>
@@ -139,16 +140,41 @@
                 method: 'GET',
                 data: {
                     chassis_number: chassis_number,
-
                 },
                 success: function(response) {
                     if (response.code == '1') {
-                        let serveiceData = response.data.serveiceData;
-                        let amc_master_details = serveiceData.amc_master_details;
-                        $('#amcContractId').html(amc_master_details.amc_display_number)
-                        $('#amcCustomerName').html(amc_master_details.customer_name)
-                        $('#amcCustomerNumber').html(amc_master_details.contact_number)
-                        console.log(amc_master_details.amc_display_number)
+
+                        
+                        let serviceFlag = response.data.serviceFlag;
+                        let serveiceDataList = response.data.serveiceDataList;
+
+
+                        if (serviceFlag) {
+                            let serveiceData = response.data.serveiceData;
+                            let amc_master_details = serveiceData.amc_master_details;
+                            $('#amcContractId').html(amc_master_details.amc_display_number);
+                            $('#amcCustomerName').html(amc_master_details.customer_name);
+                            $('#amcCustomerNumber').html(amc_master_details.contact_number);
+                            $('#amc_id').val(amc_master_details.id);
+                            $('#service_id').val(serveiceData.id);
+                         
+
+                        } else {
+                            showToast('error', 'Sorry no pending service');
+                        }
+                        $('#amcMasterSeriveTable tbody').html('');
+                        $.each(serveiceDataList, function(index, item) {
+                            $('#amcMasterSeriveTable tbody').append(`
+                                <tr>
+                                    <td>${index + 1}</td> 
+                                    <td>${item.display_service_date}</td>
+                                    <td>${item.amc_master_details.customer_name}</td>
+                                    <td>${item.service_remark ?? ''}</td>
+                                    <td>${item.attachment ?? ''}</td>
+                                    <td>${item.attachment ?? ''}</td>
+                                </tr>
+                                `);
+                        });
                     }
 
                 },

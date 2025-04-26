@@ -133,7 +133,7 @@ class AmcMasterController extends Controller
                         $serviceData = [
                             'amc_id' => $amcMasterId,
                             'service_date' => $serviceDate->format('Y-m-d H:i:s'),
-                            'created_by' => auth()->id(),
+                            'created_by' => Auth::id(),
                         ];
 
                         ServiceDetail::create($serviceData);
@@ -155,10 +155,12 @@ class AmcMasterController extends Controller
                     $whatsAppMsg .= "You can now enjoy hassle-free service and priority support under your AMC plan. \n \n";
                     $whatsAppMsg .= "Thank you for choosing Ampere! \n";
                     $whatsAppMsg .= "For queries, contact us at +91 90233 42463.";
-                    $this->sendWhatsAppMessage($amcMaster->contact_number, $whatsAppMsg);
+                    $pdfUrl = $this->generateAndStorePdf('pdf.amc-pdf', ['amc' => $amcMaster], 'amc_pdfs');
+                    
+                    //$this->sendWhatsAppMessage($amcMaster->contact_number, $whatsAppMsg);
+                    // $this->sendWhatsAppMessageWithFile($amcMaster->contact_number, $whatsAppMsg, $pdfUrl);
                 }
 
-                // $this->sendWhatsAppMessageWithFile($request->mobile, $whatsAppMsg, $pdfUrl);
             }
             SystemLogs::create([
                 'inquiry_id' => 0,
@@ -166,7 +168,7 @@ class AmcMasterController extends Controller
                 'type_id' => $amcMasterId,
                 'remark'     => 'Add AMC Master ',
                 'action_id'  => 1,
-                'created_by' => auth()->id(),
+                'created_by' => Auth::id(),
             ]);
         }
 
@@ -212,7 +214,7 @@ class AmcMasterController extends Controller
                 $amcMaster->update($data);
             }
             ServiceDetail::where('amc_id', $id)
-                ->update(['deleted_by' => auth()->id()]);
+                ->update(['deleted_by' => Auth::id()]);
 
             ServiceDetail::where('amc_id', $id)->delete();
             $amcMasterId = $amcMaster->id;
@@ -240,7 +242,7 @@ class AmcMasterController extends Controller
                         $serviceData = [
                             'amc_id' => $amcMasterId,
                             'service_date' => $serviceDate->format('Y-m-d H:i:s'),
-                            'created_by' => auth()->id(),
+                            'created_by' => Auth::id(),
                         ];
 
                         ServiceDetail::create($serviceData);
@@ -253,7 +255,7 @@ class AmcMasterController extends Controller
                 'type_id' => $amcMasterId,
                 'remark'     => 'Update AMC Master ',
                 'action_id'  => 2,
-                'created_by' => auth()->id(),
+                'created_by' => Auth::id(),
             ]);
         }
         return redirect()->route('amc-master.index')->with('success', 'AMC Master Update successfully!');
@@ -326,7 +328,7 @@ class AmcMasterController extends Controller
                         $serviceData = [
                             'amc_id' => $amcMasterId,
                             'service_date' => $serviceDate->format('Y-m-d H:i:s'),
-                            'created_by' => auth()->id(),
+                            'created_by' => Auth::id(),
                         ];
 
                         ServiceDetail::create($serviceData);
@@ -339,7 +341,7 @@ class AmcMasterController extends Controller
                 'type_id' => $amcMasterId,
                 'remark'     => 'Rnew AMC Master ',
                 'action_id'  => 1,
-                'created_by' => auth()->id(),
+                'created_by' => Auth::id(),
             ]);
         }
         return redirect()->route('amc-master.index')->with('success', 'AMC Master Renew successfully!');
@@ -369,7 +371,7 @@ class AmcMasterController extends Controller
                 'type_id' => $amcId,
                 'remark' => 'Status changed to ' . $this->getArrayNameById($this->statusArray, $statusId),
                 'action_id' => 3,
-                'created_by' => auth()->id(),
+                'created_by' => Auth::id(),
             ]);
             return response()->json(['code' => 1, 'message' => 'Status updated successfully']);
         } else {
