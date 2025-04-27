@@ -38,6 +38,25 @@
                         <div class="card-body">
 
                             <div class="row mt-3">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Chassis Number</label>
+                                        <input type="text" class="form-control" id="chassis_number"
+                                            placeholder="Enter Chassis Number" name="chassis_number"
+                                            value="">
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Chassis Number</label>
+                                        <input type="text" class="form-control" id="chassis_number"
+                                            placeholder="Enter Chassis Number" name="chassis_number"
+                                            value="">
+                                    </div>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row mt-3">
                                 <table class="table table-bordered table-hover" style="width:100%" id="amcMasterTable">
                                     <thead>
                                         <tr>
