@@ -42,7 +42,12 @@ class AmcMasterController extends Controller
                     return $this->formatDateTime('d-m-Y', $row->amc_start_date) . "<br>" . $this->formatDateTime('d-m-Y', $row->amc_end_date);
                 })
                 ->addColumn('vehicle_model', function ($row) {
-                    $vehicleName  = Vehicle::find($row->vehicle_master_id)->first()->name ?? '';
+                    $vehicleName  = '';
+                    $query = Vehicle::find($row->vehicle_master_id);
+                    if ($query) {
+                        $vehicleName =  $query->name ?? '';
+                    }
+                    
                     return $this->getArrayNameById($this->vehicleTypeArray, $row->vehicle_type) . '<br>' . $vehicleName;
                 })->addColumn('vehicle_data', function ($row) {
                     return $row->chassis_number . "<br>" . $row->vehicle_number;
@@ -67,10 +72,10 @@ class AmcMasterController extends Controller
                         }
                         $html .= '<a href="' . route('amc-master.renew', $row->id) . '" class="dropdown-item">Renew</a>';
                     }
-                    $html .= '<a href="' . route('amc-master.edit', $row->id) . '" class="dropdown-item">View</a>';
+                    $html .= '<a href="javascript:void(0);" class="dropdown-item amc-view" data-id="' . $row->id . '">View</a>';
                     $html .= '<a href="' . route('amc.download', $row->id) . '" class="dropdown-item" target="_blank">PDF</a>';
                     if (Carbon::parse($row->amc_end_date)->isFuture()) {
-                        $html .= '<a href="javascript:void()" class="dropdown-item change-status" data-id="' . $row->id . '" data-status="' . $row->status . '">Status</a>';
+                        $html .= '<a href="javascript:void(0);" class="dropdown-item change-status" data-id="' . $row->id . '" data-status="' . $row->status . '">Status</a>';
                     }
                     $html .= '</div>';
                     $html .= '</div>';
@@ -156,11 +161,10 @@ class AmcMasterController extends Controller
                     $whatsAppMsg .= "Thank you for choosing Ampere! \n";
                     $whatsAppMsg .= "For queries, contact us at +91 90233 42463.";
                     $pdfUrl = $this->generateAndStorePdf('pdf.amc-pdf', ['amc' => $amcMaster], 'amc_pdfs');
-                    
+
                     //$this->sendWhatsAppMessage($amcMaster->contact_number, $whatsAppMsg);
                     // $this->sendWhatsAppMessageWithFile($amcMaster->contact_number, $whatsAppMsg, $pdfUrl);
                 }
-
             }
             SystemLogs::create([
                 'inquiry_id' => 0,
@@ -388,6 +392,33 @@ class AmcMasterController extends Controller
             return Excel::download(new AmcExport($exportStartDate, $exportEndDate), 'amc.xlsx');
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    function geAmcViewDetails(Request $request)
+    {
+        $amcId = $request->amcId;
+        $data = [];
+
+        $amcQuery = AmcMaster::find($amcId);
+        if ($amcQuery) {
+            $amcData = $amcQuery;
+
+            $serviceQuery = ServiceDetail::where('amc_id', $amcId)->get();
+
+            $amcDetailsQuery = AmcMaster::where('amc_reference_id', $amcId)->get();
+
+            $historyData = SystemLogs::where('type', '5')->where('type_id', $amcId)->get();
+            $data = [
+                'amc' => $amcData,
+                'amcDetail' => $amcDetailsQuery->isNotEmpty() ? $amcDetailsQuery : [],
+                'serviceDetail' => $serviceQuery->isNotEmpty() ? $serviceQuery : [],
+                'historyData' => $historyData->isNotEmpty() ? $historyData : [],
+            ];
+
+            return response()->json(['code' => '1', 'data' => $data]);
+        } else {
+            return response()->json(['code' => 0, 'message' => 'No Amc Details']);
         }
     }
 }

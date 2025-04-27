@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -21,7 +22,7 @@ class SystemLogs extends Model
         'updated_at'
     ];
 
-    protected $appends = ['created_by_name'];
+    protected $appends = ['created_by_name', 'display_created_at'];
 
 
     public function getCreatedByNameAttribute()
@@ -34,5 +35,10 @@ class SystemLogs extends Model
         }
 
         return $createdByName;
+    }
+
+    function getDisplayCreatedAtAttribute()
+    {
+        return Carbon::parse($this->created_at)->format('d-M-Y');
     }
 }

@@ -79,6 +79,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('amc-master-service/service', [ServiceController::class, 'addService'])->name('amc-master-service.service');
     Route::get('amc-master-service/get-service-details-by-chassis-number', [ServiceController::class, 'getServiceDetailsByChassisNumber'])->name('amc-master-service.get-service-details-by-chassis-number');
     Route::post('amc-master-service/service/handle', [ServiceController::class, 'addServiceHandel'])->name('amc-master-service.handle');
+
+    Route::post('amc-view-details', [AmcMasterController::class, 'geAmcViewDetails'])->name('amc-view-details');
 });
 
 
