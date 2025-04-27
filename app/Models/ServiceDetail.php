@@ -20,7 +20,7 @@ class ServiceDetail extends Model
         'status',
     ];
 
-    protected $appends = ['display_service_date', 'status_name','amc_master_details','attachment_url'];
+    protected $appends = ['display_service_date', 'status_name','amc_master_details','attachment_url','service_by'];
 
     function getDisplayServiceDateAttribute()
     {
@@ -33,7 +33,11 @@ class ServiceDetail extends Model
     }
     function getAttachmentUrlAttribute()
     {
-        return ;
+        return asset('assets/attachment/amc-master/' . $this->amc_id . '/service/'.$this->attachment);
+    }
+    function getServiceByAttribute()
+    {
+        return User::find($this->modified_by)->user_name??'';
     }
 
 

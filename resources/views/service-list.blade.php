@@ -35,7 +35,6 @@
                                 @if (checkRights('USER_AMC_ROLE_CREATE'))
                                     <a class="btn btn-info btn-sm" href="{{ route('amc-master-service.service') }}">
                                         <i class="bi bi-plus me-1 align-middle me-1"></i> Add Service</a>
-
                                 @endif
 
                             </div>
@@ -47,11 +46,8 @@
                                     <thead>
                                         <tr>
                                             <th style="text-align: left;">Sr. No</th>
-                                            <th style="text-align: left;">Customer Name</th>
-                                            <th style="text-align: left;">Customer Number</th>
-                                            <th style="text-align: left;">AMC Number</th>
-                                            <th style="text-align: left;">AMC Start Date</th>
-                                            <th style="text-align: left;">AMC End Date</th>
+                                            <th style="text-align: left;">Service Date</th>
+                                            <th style="text-align: left;">Service By</th>
                                             <th style="text-align: left;">Action</th>
                                         </tr>
                                     </thead>
@@ -129,7 +125,7 @@
                 destroy: true,
                 responsive: true,
                 ajax: {
-                    url: '{{ route('amc-master.index') }}',
+                    url: '{{ route('amc-master-service.index') }}',
                     data: filter
                 },
                 columns: [{
@@ -138,24 +134,12 @@
                         searchable: false
                     },
                     {
-                        data: 'customer_name',
-                        name: 'customer_name'
+                        data: 'service_date',
+                        name: 'service_date'
                     },
                     {
-                        data: 'contact_number',
-                        name: 'contact_number'
-                    },
-                    {
-                        data: 'amc_display_number',
-                        name: 'amc_display_number'
-                    },
-                    {
-                        data: 'display_amc_start_date',
-                        name: 'display_amc_start_date'
-                    },
-                    {
-                        data: 'display_amc_start_date',
-                        name: 'display_amc_start_date'
+                        data: 'service_by',
+                        name: 'service_by'
                     },
                     {
                         data: 'action',
