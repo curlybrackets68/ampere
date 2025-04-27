@@ -106,6 +106,8 @@ class ServiceController extends Controller
         $service_remark = $request->service_remark;
         $status_id = $request->status_id;
 
+        $amcMaster = AmcMaster::find($amc_id);
+
         $updateData['service_remark'] = $service_remark;
         $updateData['status'] = $status_id;
         $updateData['modified_by'] = Auth::id();
@@ -121,7 +123,10 @@ class ServiceController extends Controller
                 $updateData['attachment'] = $imageName;
             }
         }
+        
         ServiceDetail::where('id', $service_id)->update($updateData);
+
+        $serviceData = ServiceDetail::find($service_id)->first();
 
         SystemLogs::create([
             'inquiry_id' => 0,
@@ -131,6 +136,16 @@ class ServiceController extends Controller
             'action_id'  => 1,
             'created_by' => Auth::id(),
         ]);
+        $whatsAppMsg = "Hi $amcMaster->customer_name \n \n";
+
+        $whatsAppMsg .= "Your vehicle $amcMaster->vehicle_number has been successfully serviced under AMC Contract ID: amc_display_number-> \n";
+        $whatsAppMsg .= "Service Date: *$serviceData->display_service_date* \n";
+        $whatsAppMsg .= "Next Service Due: *$serviceData->display_service_date* \n";
+        $whatsAppMsg .= "Next Service Due: Ampere Service Center, Ahmedabad \n";
+        $whatsAppMsg .= "Our team has completed all required checks and maintenance as per AMC guidelines. Your vehicle is now ready for delivery. \n \n";
+        $whatsAppMsg .= "For feedback or questions, feel free to reply to this message. \n";
+        $whatsAppMsg .= "Thank you for choosing Ampere! \n\n ";
+        $whatsAppMsg .= "Support: +91 90233 42463";
         return redirect()->route('amc-master-service.index')->with('success', 'Service Update successfully!');
     }
 }
