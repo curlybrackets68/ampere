@@ -48,3 +48,25 @@ function showToast(type, message, title = '') {
             break;
     }
 }
+
+async function apiCallPost(url, data, headers = {}) {
+    let response = await fetch(url, {
+        method: "POST",
+        headers: headers,
+        body: data,
+    });
+    if (response.ok) {
+        let result = await response.json();
+        return result;
+    } else {
+        if (response.status == "419") {
+            // window.location.reload();
+        } else if (response.status == "422") {
+            let result = await response.json();
+            return result;
+        } else {
+            dangerToast("Something went wrong!");
+        }
+        return false;
+    }
+}

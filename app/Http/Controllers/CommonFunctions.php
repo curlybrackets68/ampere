@@ -47,7 +47,7 @@ trait CommonFunctions
     protected $actionLogsArray = [
         "1" => 'Add',
         "2" => 'Edit',
-        "3" => 'change Status',
+        "3" => 'Change Status',
         "4" => 'Login',
         "5" => 'Logout',
     ];
