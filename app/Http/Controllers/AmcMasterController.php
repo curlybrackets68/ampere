@@ -26,8 +26,12 @@ class AmcMasterController extends Controller
     {
 
         if ($request->ajax()) {
-            $amcMasterList = AmcMaster::query()->select()->where('renew_status', $this->getArrayIdByName($this->statusArray, 'New'));
+            $amcMasterList = AmcMaster::query()->select();
 
+            if ($request->action_type != 'report') {
+                //default list 
+                $amcMasterList = $amcMasterList->where('renew_status', $this->getArrayIdByName($this->statusArray, 'New'));
+            }
             if (checkRights('USER_AMC_ROLE_VIEW') && !checkRights('USER_AMC_ROLE_VIEW_ALL')) {
                 $amcMasterList = $amcMasterList->where('created_by', Auth::id());
             }

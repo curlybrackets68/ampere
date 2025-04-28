@@ -257,6 +257,7 @@
                 contact_number: contact_number,
                 vehicle_type: vehicle_type,
                 vehicle_master_id: vehicle_master_id,
+                action_type:'report',
             };
 
             amcMasterList(filter);
@@ -630,12 +631,8 @@
             });
         }
         $(document).on('click', '#filterBtn', function() {
-
-
             $('#filter-form').toggleClass('d-none');
-            if (!$('#filter-form').hasClass('d-none')) {
-                amcMasterList()
-            }
+            amcMasterList()
         });
     </script>
 @endsection

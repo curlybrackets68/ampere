@@ -23,6 +23,22 @@ class ServiceController extends Controller
         if ($request->ajax()) {
             $amcMasterList = ServiceDetail::query()->where('status',2);
 
+            if (!empty($request->chassis_number)) {
+                $amcMasterList = $amcMasterList->where('chassis_number', $request->chassis_number);
+            }
+            if (!empty($request->vehicle_number)) {
+                $amcMasterList = $amcMasterList->where('vehicle_number', $request->vehicle_number);
+            }
+            if (!empty($request->contact_number)) {
+                $amcMasterList = $amcMasterList->where('contact_number', $request->contact_number);
+            }
+            if (!empty($request->vehicle_type)) {
+                $amcMasterList = $amcMasterList->where('vehicle_type', $request->vehicle_type);
+            }
+            if (!empty($request->vehicle_master_id)) {
+                $amcMasterList = $amcMasterList->where('vehicle_master_id', $request->vehicle_master_id);
+            }
+
             return DataTables::of($amcMasterList)
                 ->addIndexColumn()
 
@@ -70,7 +86,14 @@ class ServiceController extends Controller
                 ->rawColumns(['action', 'customer_details', 'contact_date', 'vehicle_data', 'display_status', 'vehicle_model'])
                 ->make(true);
         }
-        return view('service-list');
+        $vehicle = Vehicle::pluck('name', 'id');
+        $vehicleTypeArray = $this->vehicleTypeArray;
+        $serviceStatus = [
+            "1" => 'Pending',
+            "2" => 'Completed',
+        ];
+
+        return view('service-list')->with(compact('vehicle', 'vehicleTypeArray','serviceStatus'));
     }
 
     public function addService(Request $request)
