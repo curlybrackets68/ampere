@@ -295,6 +295,9 @@
 
             if (isValid) {
                 loaderButton('addUpdateAmcMaster', true);
+                
+                $('#vehicle_master_id').attr('disabled',false);
+                $('#vehicle_type').attr('disabled',false);
                 $('form[name="amcMasterForm"]').submit();
             }
         });
