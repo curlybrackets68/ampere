@@ -26,7 +26,7 @@ class AmcMasterController extends Controller
     {
 
         if ($request->ajax()) {
-            $amcMasterList = AmcMaster::query()->select();
+            $amcMasterList = AmcMaster::query()->select()->where('renew_status', $this->getArrayIdByName($this->statusArray, 'New'));
 
             if (checkRights('USER_AMC_ROLE_VIEW') && !checkRights('USER_AMC_ROLE_VIEW_ALL')) {
                 $amcMasterList = $amcMasterList->where('created_by', Auth::id());
@@ -111,6 +111,7 @@ class AmcMasterController extends Controller
         $data['amc_start_date'] = $this->formatDateTime('Y-m-d H:i:s', $request->amc_start_date);
         $data['amc_end_date'] = $this->formatDateTime('Y-m-d H:i:s', $request->amc_end_date);
         $data['renew_status'] = $this->getArrayIdByName($this->statusArray, 'New');
+        $data['amc_type'] = '2';// paid serive
         $amcMaster = AmcMaster::create($data);
         if ($amcMaster) {
             $amcMasterId = $amcMaster->id;
@@ -212,6 +213,7 @@ class AmcMasterController extends Controller
         $data['amc_start_date'] = $this->formatDateTime('Y-m-d H:i:s', $request->amc_start_date);
         $data['amc_end_date'] = $this->formatDateTime('Y-m-d H:i:s', $request->amc_end_date);
         $data['renew_status'] = $this->getArrayIdByName($this->statusArray, 'New');
+     
         $amcMaster = AmcMaster::find($id);
         if ($amcMaster) {
             if ($amcMaster) {
@@ -302,9 +304,11 @@ class AmcMasterController extends Controller
     public function renewHandel(Request $request)
     {
         $data = $request->all();
+      
         $data['amc_start_date'] = $this->formatDateTime('Y-m-d H:i:s', $request->amc_start_date);
         $data['amc_end_date'] = $this->formatDateTime('Y-m-d H:i:s', $request->amc_end_date);
         $data['renew_status'] = $this->getArrayIdByName($this->statusArray, 'New');
+        $data['amc_type'] = '2';// paid serive
         $amcMaster = AmcMaster::create($data);
         if ($amcMaster) {
             $amcMasterId = $amcMaster->id;
@@ -339,12 +343,21 @@ class AmcMasterController extends Controller
                     }
                 }
             }
+            AmcMaster::where('id', $request->amc_reference_id)->update(['renew_status' => $this->getArrayIdByName($this->statusArray, 'Renew')]);
             SystemLogs::create([
                 'inquiry_id' => 0,
                 'type' => '5', // AMC master Module ID
+                'type_id' => $request->amc_reference_id,
+                'remark'     => 'Renew AMC Master ',
+                'action_id'  => $this->getArrayIdByName($this->actionLogsArray, 'Renew'),
+                'created_by' => Auth::id(),
+            ]);
+             SystemLogs::create([
+                'inquiry_id' => 0,
+                'type' => '5', // AMC master Module ID
                 'type_id' => $amcMasterId,
-                'remark'     => 'Rnew AMC Master ',
-                'action_id'  => 1,
+                'remark'     => 'Add New AMC Master ',
+                'action_id'  => $this->getArrayIdByName($this->actionLogsArray, '1'),
                 'created_by' => Auth::id(),
             ]);
         }

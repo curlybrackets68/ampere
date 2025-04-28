@@ -50,6 +50,7 @@ trait CommonFunctions
         "3" => 'Change Status',
         "4" => 'Login',
         "5" => 'Logout',
+        "6" => 'Renew',
     ];
 
     protected $leadSource = [
