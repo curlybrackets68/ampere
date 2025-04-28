@@ -32,6 +32,22 @@ class AmcMasterController extends Controller
                 $amcMasterList = $amcMasterList->where('created_by', Auth::id());
             }
 
+            if (!empty($request->chassis_number)) {
+                $amcMasterList = $amcMasterList->where('chassis_number', $request->chassis_number);
+            }
+            if (!empty($request->vehicle_number)) {
+                $amcMasterList = $amcMasterList->where('vehicle_number', $request->vehicle_number);
+            }
+            if (!empty($request->contact_number)) {
+                $amcMasterList = $amcMasterList->where('contact_number', $request->contact_number);
+            }
+            if (!empty($request->vehicle_type)) {
+                $amcMasterList = $amcMasterList->where('vehicle_type', $request->vehicle_type);
+            }
+            if (!empty($request->vehicle_master_id)) {
+                $amcMasterList = $amcMasterList->where('vehicle_master_id', $request->vehicle_master_id);
+            }
+
             return DataTables::of($amcMasterList)
                 ->addIndexColumn()
 
@@ -47,7 +63,7 @@ class AmcMasterController extends Controller
                     if ($query) {
                         $vehicleName =  $query->name ?? '';
                     }
-                    
+
                     return $this->getArrayNameById($this->vehicleTypeArray, $row->vehicle_type) . '<br>' . $vehicleName;
                 })->addColumn('vehicle_data', function ($row) {
                     return $row->chassis_number . "<br>" . $row->vehicle_number;
@@ -84,7 +100,10 @@ class AmcMasterController extends Controller
                 ->rawColumns(['action', 'customer_details', 'contact_date', 'vehicle_data', 'display_status', 'vehicle_model'])
                 ->make(true);
         }
-        return view('amc-master-list');
+        $vehicle = Vehicle::pluck('name', 'id');
+        $vehicleTypeArray = $this->vehicleTypeArray;
+
+        return view('amc-master-list')->with(compact('vehicle', 'vehicleTypeArray'));
     }
 
     /**
@@ -111,7 +130,7 @@ class AmcMasterController extends Controller
         $data['amc_start_date'] = $this->formatDateTime('Y-m-d H:i:s', $request->amc_start_date);
         $data['amc_end_date'] = $this->formatDateTime('Y-m-d H:i:s', $request->amc_end_date);
         $data['renew_status'] = $this->getArrayIdByName($this->statusArray, 'New');
-        $data['amc_type'] = '2';// paid serive
+        $data['amc_type'] = '2'; // paid serive
         $amcMaster = AmcMaster::create($data);
         if ($amcMaster) {
             $amcMasterId = $amcMaster->id;
@@ -213,7 +232,7 @@ class AmcMasterController extends Controller
         $data['amc_start_date'] = $this->formatDateTime('Y-m-d H:i:s', $request->amc_start_date);
         $data['amc_end_date'] = $this->formatDateTime('Y-m-d H:i:s', $request->amc_end_date);
         $data['renew_status'] = $this->getArrayIdByName($this->statusArray, 'New');
-     
+
         $amcMaster = AmcMaster::find($id);
         if ($amcMaster) {
             if ($amcMaster) {
@@ -304,11 +323,11 @@ class AmcMasterController extends Controller
     public function renewHandel(Request $request)
     {
         $data = $request->all();
-      
+
         $data['amc_start_date'] = $this->formatDateTime('Y-m-d H:i:s', $request->amc_start_date);
         $data['amc_end_date'] = $this->formatDateTime('Y-m-d H:i:s', $request->amc_end_date);
         $data['renew_status'] = $this->getArrayIdByName($this->statusArray, 'New');
-        $data['amc_type'] = '2';// paid serive
+        $data['amc_type'] = '2'; // paid serive
         $amcMaster = AmcMaster::create($data);
         if ($amcMaster) {
             $amcMasterId = $amcMaster->id;
@@ -352,7 +371,7 @@ class AmcMasterController extends Controller
                 'action_id'  => $this->getArrayIdByName($this->actionLogsArray, 'Renew'),
                 'created_by' => Auth::id(),
             ]);
-             SystemLogs::create([
+            SystemLogs::create([
                 'inquiry_id' => 0,
                 'type' => '5', // AMC master Module ID
                 'type_id' => $amcMasterId,
@@ -401,8 +420,13 @@ class AmcMasterController extends Controller
         try {
             $exportStartDate = $request->input('exportStartDate');
             $exportEndDate = $request->input('exportEndDate');
+            $exportChassisNumber = $request->input('exportChassisNumber');
+            $exportVehicleNumber = $request->input('exportVehicleNumber');
+            $exportContactNumber = $request->input('exportContactNumber');
+            $exportVehicleType = $request->input('exportVehicleType');
+            $exportvehicleMasterId = $request->input('exportvehicleMasterId');
 
-            return Excel::download(new AmcExport($exportStartDate, $exportEndDate), 'amc.xlsx');
+            return Excel::download(new AmcExport($exportStartDate, $exportEndDate, $exportChassisNumber, $exportVehicleNumber, $exportContactNumber, $exportVehicleType, $exportvehicleMasterId), 'amc.xlsx');
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }

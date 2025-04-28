@@ -30,34 +30,88 @@
                                         @csrf
                                         {{ Form::hidden('exportStartDate', null, ['id' => 'exportStartDate']) }}
                                         {{ Form::hidden('exportEndDate', null, ['id' => 'exportEndDate']) }}
+                                        {{ Form::hidden('exportChassisNumber', null, ['id' => 'exportChassisNumber']) }}
+                                        {{ Form::hidden('exportVehicleNumber', null, ['id' => 'exportVehicleNumber']) }}
+                                        {{ Form::hidden('exportContactNumber', null, ['id' => 'exportContactNumber']) }}
+                                        {{ Form::hidden('exportVehicleType', null, ['id' => 'exportVehicleType']) }}
+                                        {{ Form::hidden('exportvehicleMasterId', null, ['id' => 'exportvehicleMasterId']) }}
 
                                         <i class="bi bi-cloud-download me-1 align-middle me-1"></i> Export
                                     </form>
                                 </a>
+                                <a class="btn btn-info btn-sm mr-2" href="#" id="filterBtn">
+                                    <i class="bi bi-funnel-fill align-middle me-1"></i>Filter</a>
                                 @if (checkRights('USER_AMC_ROLE_CREATE'))
                                     <a class="btn btn-info btn-sm" href="{{ route('amc-master.create') }}">
                                         <i class="bi bi-plus me-1 align-middle me-1"></i> Add AMC</a>
                                 @endif
 
+
+
                             </div>
                         </div>
                         <div class="card-body">
 
-                            <div class="row mt-3">
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label>Chassis Number</label>
-                                        <input type="text" class="form-control" id="chassis_number"
-                                            placeholder="Enter Chassis Number" name="chassis_number"
-                                            value="">
+                            <div id="filter-form" class="d-none">
+                                <div class="row mt-3">
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label>Chassis Number</label>
+                                            <input type="text" class="form-control" id="chassis_number"
+                                                placeholder="Enter Chassis Number" name="chassis_number" value="">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label>Vehicle Number</label>
+                                            <input type="text" class="form-control" id="vehicle_number"
+                                                placeholder="Enter Vehicle Number" name="vehicle_number" value="">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label>Mobile Number</label>
+                                            <input type="text" class="form-control" id="contact_number"
+                                                placeholder="Enter Mobile Number" name="contact_number" value="">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label>AMC Due Date</label>
+                                            <input type="text" id="datePeriod" class="form-control">
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label>Chassis Number</label>
-                                        <input type="text" class="form-control" id="chassis_number"
-                                            placeholder="Enter Chassis Number" name="chassis_number"
-                                            value="">
+                                <div class="row mt-3">
+
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label>Vehicle Type</label>
+                                            <select class="form-select" id="vehicle_type" name="vehicle_type">
+                                                <option value="">Select Vehicle Type</option>
+                                                @forelse (@$vehicleTypeArray as $key => $value)
+                                                    <option value="{{ $key }}"
+                                                        {{ @$amcMaster && $key == $amcMaster->vehicle_type ? 'selected' : '' }}>
+                                                        {{ $value }}</option>
+                                                @empty
+                                                @endforelse
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label>Vehicle Type</label>
+                                            <select class="form-select" id="vehicle_master_id" name="vehicle_master_id">
+                                                <option value="">Select Vehicle Model</option>
+                                                @forelse (@$vehicle as $key => $value)
+                                                    <option value="{{ $key }}">{{ $value }}</option>
+                                                @empty
+                                                @endforelse
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2" style="margin-top: 31px;">
+                                        <button type="button" class="btn btn-primary" id="searchReport">Search</button>
                                     </div>
                                 </div>
                             </div>
@@ -141,6 +195,10 @@
     <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 
     <script>
+        $(document).ready(async function() {
+
+            await orderDetails(filterData);
+        });
         $(document).ready(function() {
             $('#datePeriod').daterangepicker({
                 timePicker: false,
@@ -153,6 +211,18 @@
                 endDate: moment().endOf('month')
             });
 
+            let startDate = $('#datePeriod').data('daterangepicker').startDate.format('YYYY-MM-DD');
+            let endDate = $('#datePeriod').data('daterangepicker').endDate.format('YYYY-MM-DD');
+            let searchStatusId = $('#searchStatusId').val();
+            let branchId = $('#branchId').val();
+
+            // let filterData = {
+            //     actionType: 'report',
+            //     startDate: '',
+            //     endDate: '',
+            //     statusId: searchStatusId,
+            //     branchId: branchId
+            // };
             amcMasterList();
         });
 
@@ -165,25 +235,28 @@
         $(document).on('click', '#searchReport', function() {
             let startDate = $('#datePeriod').data('daterangepicker').startDate.format('YYYY-MM-DD');
             let endDate = $('#datePeriod').data('daterangepicker').endDate.format('YYYY-MM-DD');
-            let salesmanId = $('#salesmanId').val();
-            let leadSourceId = $('#leadSourceId').val();
-            let mobileNumber = $('#mobileNumber').val();
-            let customerName = $('#customerName').val();
+            let chassis_number = $('#chassis_number').val();
+            let vehicle_number = $('#vehicle_number').val();
+            let contact_number = $('#contact_number').val();
+            let vehicle_type = $('#vehicle_type').val();
+            let vehicle_master_id = $('#vehicle_master_id').val();
 
             $('#exportStartDate').val(startDate);
             $('#exportEndDate').val(endDate);
-            $('#exportSalesmanId').val(salesmanId);
-            $('#exportLeadSourceId').val(leadSourceId);
-            $('#exportMobileNumber').val(mobileNumber);
-            $('#exportCustomerName').val(customerName);
+            $('#exportChassisNumber').val(chassis_number);
+            $('#exportVehicleNumber').val(vehicle_number);
+            $('#exportContactNumber').val(contact_number);
+            $('#exportVehicleType').val(vehicle_type);
+            $('#exportvehicleMasterId').val(vehicle_master_id);
 
             let filter = {
                 startDate: startDate,
                 endDate: endDate,
-                salesmanId: salesmanId,
-                leadSourceId: leadSourceId,
-                mobileNumber: mobileNumber,
-                customerName: customerName
+                chassis_number: chassis_number,
+                vehicle_number: vehicle_number,
+                contact_number: contact_number,
+                vehicle_type: vehicle_type,
+                vehicle_master_id: vehicle_master_id,
             };
 
             amcMasterList(filter);
@@ -254,6 +327,7 @@
         $(document).on('click', '#exportExcel', function() {
             $('#exportExcelForm').submit();
         });
+
 
         $(document).on('click', '.change-status', function() {
             let amcId = $(this).data('id');
@@ -416,6 +490,7 @@
                                         <th class="alignTdCenter">Service Date</th>
                                         <th class="alignTdCenter">Service Status</th>
                                         <th class="alignTdCenter">Remark</th>
+                                        <th class="alignTdCenter">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>`;
@@ -431,7 +506,10 @@
                                     <td class="alignTdCenter" style="width: 10%;">${index++}</td>
                                     <td class="alignTdCenter" style="width: 20%;">${item.display_service_date}</td>
                                     <td class="alignTdCenter" style="width: 20%;"><span class="badge ${badge}">${item.status_name}</span></td>
-                                    <td class="alignTdCenter" style="width: 50%;">${item.service_remark ?? ''}</td>
+                                    <td class="alignTdCenter" style="width: 40%;">${item.service_remark ?? ''}</td>
+                                <td class="alignTdCenter" style="width: 10%;">
+                                    ${item.status == 1 ? '<button class="btn btn-sm btn-primary ">add inq</button>' : ''}
+                                </td
                                 </tr>
                             `;
                     }
@@ -551,5 +629,13 @@
                 ],
             });
         }
+        $(document).on('click', '#filterBtn', function() {
+
+
+            $('#filter-form').toggleClass('d-none');
+            if (!$('#filter-form').hasClass('d-none')) {
+                amcMasterList()
+            }
+        });
     </script>
 @endsection

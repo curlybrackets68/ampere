@@ -18,18 +18,38 @@ class AmcExport implements FromCollection, WithHeadings, WithCustomStartCell, Wi
      * @return \Illuminate\Support\Collection
      */
 
-    protected $startDate, $endDate;
+    protected $startDate, $endDate, $exportChassisNumber, $exportVehicleNumber, $exportContactNumber, $exportVehicleType, $exportvehicleMasterId;
 
-    public function __construct($startDate = '', $endDate = '')
+    public function __construct($startDate = '', $endDate = '', $exportChassisNumber = '', $exportVehicleNumber = '', $exportContactNumber = '', $exportVehicleType = '', $exportvehicleMasterId = '')
     {
         $this->startDate = $this->formatDateTime('Y-m-d', $startDate);
         $this->endDate   = $this->formatDateTime('Y-m-d', $endDate);
+        $this->exportChassisNumber   = $exportChassisNumber;
+        $this->exportVehicleNumber   = $exportVehicleNumber;
+        $this->exportContactNumber   = $exportContactNumber;
+        $this->exportVehicleType   = $exportVehicleType;
+        $this->exportvehicleMasterId   = $exportvehicleMasterId;
     }
     public function collection()
     {
         $query = AmcMaster::query();
         if (! empty($this->startDate) && ! empty($this->endDate)) {
             $query = $query->whereBetween(DB::raw('DATE(amc_masters.created_at)'), [$this->startDate, $this->endDate]);
+        }
+        if (!empty($this->exportChassisNumber)) {
+            $query = $query->where('chassis_number', $this->exportChassisNumber);
+        }
+        if (!empty($this->exportVehicleNumber)) {
+            $query = $query->where('vehicle_number', $this->exportVehicleNumber);
+        }
+        if (!empty($this->exportContactNumber)) {
+            $query = $query->where('contact_number', $this->exportContactNumber);
+        }
+        if (!empty($this->exportVehicleType)) {
+            $query = $query->where('vehicle_type', $this->exportVehicleType);
+        }
+        if (!empty($this->exportvehicleMasterId)) {
+            $query = $query->where('vehicle_master_id', $this->exportvehicleMasterId);
         }
 
         $results = $query->get();
