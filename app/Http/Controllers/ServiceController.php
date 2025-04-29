@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\AmcMaster;
-use App\Models\AmcPackageMaster;
 use App\Models\ServiceDetail;
 use App\Models\SystemLogs;
 use App\Models\Vehicle;
@@ -21,25 +20,30 @@ class ServiceController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $amcMasterList = ServiceDetail::query()->where('status',2);
+            $serviceList = ServiceDetail::query()->where('status', 2);
 
-            if (!empty($request->chassis_number)) {
-                $amcMasterList = $amcMasterList->where('chassis_number', $request->chassis_number);
-            }
-            if (!empty($request->vehicle_number)) {
-                $amcMasterList = $amcMasterList->where('vehicle_number', $request->vehicle_number);
-            }
-            if (!empty($request->contact_number)) {
-                $amcMasterList = $amcMasterList->where('contact_number', $request->contact_number);
-            }
-            if (!empty($request->vehicle_type)) {
-                $amcMasterList = $amcMasterList->where('vehicle_type', $request->vehicle_type);
-            }
-            if (!empty($request->vehicle_master_id)) {
-                $amcMasterList = $amcMasterList->where('vehicle_master_id', $request->vehicle_master_id);
+
+
+            if ($request->action_type != 'report') {
+                //default list 
+                $serviceList = $serviceList->where('status', 2);
+            } else {
+                $amcIds = AmcMaster::query()
+                    ->when(!empty($request->chassis_number), fn($q) => $q->where('chassis_number', $request->chassis_number))
+                    ->when(!empty($request->vehicle_number), fn($q) => $q->where('vehicle_number', $request->vehicle_number))
+                    ->when(!empty($request->contact_number), fn($q) => $q->where('contact_number', $request->contact_number))
+                    ->when(!empty($request->vehicle_type), fn($q) => $q->where('vehicle_type', $request->vehicle_type))
+                    ->when(!empty($request->vehicle_master_id), fn($q) => $q->where('vehicle_master_id', $request->vehicle_master_id))
+                    ->pluck('id')
+                    ->toArray();
+
+                if(!empty($amcIds)){
+                    $serviceList = $serviceList->whereIn('amc_id', $amcIds);
+                }
             }
 
-            return DataTables::of($amcMasterList)
+
+            return DataTables::of($serviceList)
                 ->addIndexColumn()
 
                 ->addColumn('customer_details', function ($row) {
@@ -93,7 +97,7 @@ class ServiceController extends Controller
             "2" => 'Completed',
         ];
 
-        return view('service-list')->with(compact('vehicle', 'vehicleTypeArray','serviceStatus'));
+        return view('service-list')->with(compact('vehicle', 'vehicleTypeArray', 'serviceStatus'));
     }
 
     public function addService(Request $request)
@@ -146,7 +150,7 @@ class ServiceController extends Controller
                 $updateData['attachment'] = $imageName;
             }
         }
-        
+
         ServiceDetail::where('id', $service_id)->update($updateData);
 
         $serviceData = ServiceDetail::find($service_id)->first();
