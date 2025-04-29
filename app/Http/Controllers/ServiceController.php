@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\ServiceDetailsExport;
 use App\Models\AmcMaster;
 use App\Models\ServiceDetail;
 use App\Models\SystemLogs;
@@ -10,6 +11,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
+use Maatwebsite\Excel\Facades\Excel;
 use PhpOffice\PhpSpreadsheet\Calculation\Web\Service;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -175,4 +177,22 @@ class ServiceController extends Controller
         $whatsAppMsg .= "Support: +91 90233 42463";
         return redirect()->route('amc-master-service.index')->with('success', 'Service Update successfully!');
     }
+
+    public function export(Request $request)
+    {
+        try {
+            $exportStartDate = $request->input('exportStartDate');
+            $exportEndDate = $request->input('exportEndDate');
+            $exportChassisNumber = $request->input('exportChassisNumber');
+            $exportVehicleNumber = $request->input('exportVehicleNumber');
+            $exportContactNumber = $request->input('exportContactNumber');
+            $exportVehicleType = $request->input('exportVehicleType');
+            $exportvehicleMasterId = $request->input('exportvehicleMasterId');
+
+            return Excel::download(new ServiceDetailsExport($exportStartDate, $exportEndDate, $exportChassisNumber, $exportVehicleNumber, $exportContactNumber, $exportVehicleType, $exportvehicleMasterId), 'service.xlsx');
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
 }

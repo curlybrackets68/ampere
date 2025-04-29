@@ -19,7 +19,7 @@
                             <h5 class="card-title">AMC Master Service</h5>
                             <div class="d-flex justify-content-end">
                                 <a href="javascript:void(0);" class="btn btn-primary btn-sm me-2 d-none" id="exportExcel">
-                                    <form action="{{ route('user.leads.excel.export') }}" method="POST"
+                                    <form action="{{ route('amc-master-service.excel.export') }}" method="POST"
                                         id="exportExcelForm">
                                         @csrf
                                         {{ Form::hidden('exportStartDate', null, ['id' => 'exportStartDate']) }}
