@@ -172,14 +172,18 @@ class AmcMasterController extends Controller
                         $lastServiceDate = $nextServiceDate;
                     }
 
+                    $serviceNo = 1;
                     foreach ($serviceDates as $serviceDate) {
+                        
                         $serviceData = [
+                            'service_no'=>$serviceNo,
                             'amc_id' => $amcMasterId,
                             'service_date' => $serviceDate->format('Y-m-d H:i:s'),
                             'created_by' => Auth::id(),
                         ];
 
                         ServiceDetail::create($serviceData);
+                        $serviceNo++;
                     }
                     $vehicleTypeName = $this->getArrayNameById($this->vehicleTypeArray, $amcMaster->vehicle_type);
                     $startDate = $this->formatDateTime('d-M-Y', $amcMaster->amc_start_date);
@@ -288,14 +292,18 @@ class AmcMasterController extends Controller
                         $lastServiceDate = $nextServiceDate;
                     }
 
+                    $serviceNo = 1;
                     foreach ($serviceDates as $serviceDate) {
+                        
                         $serviceData = [
+                            'service_no'=>$serviceNo,
                             'amc_id' => $amcMasterId,
                             'service_date' => $serviceDate->format('Y-m-d H:i:s'),
-                            'created_by' => Auth::id(),
+                            'modified_by' => Auth::id(),
                         ];
 
                         ServiceDetail::create($serviceData);
+                        $serviceNo++;
                     }
                 }
             }

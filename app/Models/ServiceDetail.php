@@ -13,6 +13,7 @@ class ServiceDetail extends Model
     use HasFactory,SoftDeletes,CommonFunctions;
 
     protected $fillable = [
+        'service_no',
         'amc_id',
         'service_date',
         'service_remark',

@@ -59,11 +59,17 @@
                                 <div class="row mt-2">
                                     <input type="hidden" value="" id="amc_id" name="amc_id" />
                                     <input type="hidden" value="" id="service_id" name="service_id" />
-                                    <div class="col-md-3">
+                                    <div class="col-md-3 d-none">
                                         <label>Status</label>
                                         <select class="form-select" id="status_id" name="status_id">
                                             <option value="2">Completed</option>
                                         </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <strong>Service No</strong><br>
+                                            <label id="amcServiceNo" class="form-control-static"></label>
+                                        </div>
                                     </div>
                                     <div class="col-md-2">
                                         <label>Attachment</label>
@@ -155,6 +161,7 @@
                             $('#amcContractId').html(amc_master_details.amc_display_number);
                             $('#amcCustomerName').html(amc_master_details.customer_name);
                             $('#amcCustomerNumber').html(amc_master_details.contact_number);
+                            $('#amcServiceNo').html(serveiceData.service_no);
                             $('#amc_id').val(amc_master_details.id);
                             $('#service_id').val(serveiceData.id);
 
@@ -172,10 +179,10 @@
                                     <td>${item.service_remark ?? ''}</td>
                                     <td>
                                         ${item.attachment_url ? `
-                                            <a href="${item.attachment_url}" download target="_blank" class="btn btn-sm btn-primary">
-                                                <i class="fa fa-download"></i> Download
-                                            </a>
-                                        ` : ''}
+                                                <a href="${item.attachment_url}" download target="_blank" class="btn btn-sm btn-primary">
+                                                    <i class="fa fa-download"></i> Download
+                                                </a>
+                                            ` : ''}
                                     </td>
                                     <td>${item.service_by ?? ''}</td>
                                 </tr>
