@@ -83,6 +83,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('amc-view-details', [AmcMasterController::class, 'geAmcViewDetails'])->name('amc-view-details');
 
     Route::post('export-service', [ServiceController::class, 'export'])->name('amc-master-service.excel.export');
+    Route::post('add-service-inquiry', [ServiceController::class, 'addServiceInquiry'])->name('amc-master-service.add-service-inquiry');
 });
 
 

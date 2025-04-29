@@ -94,6 +94,7 @@ class AmcMasterController extends Controller
                     }
                     $html .= '<a href="javascript:void(0);" class="dropdown-item amc-view" data-id="' . $row->id . '">View</a>';
                     $html .= '<a href="' . route('amc.download', $row->id) . '" class="dropdown-item" target="_blank">PDF</a>';
+                    $html .= '<a href="#" class="dropdown-item amc-add-inquiry" data-id="' . $row->id . '" data-vehicle-number="'.$row->vehicle_number.'" data-customer-name="'.$row->customer_name.'" data-customer-number="'.$row->contact_number.'">Add Inquiry</a>';
                     if (Carbon::parse($row->amc_end_date)->isFuture()) {
                         $html .= '<a href="javascript:void(0);" class="dropdown-item change-status" data-id="' . $row->id . '" data-status="' . $row->status . '">Status</a>';
                     }
@@ -106,8 +107,10 @@ class AmcMasterController extends Controller
         }
         $vehicle = Vehicle::pluck('name', 'id');
         $vehicleTypeArray = $this->vehicleTypeArray;
+        $serviceTypeArray = $this->serviceTypeArray;
+        $branch = $this->branchArray;
 
-        return view('amc-master-list')->with(compact('vehicle', 'vehicleTypeArray'));
+        return view('amc-master-list')->with(compact('vehicle', 'vehicleTypeArray','branch','serviceTypeArray'));
     }
 
     /**

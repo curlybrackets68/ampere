@@ -188,6 +188,62 @@
             </div>
         </div>
     </div>
+    <div class="modal fade" id="amcAddInquiryModel" tabindex="-1" aria-labelledby="exampleModalLabel"
+        aria-hidden="true" data-bs-backdrop="static">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">AMC Add Inquiry Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label>Name</label>
+                            <input type="text" class="form-control" id="inquiry_name" name="inquiry_name" />
+                        </div>
+                        <div class="col-md-3">
+                            <label>Mobile</label>
+                            <input type="text" class="form-control" id="inquiry_mobile" name="inquiry_mobile" />
+                        </div>
+                        <div class="col-md-3">
+                            <label>Vehicle Number</label>
+                            <input type="text" class="form-control" id="inquiry_vehicle_no"
+                                name="inquiry_vehicle_no" />
+                        </div>
+                        <div class="col-md-3">
+                            <label>Select Branch</label>
+                            <select class="form-select" id="inquiry_branch">
+                                <option value="">Select Branch</option>
+                                @forelse (@$branch as $key => $value)
+                                    <option value="{{ $key }}">
+                                        {{ $value }}</option>
+                                @empty
+                                @endforelse
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label>Select Service Type</label>
+                            <select class="form-select" id="inquiry_service_type">
+                                <option value="">Select Service Type</option>
+                                @forelse (@$serviceTypeArray as $key => $value)
+                                    <option value="{{ $key }}">
+                                        {{ $value }}</option>
+                                @empty
+                                @endforelse
+                            </select>
+                        </div>
+
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="addInquiryBtn">Save</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 @section('javascript')
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
@@ -195,10 +251,7 @@
     <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 
     <script>
-        $(document).ready(async function() {
-
-            await orderDetails(filterData);
-        });
+       
         $(document).ready(function() {
             $('#datePeriod').daterangepicker({
                 timePicker: false,
@@ -257,7 +310,7 @@
                 contact_number: contact_number,
                 vehicle_type: vehicle_type,
                 vehicle_master_id: vehicle_master_id,
-                action_type:'report',
+                action_type: 'report',
             };
 
             amcMasterList(filter);
@@ -633,6 +686,68 @@
         $(document).on('click', '#filterBtn', function() {
             $('#filter-form').toggleClass('d-none');
             amcMasterList()
+        });
+        $(document).on('click', '.amc-add-inquiry', function() {
+            console.log($(this).data('customer-name'));
+            $('#inquiry_name').val($(this).data('customer-name'));
+            $('#inquiry_mobile').val($(this).data('customer-number'));
+            $('#inquiry_vehicle_no').val($(this).data('vehicle-number'));
+            $('#inquiry_service_type').val('');
+            $('#inquiry_branch').val('');
+            $('#amcAddInquiryModel').modal('show');
+
+        });
+        $(document).on('click', '#addInquiryBtn', async function() {
+
+            let inquiry_name = $('#inquiry_name').val();
+            let inquiry_mobile = $('#inquiry_mobile').val();
+            let inquiry_vehicle_no = $('#inquiry_vehicle_no').val();
+            let inquiry_service_type = $('#inquiry_service_type').val();
+            let branch_id = $('#inquiry_branch').val();
+            let formData = new FormData();
+
+            let isValid = true;
+            if (inquiry_name === '') {
+                $('#inquiry_name').after(
+                    '<small class="error-message text-danger">Enter Name.</small>');
+                isValid = false;
+            }
+            if (inquiry_mobile === '') {
+                $('#inquiry_mobile').after(
+                    '<small class="error-message text-danger">Mobile number is required.</small>');
+                isValid = false;
+            } else if (!/^\d{10}$/.test(inquiry_mobile)) {
+                $('#inquiry_mobile').after(
+                    '<small class="error-message text-danger">Enter a valid 10-digit mobile number.</small>');
+                isValid = false;
+            }
+
+            if (inquiry_service_type === '') {
+                $('#inquiry_service_type').after(
+                    '<small class="error-message text-danger">Please Select servie type.</small>');
+                isValid = false;
+            } if (branch_id === '') {
+                $('#inquiry_branch').after(
+                    '<small class="error-message text-danger">Please Select branch.</small>');
+                isValid = false;
+            }
+            formData.append('_token', '{{ csrf_token() }}');
+            formData.append('name', inquiry_name);
+            formData.append('mobile', inquiry_mobile);
+            formData.append('vehicle_no', inquiry_vehicle_no);
+            formData.append('branch_id', branch_id);
+
+            if (isValid) {
+                let response = await apiCallPost('{{ route('amc-master-service.add-service-inquiry') }}',
+                    formData);
+
+                if (response.code == '1') {
+                    showToast('success', response.message);
+                    $('#amcAddInquiryModel').modal('hide');
+                }
+            }
+
+
         });
     </script>
 @endsection

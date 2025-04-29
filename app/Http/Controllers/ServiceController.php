@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exports\ServiceDetailsExport;
 use App\Models\AmcMaster;
+use App\Models\InquiryDetails;
 use App\Models\ServiceDetail;
 use App\Models\SystemLogs;
 use App\Models\Vehicle;
@@ -193,6 +194,32 @@ class ServiceController extends Controller
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
+    }
+
+    public function addServiceInquiry(Request $request){
+        $data = $request->all();
+        $data['created_by'] = Auth::id();
+        $data['vehicle_no'] = strtoupper($request->vehicle_no);
+        $lastInquiryId = InquiryDetails::orderBy('id', 'desc')->first()->id ?? 0;
+        $data['inquiry_no'] = 'INQ-' . ($lastInquiryId + 1);
+
+       
+        $inquirySave = InquiryDetails::create($data);
+        $latestNumber = $inquirySave->inquiry_no;
+        SystemLogs::create([
+            'inquiry_id' => $inquirySave->id,
+            'type' => '1', // for Order
+            'type_id' => $inquirySave->id, // for Order
+            'remark'     => 'Inquiry Created # '.$latestNumber,
+            'action_id'  => 1,
+            'created_by' => 1,
+        ]);
+
+
+        $this->sendWhatsAppMessage($request->mobile, "Inquiry No # $latestNumber added successfully. We will contact you soon.");
+
+        return $this->successResponse([], "Inquiry No # $latestNumber added successfully. We will contact you soon.");
+        
     }
 
 }
