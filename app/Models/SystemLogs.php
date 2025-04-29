@@ -22,7 +22,7 @@ class SystemLogs extends Model
         'updated_at'
     ];
 
-    protected $appends = ['created_by_name', 'display_created_at'];
+    protected $appends = ['created_by_name', 'display_created_at', 'display_created_at_date_time'];
 
 
     public function getCreatedByNameAttribute()
@@ -40,5 +40,10 @@ class SystemLogs extends Model
     function getDisplayCreatedAtAttribute()
     {
         return Carbon::parse($this->created_at)->format('d-M-Y');
+    }
+
+    function getDisplayCreatedAtDateTimeAttribute()
+    {
+        return Carbon::parse($this->created_at)->format('d-M-Y H:i A');
     }
 }
