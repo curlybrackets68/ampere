@@ -49,17 +49,25 @@ class ServiceController extends Controller
             return DataTables::of($serviceList)
                 ->addIndexColumn()
 
+                ->addColumn('contract_details', function ($row) {
+                    return $row->amc_master_details->amc_display_number . "<br>" . $this->formatDateTime('d-m-Y', $row->amc_start_date) . "<br>" . $this->formatDateTime('d-m-Y', $row->amc_end_date);
+                })
                 ->addColumn('customer_details', function ($row) {
                     return $row->amc_master_details->customer_name . "<br>" . $row->amc_master_details->contact_number;
                 })
                 ->addColumn('service_date', function ($row) {
                     return $this->formatDateTime('d-m-Y', $row->service_date);
+                }) 
+                ->addColumn('service_details', function ($row) {
+                    return $row->service_no."<br>".$this->formatDateTime('d-m-Y', $row->service_date);
                 })
-                ->addColumn('vehicle_model', function ($row) {
+                ->addColumn('service_by', function ($row) {
+                    return $row->service_by;
+                })
+                ->addColumn('vehicle_details', function ($row) {
                     $vehicleName  = Vehicle::find($row->amc_master_details->vehicle_master_id)->first()->name ?? '';
-                    return $this->getArrayNameById($this->vehicleTypeArray, $row->vehicle_type) . '<br>' . $vehicleName;
-                })->addColumn('vehicle_data', function ($row) {
-                    return $row->chassis_number . "<br>" . $row->vehicle_number;
+                    return $this->getArrayNameById($this->vehicleTypeArray, $row->amc_master_details->vehicle_type) . '<br>' . $vehicleName . '<br>' . $row->amc_master_details->vehicle_number;
+                  
                 })
                 ->addColumn('display_status', function ($row) {
                     $class = 'warning';
@@ -90,7 +98,7 @@ class ServiceController extends Controller
                     // $html .= '</div>';
                     return $html;
                 })
-                ->rawColumns(['action', 'customer_details', 'contact_date', 'vehicle_data', 'display_status', 'vehicle_model'])
+                ->rawColumns(['action', 'contract_details', 'customer_details', 'service_date','service_details','vehicle_details', 'display_status', 'vehicle_model'])
                 ->make(true);
         }
         $vehicle = Vehicle::pluck('name', 'id');

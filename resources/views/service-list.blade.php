@@ -124,7 +124,10 @@
                                     <thead>
                                         <tr>
                                             <th style="text-align: left;">Sr. No</th>
-                                            <th style="text-align: left;">Service Date</th>
+                                            <th style="text-align: left;">Contract ID</th>
+                                            <th style="text-align: left;">Customer Deatils</th>
+                                            <th style="text-align: left;">Vehicle Deatils</th>
+                                            <th style="text-align: left;">Service Deatils</th>
                                             <th style="text-align: left;">Service By</th>
                                             <th style="text-align: left;">Action</th>
                                         </tr>
@@ -217,8 +220,19 @@
                         searchable: false
                     },
                     {
-                        data: 'service_date',
-                        name: 'service_date'
+                        data: 'contract_details',
+                        name: 'contract_details'
+                    },
+                    {
+                        data: 'customer_details',
+                        name: 'customer_details'
+                    },{
+                        data: 'vehicle_details',
+                        name: 'vehicle_details'
+                    },
+                    {
+                        data: 'service_details',
+                        name: 'service_details'
                     },
                     {
                         data: 'service_by',
