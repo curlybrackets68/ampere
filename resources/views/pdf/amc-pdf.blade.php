@@ -92,7 +92,7 @@
             </td>
         </tr>
         <tr>
-            <td colspan="2">Address: <strong></strong></td>
+            <td colspan="2">Address: <strong>{{ $amc->contact_address }}</strong></td>
         </tr>
     </table>
 

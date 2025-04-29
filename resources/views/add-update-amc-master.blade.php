@@ -175,11 +175,11 @@
                                 </div>
 
                             </div>
-                        </div>
 
-                        <div class="card-footer">
-                            <button type="submit" class="btn btn-primary btn-sm" id="addUpdateAmcMaster">Submit</button>
-                            <button type="reset" class="btn btn-light btn-sm">Cancel</button>
+                            <div class="card-footer">
+                                <button type="submit" class="btn btn-primary btn-sm" id="addUpdateAmcMaster">Submit</button>
+                                <button type="reset" class="btn btn-light btn-sm">Cancel</button>
+                            </div>
                         </div>
                     </form>
                 </div>

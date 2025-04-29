@@ -18,3 +18,4 @@ yarn-error.log
 /app/Secrets
 /public/amc_pdfs
 /public/assets
+.phpunit.result.cache

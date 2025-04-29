@@ -175,7 +175,7 @@
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">AMC View Details</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">AMC View Details <span class="amcDisplayNumber" style="color: blueviolet"></span></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -463,49 +463,51 @@
                     let historyData = response.data.historyData;
 
                     if (amcData) {
+                        $('.amcDisplayNumber').html(`#${amcData.amc_display_number}`);
                         headerHtml += `
                     <div class="card">
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-md-3">
-                                    <span>Contract Id</span><br>
-                                    <span>${amcData.amc_display_number}</span>
+                                    <span style="font-weight: bold;">Chassis Number</span><br>
+                                    <span>${amcData.chassis_number}</span>
                                 </div>
                                 <div class="col-md-3">
-                                    <span>Customer Name</span><br>
+                                    <span style="font-weight: bold;">Vehicle Details</span><br>
+                                    <span>${amcData.vehicle_type_name} - ${amcData.vehicle_name} - ${amcData.vehicle_number}</span>
+                                </div>
+                                <div class="col-md-3">
+                                    <span style="font-weight: bold;">Customer Name</span><br>
                                     <span>${amcData.customer_name}</span>
                                 </div>
                                 <div class="col-md-3">
-                                    <span>Customer Mobile</span><br>
+                                    <span style="font-weight: bold;">Customer Mobile</span><br>
                                     <span>${amcData.contact_number}</span>
                                 </div>
-                                <div class="col-md-3">
-                                    <span>Customer Address</span><br>
-                                    <span>${amcData.contact_address ?? ''}</span>
-                                </div>
+                                
                             </div>
                             <div class="row mt-2">
                                 <div class="col-md-3">
-                                    <span>Start Date</span><br>
-                                    <span>${amcData.display_amc_start_date}</span>
+                                    <span style="font-weight: bold;">Customer Address</span><br>
+                                    <span>${amcData.contact_address ?? ''}</span>
                                 </div>
                                 <div class="col-md-3">
-                                    <span>End Date</span><br>
-                                    <span>${amcData.display_amc_end_date}</span>
+                                    <span style="font-weight: bold;">Start & End Date</span><br>
+                                    <span>${amcData.display_amc_start_date} - ${amcData.display_amc_end_date}</span>
                                 </div>
                                 <div class="col-md-3">
-                                    <span>Package</span><br>
+                                    <span style="font-weight: bold;">Package</span><br>
                                     <span>${amcData.amc_package_type_name}</span>
                                 </div>
                                 <div class="col-md-3">
-                                    <span>Amount</span><br>
-                                    <span>${amcData.amc_basic_price}</span>
+                                    <span style="font-weight: bold;">Amount</span><br>
+                                    <span>${amcData.amc_basic_price}/- ${amcData.payment_type_name}</span>
                                 </div>
                             </div>
                             <div class="row mt-2">
                                 <div class="col-md-3">
-                                    <span>Vehicle Number</span><br>
-                                    <span>${amcData.vehicle_number}</span>
+                                    <span style="font-weight: bold;">Transaction Details</span><br>
+                                    <span>${amcData.transaction_details}</span>
                                 </div>
                             </div>
                         </div>
@@ -523,7 +525,7 @@
                     </li>
 
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link " id="amc-detail-tab" data-bs-toggle="tab" data-bs-target="#amc-detail" type="button" role="tab" aria-controls="amc-detail" aria-selected="false">AMC Details</button>
+                        <button class="nav-link " id="amc-detail-tab" data-bs-toggle="tab" data-bs-target="#amc-detail" type="button" role="tab" aria-controls="amc-detail" aria-selected="false">Renew AMC Details</button>
                     </li>
 
                     <li class="nav-item" role="presentation">
@@ -544,8 +546,9 @@
                                     <tr>
                                         <th class="alignTdCenter">#</th>
                                         <th class="alignTdCenter">Service Date</th>
-                                        <th class="alignTdCenter">Service Status</th>
                                         <th class="alignTdCenter">Remark</th>
+                                        <th class="alignTdCenter">Status</th>
+                                        <th class="alignTdCenter">Service By</th>
                                         <th class="alignTdCenter">Action</th>
                                     </tr>
                                 </thead>
@@ -559,11 +562,12 @@
                         }
                         tabContentHtml += `
                             <tr>
-                                    <td class="alignTdCenter" style="width: 10%;">${index++}</td>
-                                    <td class="alignTdCenter" style="width: 20%;">${item.display_service_date}</td>
-                                    <td class="alignTdCenter" style="width: 20%;"><span class="badge ${badge}">${item.status_name}</span></td>
-                                    <td class="alignTdCenter" style="width: 40%;">${item.service_remark ?? ''}</td>
-                                <td class="alignTdCenter" style="width: 10%;">
+                                <td class="alignTdCenter" style="width: 10%;">${index++}</td>
+                                <td class="alignTdCenter" style="width: 15%;">${item.display_service_date}</td>
+                                <td class="alignTdCenter" style="width: 40%;">${item.service_remark ?? ''}</td>
+                                <td class="alignTdCenter" style="width: 10%;"><span class="badge ${badge}">${item.status_name}</span></td>
+                                <td class="alignTdCenter" style="width: 15%;">${item.service_by ?? ''}</td>
+                                <td class="alignTdCenter" style="width: 20%;">
                                     ${item.status == 1 ? '<button class="btn btn-sm btn-primary ">add inq</button>' : ''}
                                 </td
                                 </tr>
@@ -633,7 +637,7 @@
                     for (let item of historyData) {
                         tabContentHtml += `<tr>
                                     <td class="alignTdCenter" style="width: 5%;">${serialNoHistory++}</td>
-                                    <td class="alignTdCenter" style="width: 10%;">${item.display_created_at}</td>
+                                    <td class="alignTdCenter" style="width: 10%;">${item.display_created_at_date_time}</td>
                                     <td class="alignTdCenter" style="width: 10%;">${item.created_by_name}</td>
                                     <td class="alignTdCenter" style="width: 10%;">${item.remark}</td>
                                 </tr>`;
