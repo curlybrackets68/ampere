@@ -168,14 +168,16 @@ class ServiceController extends Controller
         ]);
         $whatsAppMsg = "Hi $amcMaster->customer_name \n \n";
 
-        $whatsAppMsg .= "Your vehicle $amcMaster->vehicle_number has been successfully serviced under AMC Contract ID: amc_display_number-> \n";
+        $whatsAppMsg .= "Your vehicle *$amcMaster->vehicle_number* has been successfully serviced under AMC Contract ID: *$amcMaster->amc_display_number* \n \n";
         $whatsAppMsg .= "Service Date: *$serviceData->display_service_date* \n";
         $whatsAppMsg .= "Next Service Due: *$serviceData->display_service_date* \n";
-        $whatsAppMsg .= "Next Service Due: Ampere Service Center, Ahmedabad \n";
+        $whatsAppMsg .= "Location: Ampere Service Center, Vadodara \n \n";
         $whatsAppMsg .= "Our team has completed all required checks and maintenance as per AMC guidelines. Your vehicle is now ready for delivery. \n \n";
         $whatsAppMsg .= "For feedback or questions, feel free to reply to this message. \n";
         $whatsAppMsg .= "Thank you for choosing Ampere! \n\n ";
         $whatsAppMsg .= "Support: +91 90233 42463";
+
+        $this->sendWhatsAppMessage($amcMaster->contact_number, $whatsAppMsg);
         return redirect()->route('amc-master-service.index')->with('success', 'Service Update successfully!');
     }
 

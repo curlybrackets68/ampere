@@ -188,19 +188,19 @@ class AmcMasterController extends Controller
                     $packageString = $amcPackageMasterData->service_count . ' Sevices - ' . $amcPackageMasterData->duration . ' duration ' . $amcPackageMasterData->time_period . 'months';
                     $whatsAppMsg = "Hi $amcMaster->customer_name \n \n";
 
-                    $whatsAppMsg .= "Your AMC contract has been successfully generated for your vehicle $amcMaster->vehicle_number \n";
+                    $whatsAppMsg .= "Your AMC contract has been successfully generated for your vehicle *$amcMaster->vehicle_number* \n \n";
                     $whatsAppMsg .= "Contract ID: *$amcMaster->amc_display_number* \n";
                     $whatsAppMsg .= "Vehicle Category: *$vehicleTypeName* \n";
                     $whatsAppMsg .= "Contract Start Date: *$startDate* \n";
                     $whatsAppMsg .= "Valid Till: *$endDate* \n";
                     $whatsAppMsg .= "Vehicle Model: *$vehicleName* \n";
-                    $whatsAppMsg .= "Service Details: *$packageString* \n";
+                    $whatsAppMsg .= "Service Details: *$packageString* \n \n";
                     $whatsAppMsg .= "You can now enjoy hassle-free service and priority support under your AMC plan. \n \n";
                     $whatsAppMsg .= "Thank you for choosing Ampere! \n";
                     $whatsAppMsg .= "For queries, contact us at +91 90233 42463.";
                     $pdfUrl = $this->generateAndStorePdf('pdf.amc-pdf', ['amc' => $amcMaster], 'amc_pdfs');
 
-                    //$this->sendWhatsAppMessage($amcMaster->contact_number, $whatsAppMsg);
+                    $this->sendWhatsAppMessage($amcMaster->contact_number, $whatsAppMsg);
                     // $this->sendWhatsAppMessageWithFile($amcMaster->contact_number, $whatsAppMsg, $pdfUrl);
                 }
             }
@@ -398,6 +398,8 @@ class AmcMasterController extends Controller
                 'created_by' => Auth::id(),
             ]);
         }
+
+            
         return redirect()->route('amc-master.index')->with('success', 'AMC Master Renew successfully!');
     }
 
