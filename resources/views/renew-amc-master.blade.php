@@ -160,7 +160,9 @@
                                             <label>Amount</label>
                                             <input type="text" class="form-control" id="amc_basic_price"
                                                 placeholder="Amount" name="amc_basic_price"
-                                                value="{{ old('amc_basic_price', $amcMaster->amc_basic_price ?? '') }}">
+                                                value="{{ old('amc_basic_price', $amcMaster->amc_basic_price ?? '') }}"
+                                                oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
+                                                
                                         </div>
                                     </div>
                                     <div class="col-md-3">
