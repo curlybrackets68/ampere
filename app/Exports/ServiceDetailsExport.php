@@ -1,9 +1,11 @@
 <?php
 
+
 namespace App\Exports;
 
 use App\Http\Controllers\CommonFunctions;
 use App\Models\AmcMaster;
+use App\Models\ServiceDetail;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithCustomStartCell;
@@ -11,7 +13,7 @@ use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Events\BeforeSheet;
 
-class AmcExport implements FromCollection, WithHeadings, WithCustomStartCell, WithEvents
+class ServiceDetailsExport implements FromCollection, WithHeadings, WithCustomStartCell, WithEvents
 {
     use CommonFunctions;
     /**
@@ -32,27 +34,24 @@ class AmcExport implements FromCollection, WithHeadings, WithCustomStartCell, Wi
     }
     public function collection()
     {
-        $query = AmcMaster::query();
+        $amcQuery = AmcMaster::query();
+        $seriveQuery = ServiceDetail::query();
         if (! empty($this->startDate) && ! empty($this->endDate)) {
-            $query = $query->whereBetween(DB::raw('DATE(amc_masters.created_at)'), [$this->startDate, $this->endDate]);
+            $seriveQuery = $seriveQuery->whereBetween(DB::raw('DATE(service_details.service_date)'), [$this->startDate, $this->endDate]);
         }
-        if (!empty($this->exportChassisNumber)) {
-            $query = $query->where('chassis_number', $this->exportChassisNumber);
-        }
-        if (!empty($this->exportVehicleNumber)) {
-            $query = $query->where('vehicle_number', $this->exportVehicleNumber);
-        }
-        if (!empty($this->exportContactNumber)) {
-            $query = $query->where('contact_number', $this->exportContactNumber);
-        }
-        if (!empty($this->exportVehicleType)) {
-            $query = $query->where('vehicle_type', $this->exportVehicleType);
-        }
-        if (!empty($this->exportvehicleMasterId)) {
-            $query = $query->where('vehicle_master_id', $this->exportvehicleMasterId);
-        }
+        $amcIds = AmcMaster::query()
+            ->when(!empty($this->exportChassisNumber), fn($q) => $q->where('chassis_number',  $this->exportChassisNumber))
+            ->when(!empty($this->exportVehicleNumber), fn($q) => $q->where('vehicle_number', $this->exportVehicleNumber))
+            ->when(!empty($this->exportContactNumber), fn($q) => $q->where('contact_number', $this->exportContactNumber))
+            ->when(!empty($this->exportVehicleType), fn($q) => $q->where('vehicle_type', $this->exportVehicleType))
+            ->when(!empty($this->exportvehicleMasterId), fn($q) => $q->where('vehicle_master_id', $this->exportvehicleMasterId))
+            ->pluck('id')
+            ->toArray();
 
-        $results = $query->get();
+        if (!empty($amcIds)) {
+            $seriveQuery = $seriveQuery->whereIn('amc_id', $amcIds);
+        }
+        $results = $seriveQuery->get();
 
         $data     = [];
         foreach ($results as $row) {
@@ -75,22 +74,21 @@ class AmcExport implements FromCollection, WithHeadings, WithCustomStartCell, Wi
 
         return collect($data);
     }
-
     public function headings(): array
     {
         return [
-            'Contract ID',
             'Vehicle Type',
-            'Contract Start Date',
-            'Contract End Date',
-            'Chassis Number',
+            'Chassis number',
             'Vehicle Number',
-            'Service Package',
+            'Contract Start Date ',
+            'Contract End Date ',
             'Customer Name',
             'Mobile Number',
-            'Payment Type',
-            'Transaction ID',
-            'AMC Amount',
+            'Service NO',
+            'Service Date',
+            'Service Remark',
+            'Service Status',
+            'Service Done by',
             'AMC Status',
         ];
     }

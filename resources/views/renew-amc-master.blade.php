@@ -18,7 +18,7 @@
                         action="{{ route('amc-master.renew-handel') }}"
                         method="post">
                         @csrf
-                        <input type="hidden" name='amc_id' value="{{$amcMaster->id}}" />
+                        <input type="hidden" name='amc_reference_id' value="{{$amcMaster->id}}" />
                        
                         <div class="card mb-4">
                             <div class="card-header">
@@ -27,7 +27,7 @@
                                     <div class="input-group date">
                                         <input type="text" id="amc_display_number" name="amc_display_number"
                                             class="form-control"
-                                            value="{{ old('name', $amcMaster->amc_display_number ?? $amcDisplayNumber) }}">
+                                            value="{{$amcDisplayNumber}}">
                                     </div>
                                 </div>
 
@@ -295,6 +295,9 @@
 
             if (isValid) {
                 loaderButton('addUpdateAmcMaster', true);
+                
+                $('#vehicle_master_id').attr('disabled',false);
+                $('#vehicle_type').attr('disabled',false);
                 $('form[name="amcMasterForm"]').submit();
             }
         });

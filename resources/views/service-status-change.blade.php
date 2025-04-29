@@ -144,7 +144,7 @@
                 success: function(response) {
                     if (response.code == '1') {
 
-                        
+
                         let serviceFlag = response.data.serviceFlag;
                         let serveiceDataList = response.data.serveiceDataList;
 
@@ -157,7 +157,7 @@
                             $('#amcCustomerNumber').html(amc_master_details.contact_number);
                             $('#amc_id').val(amc_master_details.id);
                             $('#service_id').val(serveiceData.id);
-                         
+
 
                         } else {
                             showToast('error', 'Sorry no pending service');
@@ -170,8 +170,11 @@
                                     <td>${item.display_service_date}</td>
                                     <td>${item.amc_master_details.customer_name}</td>
                                     <td>${item.service_remark ?? ''}</td>
-                                    <td>${item.attachment ?? ''}</td>
-                                    <td>${item.attachment ?? ''}</td>
+                                    <td>
+                                   <a href="${item.attachment_url ?? '#'}" download target="_blank" class="btn btn-sm btn-primary">
+                                        <i class="fa fa-download"></i> Download
+                                    </a></td>
+                                    <td>${item.service_by ?? ''}</td>
                                 </tr>
                                 `);
                         });
