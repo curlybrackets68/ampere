@@ -18,6 +18,8 @@ class ServiceDetail extends Model
         'service_remark',
         'attachment',
         'status',
+        'inquiry_flag',
+        'inquiry_id'
     ];
 
     protected $appends = ['display_service_date', 'status_name','amc_master_details','attachment_url','service_by'];

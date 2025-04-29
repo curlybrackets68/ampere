@@ -40,7 +40,7 @@ class ServiceController extends Controller
                     ->pluck('id')
                     ->toArray();
 
-                if(!empty($amcIds)){
+                if (!empty($amcIds)) {
                     $serviceList = $serviceList->whereIn('amc_id', $amcIds);
                 }
             }
@@ -196,30 +196,39 @@ class ServiceController extends Controller
         }
     }
 
-    public function addServiceInquiry(Request $request){
-        $data = $request->all();
-        $data['created_by'] = Auth::id();
+    public function addServiceInquiry(Request $request)
+    {
+        $data = [];
+
+
+        $data['name'] = $request->name;
+        $data['mobile'] = $request->mobile;
         $data['vehicle_no'] = strtoupper($request->vehicle_no);
+        $data['created_by'] = Auth::id();
+        $data['branch_id'] = $request->branch_id;
+
+
         $lastInquiryId = InquiryDetails::orderBy('id', 'desc')->first()->id ?? 0;
         $data['inquiry_no'] = 'INQ-' . ($lastInquiryId + 1);
 
-       
+
         $inquirySave = InquiryDetails::create($data);
         $latestNumber = $inquirySave->inquiry_no;
         SystemLogs::create([
             'inquiry_id' => $inquirySave->id,
-            'type' => '1', // for Order
-            'type_id' => $inquirySave->id, // for Order
-            'remark'     => 'Inquiry Created # '.$latestNumber,
+            'type' => '1', //
+            'type_id' => $inquirySave->id,
+            'remark'     => 'Inquiry Created # ' . $latestNumber,
             'action_id'  => 1,
             'created_by' => 1,
         ]);
 
 
+
         $this->sendWhatsAppMessage($request->mobile, "Inquiry No # $latestNumber added successfully. We will contact you soon.");
 
+        $serviceData = ServiceDetail::query()->where('status', 1)->where('amc_id', $request->amc_id)->orderBy('service_date', 'ASC')->first();
+        $serviceData->update(['inquiry_id' => $inquirySave->id, 'inquiry_flag' => 2]);
         return $this->successResponse([], "Inquiry No # $latestNumber added successfully. We will contact you soon.");
-        
     }
-
 }

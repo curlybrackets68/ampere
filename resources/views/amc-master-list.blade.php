@@ -201,6 +201,7 @@
                         <div class="col-md-3">
                             <label>Name</label>
                             <input type="text" class="form-control" id="inquiry_name" name="inquiry_name" />
+                            <input type="hidden" class="form-control" id="inquiry_amc_id" name="inquiry_amc_id" />
                         </div>
                         <div class="col-md-3">
                             <label>Mobile</label>
@@ -208,6 +209,7 @@
                         </div>
                         <div class="col-md-3">
                             <label>Vehicle Number</label>
+
                             <input type="text" class="form-control" id="inquiry_vehicle_no"
                                 name="inquiry_vehicle_no" />
                         </div>
@@ -692,11 +694,13 @@
             $('#inquiry_name').val($(this).data('customer-name'));
             $('#inquiry_mobile').val($(this).data('customer-number'));
             $('#inquiry_vehicle_no').val($(this).data('vehicle-number'));
+            $('#inquiry_amc_id').val($(this).data('id'));
             $('#inquiry_service_type').val('');
             $('#inquiry_branch').val('');
             $('#amcAddInquiryModel').modal('show');
 
         });
+
         $(document).on('click', '#addInquiryBtn', async function() {
 
             let inquiry_name = $('#inquiry_name').val();
@@ -704,6 +708,7 @@
             let inquiry_vehicle_no = $('#inquiry_vehicle_no').val();
             let inquiry_service_type = $('#inquiry_service_type').val();
             let branch_id = $('#inquiry_branch').val();
+            let amc_id = $('#inquiry_amc_id').val();
             let formData = new FormData();
 
             let isValid = true;
@@ -736,6 +741,7 @@
             formData.append('mobile', inquiry_mobile);
             formData.append('vehicle_no', inquiry_vehicle_no);
             formData.append('branch_id', branch_id);
+            formData.append('amc_id', amc_id);
 
             if (isValid) {
                 let response = await apiCallPost('{{ route('amc-master-service.add-service-inquiry') }}',

@@ -74,7 +74,17 @@ class AmcMasterController extends Controller
                 })
                 ->addColumn('display_status', function ($row) {
                     $class = 'warning';
-                    $html = '<button type="button" class="btn btn-' . $class . ' btn-sm " data-id="' . $row->id . '" data-status="' . $row->status_id . '">' . $this->getArrayNameById($this->statusArray, $row->status) . '</button>';
+                    $serviceData = ServiceDetail::query()->where('status', 1)->where('inquiry_flag',2)->where('inquiry_id','!=',0)->where('amc_id', $row->id)->orderBy('service_date', 'ASC')->first();
+                    $htmlInfo = '';
+                    if($serviceData){
+                        if (checkRights('USER_INQUIRY_ROLE_VIEW') ||checkRights('USER_INQUIRY_ROLE_VIEW_ALL')) {
+                            $htmlInfo = '<a href="' . route('inquiry') . '" class=""><i class="bi bi-info-circle-fill"></i></a>';
+                        }else{
+                            $htmlInfo = '<a href="#" class="btn btn-' . $class . ' btn-sm " data-id="' . $row->id . '" data-status="' . $row->status_id . '">' . $this->getArrayNameById($this->statusArray, $row->status) . '</a>';
+                        }
+                    }
+                   
+                    $html = '<a href="" class="btn btn-' . $class . ' btn-sm " data-id="' . $row->id . '" data-status="' . $row->status_id . '">' . $this->getArrayNameById($this->statusArray, $row->status) . '</a> <br> ' . $htmlInfo;
                     return $html;
                 })
                 ->addColumn('action', function ($row) {
@@ -94,6 +104,7 @@ class AmcMasterController extends Controller
                     }
                     $html .= '<a href="javascript:void(0);" class="dropdown-item amc-view" data-id="' . $row->id . '">View</a>';
                     $html .= '<a href="' . route('amc.download', $row->id) . '" class="dropdown-item" target="_blank">PDF</a>';
+                   
                     $html .= '<a href="#" class="dropdown-item amc-add-inquiry" data-id="' . $row->id . '" data-vehicle-number="'.$row->vehicle_number.'" data-customer-name="'.$row->customer_name.'" data-customer-number="'.$row->contact_number.'">Add Inquiry</a>';
                     if (Carbon::parse($row->amc_end_date)->isFuture()) {
                         $html .= '<a href="javascript:void(0);" class="dropdown-item change-status" data-id="' . $row->id . '" data-status="' . $row->status . '">Status</a>';
