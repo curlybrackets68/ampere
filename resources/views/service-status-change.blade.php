@@ -171,9 +171,12 @@
                                     <td>${item.amc_master_details.customer_name}</td>
                                     <td>${item.service_remark ?? ''}</td>
                                     <td>
-                                   <a href="${item.attachment_url ?? '#'}" download target="_blank" class="btn btn-sm btn-primary">
-                                        <i class="fa fa-download"></i> Download
-                                    </a></td>
+                                        ${item.attachment_url ? `
+                                            <a href="${item.attachment_url}" download target="_blank" class="btn btn-sm btn-primary">
+                                                <i class="fa fa-download"></i> Download
+                                            </a>
+                                        ` : ''}
+                                    </td>
                                     <td>${item.service_by ?? ''}</td>
                                 </tr>
                                 `);

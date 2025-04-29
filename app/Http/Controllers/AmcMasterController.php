@@ -74,16 +74,16 @@ class AmcMasterController extends Controller
                 })
                 ->addColumn('display_status', function ($row) {
                     $class = 'warning';
-                    $serviceData = ServiceDetail::query()->where('status', 1)->where('inquiry_flag',2)->where('inquiry_id','!=',0)->where('amc_id', $row->id)->orderBy('service_date', 'ASC')->first();
+                    $serviceData = ServiceDetail::query()->where('status', 1)->where('inquiry_flag', 2)->where('inquiry_id', '!=', 0)->where('amc_id', $row->id)->orderBy('service_date', 'ASC')->first();
                     $htmlInfo = '';
-                    if($serviceData){
-                        if (checkRights('USER_INQUIRY_ROLE_VIEW') ||checkRights('USER_INQUIRY_ROLE_VIEW_ALL')) {
+                    if ($serviceData) {
+                        if (checkRights('USER_INQUIRY_ROLE_VIEW') || checkRights('USER_INQUIRY_ROLE_VIEW_ALL')) {
                             $htmlInfo = '<a href="' . route('inquiry') . '" class=""><i class="bi bi-info-circle-fill"></i></a>';
-                        }else{
+                        } else {
                             $htmlInfo = '<a href="#" class="btn btn-' . $class . ' btn-sm " data-id="' . $row->id . '" data-status="' . $row->status_id . '">' . $this->getArrayNameById($this->statusArray, $row->status) . '</a>';
                         }
                     }
-                   
+
                     $html = '<a href="" class="btn btn-' . $class . ' btn-sm " data-id="' . $row->id . '" data-status="' . $row->status_id . '">' . $this->getArrayNameById($this->statusArray, $row->status) . '</a> <br> ' . $htmlInfo;
                     return $html;
                 })
@@ -104,8 +104,8 @@ class AmcMasterController extends Controller
                     }
                     $html .= '<a href="javascript:void(0);" class="dropdown-item amc-view" data-id="' . $row->id . '">View</a>';
                     $html .= '<a href="' . route('amc.download', $row->id) . '" class="dropdown-item" target="_blank">PDF</a>';
-                   
-                    $html .= '<a href="#" class="dropdown-item amc-add-inquiry" data-id="' . $row->id . '" data-vehicle-number="'.$row->vehicle_number.'" data-customer-name="'.$row->customer_name.'" data-customer-number="'.$row->contact_number.'">Add Inquiry</a>';
+
+                    $html .= '<a href="#" class="dropdown-item amc-add-inquiry" data-id="' . $row->id . '" data-vehicle-number="' . $row->vehicle_number . '" data-customer-name="' . $row->customer_name . '" data-customer-number="' . $row->contact_number . '">Add Inquiry</a>';
                     if (Carbon::parse($row->amc_end_date)->isFuture()) {
                         $html .= '<a href="javascript:void(0);" class="dropdown-item change-status" data-id="' . $row->id . '" data-status="' . $row->status . '">Status</a>';
                     }
@@ -121,7 +121,7 @@ class AmcMasterController extends Controller
         $serviceTypeArray = $this->serviceTypeArray;
         $branch = $this->branchArray;
 
-        return view('amc-master-list')->with(compact('vehicle', 'vehicleTypeArray','branch','serviceTypeArray'));
+        return view('amc-master-list')->with(compact('vehicle', 'vehicleTypeArray', 'branch', 'serviceTypeArray'));
     }
 
     /**
@@ -208,7 +208,7 @@ class AmcMasterController extends Controller
                 'inquiry_id' => 0,
                 'type' => '5', // AMC master Module ID
                 'type_id' => $amcMasterId,
-                'remark'     => 'Add AMC Master ',
+                'remark'     => 'Add AMC # ' . $amcMaster->amc_display_number,
                 'action_id'  => 1,
                 'created_by' => Auth::id(),
             ]);
@@ -238,7 +238,14 @@ class AmcMasterController extends Controller
         $amcDisplayNumber = AmcMaster::select('amc_display_number')->orderBy('amc_display_number', 'DESC')->first() ?? 0;
         $amcDisplayNumber = $amcDisplayNumber ? $amcDisplayNumber->amc_display_number + 1 : 1;
         $amcMaster = AmcMaster::find($id);
-        return view('add-update-amc-master')->with(compact('amcMaster',  'vehicle',  'vehicleTypeArray', 'paymentTypeArray', 'amcDisplayNumber'));
+        $amcPackageMasterData = AmcPackageMaster::where('vehicle_type', $amcMaster->vehicle_type)->get();
+        $amcPackageMaster = [];
+        if($amcPackageMasterData){
+            foreach($amcPackageMasterData as $value){
+                $amcPackageMaster[$value->id] = $value->service_count . ' Services';
+            }
+        }  
+        return view('add-update-amc-master')->with(compact('amcMaster',  'vehicle',  'vehicleTypeArray', 'paymentTypeArray', 'amcDisplayNumber','amcPackageMaster'));
     }
 
     /**
@@ -296,7 +303,7 @@ class AmcMasterController extends Controller
                 'inquiry_id' => 0,
                 'type' => '5', // AMC master Module ID
                 'type_id' => $amcMasterId,
-                'remark'     => 'Update AMC Master ',
+                'remark'     => 'Update AMC # ' . $amcMaster->amc_display_number,
                 'action_id'  => 2,
                 'created_by' => Auth::id(),
             ]);
@@ -380,12 +387,15 @@ class AmcMasterController extends Controller
                     }
                 }
             }
-            AmcMaster::where('id', $request->amc_reference_id)->update(['renew_status' => $this->getArrayIdByName($this->statusArray, 'Renew')]);
+            $oldAmcData = AmcMaster::find($request->amc_reference_id)->first();
+            AmcMaster::where('id', $request->amc_reference_id)->update(['renew_status' => $this->getArrayIdByName($this->statusArray, 'Renew'), 'status' => $this->getArrayIdByName($this->statusArray, 'Deactive')]);
+
+
             SystemLogs::create([
                 'inquiry_id' => 0,
                 'type' => '5', // AMC master Module ID
                 'type_id' => $request->amc_reference_id,
-                'remark'     => 'Renew AMC Master ',
+                'remark'     => 'Renew AMC # ' . $oldAmcData->amc_display_number,
                 'action_id'  => $this->getArrayIdByName($this->actionLogsArray, 'Renew'),
                 'created_by' => Auth::id(),
             ]);
@@ -393,13 +403,13 @@ class AmcMasterController extends Controller
                 'inquiry_id' => 0,
                 'type' => '5', // AMC master Module ID
                 'type_id' => $amcMasterId,
-                'remark'     => 'Add New AMC Master ',
+                'remark'     => 'Add New AMC # ' . $amcMaster->amc_display_number,
                 'action_id'  => $this->getArrayIdByName($this->actionLogsArray, '1'),
                 'created_by' => Auth::id(),
             ]);
         }
 
-            
+
         return redirect()->route('amc-master.index')->with('success', 'AMC Master Renew successfully!');
     }
 
@@ -476,6 +486,18 @@ class AmcMasterController extends Controller
             return response()->json(['code' => '1', 'data' => $data]);
         } else {
             return response()->json(['code' => 0, 'message' => 'No Amc Details']);
+        }
+    }
+
+    public function checkChassisNumber(Request $request)
+    {
+        $chassisNumber = $request->chassis_number;
+
+        $amcMaster = AmcMaster::where('chassis_number', $chassisNumber)->where('status', $this->getArrayIdByName($this->statusArray, 'Active'))->first();
+        if ($amcMaster) {
+            return response()->json(['code' => 1, 'message' => 'Chassis number already exists']);
+        } else {
+            return response()->json(['code' => 0, 'message' => 'Chassis number is available']);
         }
     }
 }

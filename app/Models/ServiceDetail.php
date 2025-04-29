@@ -35,7 +35,13 @@ class ServiceDetail extends Model
     }
     function getAttachmentUrlAttribute()
     {
-        return asset('assets/attachment/amc-master/' . $this->amc_id . '/service/'.$this->attachment);
+        $path = public_path('assets/attachment/amc-master/' . $this->amc_id . '/service/' . $this->attachment);
+
+        if (!empty($this->attachment) && file_exists($path)) {
+            return asset('assets/attachment/amc-master/' . $this->amc_id . '/service/' . $this->attachment);
+        }
+    
+        return '';
     }
     function getServiceByAttribute()
     {

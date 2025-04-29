@@ -175,7 +175,8 @@
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">AMC View Details <span class="amcDisplayNumber" style="color: blueviolet"></span></h5>
+                    <h5 class="modal-title" id="exampleModalLabel">AMC View Details <span class="amcDisplayNumber"
+                            style="color: blueviolet"></span></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -253,7 +254,6 @@
     <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 
     <script>
-       
         $(document).ready(function() {
             $('#datePeriod').daterangepicker({
                 timePicker: false,
@@ -549,6 +549,7 @@
                                         <th class="alignTdCenter">Remark</th>
                                         <th class="alignTdCenter">Status</th>
                                         <th class="alignTdCenter">Service By</th>
+                                        <th class="alignTdCenter">Attachment</th>
                                         <th class="alignTdCenter">Action</th>
                                     </tr>
                                 </thead>
@@ -566,10 +567,22 @@
                                 <td class="alignTdCenter" style="width: 15%;">${item.display_service_date}</td>
                                 <td class="alignTdCenter" style="width: 40%;">${item.service_remark ?? ''}</td>
                                 <td class="alignTdCenter" style="width: 10%;"><span class="badge ${badge}">${item.status_name}</span></td>
-                                <td class="alignTdCenter" style="width: 15%;">${item.service_by ?? ''}</td>
-                                <td class="alignTdCenter" style="width: 20%;">
-                                    ${item.status == 1 ? '<button class="btn btn-sm btn-primary ">add inq</button>' : ''}
-                                </td
+                                <td class="alignTdCenter" style="width: 10%;">${item.service_by ?? ''}</td>
+                                <td class="alignTdCenter" style="width: 5%;">
+                                ${item.attachment_url ? `
+                                        <a href="${item.attachment_url}" download target="_blank" class="btn btn-sm btn-primary">
+                                            <i class="fa fa-download"></i> Download
+                                        </a>
+                                    ` : ''}
+                                </td>
+                               <td class="alignTdCenter" style="width: 20%;">
+                                    ${item.status == 1 ? `<button class="btn btn-sm btn-primary amc-add-inquiry"
+                                                    data-id="${item.amc_master_details.id}"
+                                                    data-vehicle-number="${item.amc_master_details.vehicle_number}"
+                                                    data-customer-name="${item.amc_master_details.customer_name}"
+                                                    data-customer-number="${item.amc_master_details.contact_number}">Add inq</button>` : ''}
+                                </td>
+
                                 </tr>
                             `;
                     }
@@ -727,7 +740,8 @@
                 isValid = false;
             } else if (!/^\d{10}$/.test(inquiry_mobile)) {
                 $('#inquiry_mobile').after(
-                    '<small class="error-message text-danger">Enter a valid 10-digit mobile number.</small>');
+                    '<small class="error-message text-danger">Enter a valid 10-digit mobile number.</small>'
+                );
                 isValid = false;
             }
 
@@ -735,7 +749,8 @@
                 $('#inquiry_service_type').after(
                     '<small class="error-message text-danger">Please Select servie type.</small>');
                 isValid = false;
-            } if (branch_id === '') {
+            }
+            if (branch_id === '') {
                 $('#inquiry_branch').after(
                     '<small class="error-message text-danger">Please Select branch.</small>');
                 isValid = false;
@@ -750,12 +765,14 @@
             if (isValid) {
                 let response = await apiCallPost('{{ route('amc-master-service.add-service-inquiry') }}',
                     formData);
-                    amcMasterList();
+                amcMasterList();
                 if (response.code == '1') {
                     showToast('success', response.message);
                     $('#amcAddInquiryModel').modal('hide');
-                   
+                    $('#amcViewModal').modal('hide');
+
                 }
+               
             }
 
 

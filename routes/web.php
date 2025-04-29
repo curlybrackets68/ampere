@@ -63,9 +63,11 @@ Route::middleware(['auth'])->group(function () {
     //amc
     Route::resource('amc-master', AmcMasterController::class);
     Route::get('get-amc-package-master', [AmcMasterController::class, 'getAmcPackageMaster'])->name('amc-master.get-amc-package-master');
+    Route::get('check-chassis-number', [AmcMasterController::class, 'checkChassisNumber'])->name('amc-master.check-chassis-number');
     Route::get('amc-master/renew/{amc_id}', [AmcMasterController::class, 'renew'])->name('amc-master.renew');
 
     Route::get('get-amc-chart', [DashboardController::class, 'amcChart'])->name('get-amc-chart');
+   
     Route::get('get-service-chart', [DashboardController::class, 'serviceChart'])->name('get-service-chart');
 
     Route::post('change-amc-status', [AmcMasterController::class, 'changeStatus'])->name('amc.change-status');

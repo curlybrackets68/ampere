@@ -94,7 +94,7 @@
                                                 value="{{ old('name', $amcMaster->vehicle_number ?? '') }}">
                                         </div>
                                     </div>
-                                    
+
                                     <div class="col-md-2">
                                         <div class="form-group">
                                             <label>Contact Number</label>
@@ -114,12 +114,11 @@
                                     <div class="col-md-5">
                                         <div class="form-group">
                                             <label>Address</label>
-                                            <textarea class="form-control" rows="2"  id="contact_address"
-                                            placeholder="Enter Address" name="contact_address">{{@$amcMaster->contact_address}}</textarea>
-                                           
+                                            <textarea class="form-control" rows="2" id="contact_address" placeholder="Enter Address" name="contact_address">{{ @$amcMaster->contact_address }}</textarea>
+
                                         </div>
                                     </div>
-                                    
+
                                 </div>
                                 <div class="row mt-2">
                                     <div class="col-md-2">
@@ -177,7 +176,8 @@
                             </div>
 
                             <div class="card-footer">
-                                <button type="submit" class="btn btn-primary btn-sm" id="addUpdateAmcMaster">Submit</button>
+                                <button type="submit" class="btn btn-primary btn-sm"
+                                    id="addUpdateAmcMaster">Submit</button>
                                 <button type="reset" class="btn btn-light btn-sm">Cancel</button>
                             </div>
                         </div>
@@ -192,12 +192,12 @@
     <script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
     <script>
-          $(document).ready(async function() {
+        $(document).ready(async function() {
             let amcMaster = @json(@$amcMaster);
-            if(amcMaster){
+            if (amcMaster) {
                 $('#vehicle_type').trigger('change');
             }
-            console.log(amcMaster)
+        
         });
         $(function() {
             flatpickr("#amc_start_date", {
@@ -225,12 +225,16 @@
                 success: function(response) {
                     if (response.code == '1') {
                         const packages = response.data.amcPackageMaster;
-
+                        let amcMaster = @json(@$amcMaster);
                         $.each(packages, function(index, item) {
+                            let selected = '';
+                            if (amcMaster && amcMaster.amc_package_type_id == item.id) {
+                                selected = 'selected';
+                            }
                             const text =
                                 `${item.service_count} Services`;
                             dropdown.append(
-                                `<option value="${item.id}" data-time-period="${item.time_period}">${text}</option>`
+                                `<option value="${item.id}" data-time-period="${item.time_period}" ${selected}>${text}</option>`
                             );
                         });
                         $('#amc_package_type_id').trigger('change');
@@ -322,8 +326,65 @@
             }
         }
 
-        $(document).on('change', '#amc_package_type_id', calculateAmcEndDate);
+        function checkChassisNumber(){
+            $.ajax({
+                url: "{{ route('amc-master.get-amc-package-master') }}",
+                method: 'GET',
+                data: {
+                    type_id: type_id,
+
+                },
+                success: function(response) {
+                    if (response.code == '1') {
+                        const packages = response.data.amcPackageMaster;
+
+                        $.each(packages, function(index, item) {
+                            const text =
+                                `${item.service_count} Services`;
+                            dropdown.append(
+                                `<option value="${item.id}" data-time-period="${item.time_period}">${text}</option>`
+                            );
+                        });
+                        $('#amc_package_type_id').trigger('change');
+                    }
+
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error fetching chart data:", error);
+                }
+            });
+        }
+
+        $(document).on('change',  '#amc_package_type_id', calculateAmcEndDate);
 
         $(document).on('change', '#amc_start_date', calculateAmcEndDate);
+
+        $(document).on('change', '#chassis_number', function() {
+            let chassis_number = $(this).val();
+            const dropdown = $('#amc_package_type_id');
+            dropdown.empty();
+            $.ajax({
+                url: "{{ route('amc-master.check-chassis-number') }}",
+                method: 'GET',
+                data: {
+                    chassis_number: chassis_number,
+
+                },
+                success: function(response) {
+                    if (response.code == '1') {
+                        showToast('error', response.message);
+                        $(this).focus();
+                        $(this).val('');
+                        return false;
+                    }else{
+
+                    }
+
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error fetching chart data:", error);
+                }
+            });
+        });
     </script>
 @endsection
