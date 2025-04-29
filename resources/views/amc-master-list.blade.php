@@ -746,10 +746,11 @@
             if (isValid) {
                 let response = await apiCallPost('{{ route('amc-master-service.add-service-inquiry') }}',
                     formData);
-
+                    amcMasterList();
                 if (response.code == '1') {
                     showToast('success', response.message);
                     $('#amcAddInquiryModel').modal('hide');
+                   
                 }
             }
 
