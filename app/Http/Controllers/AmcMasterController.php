@@ -14,6 +14,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -35,7 +36,9 @@ class AmcMasterController extends Controller
             if (checkRights('USER_AMC_ROLE_VIEW') && !checkRights('USER_AMC_ROLE_VIEW_ALL')) {
                 $amcMasterList = $amcMasterList->where('created_by', Auth::id());
             }
-
+            if (! empty($request->startDate) && ! empty($request->endDate)) {
+                $amcMasterList = $amcMasterList->whereBetween(DB::raw('DATE(amc_end_date)'), [$request->startDate, $request->endDate]);
+            }
             if (!empty($request->chassis_number)) {
                 $amcMasterList = $amcMasterList->where('chassis_number', $request->chassis_number);
             }
