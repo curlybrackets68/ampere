@@ -311,7 +311,7 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
-    <script src="{{ asset('/assets/js/Chart.min.js') }}"></script>
+    <script src="{{ shared_asset('/assets/js/Chart.min.js') }}"></script>
     <script>
         $(document).ready(function() {
             $('#inquiryDatePeriod').daterangepicker({
