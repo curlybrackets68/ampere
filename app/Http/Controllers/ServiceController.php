@@ -164,7 +164,9 @@ class ServiceController extends Controller
 
         ServiceDetail::where('id', $service_id)->update($updateData);
 
-        $serviceData = ServiceDetail::find($service_id)->first();
+        $serviceData = ServiceDetail::query()->where('id',$service_id)->first();
+       
+        $serviceDataLastDate = ServiceDetail::query()->Where('amc_id',$amc_id)->orderBy('service_no','ASC')->where('status','1')->first();
 
         SystemLogs::create([
             'inquiry_id' => 0,
@@ -178,7 +180,7 @@ class ServiceController extends Controller
 
         $whatsAppMsg .= "Your vehicle *$amcMaster->vehicle_number* has been successfully serviced under AMC Contract ID: *$amcMaster->amc_display_number* \n \n";
         $whatsAppMsg .= "Service Date: *$serviceData->display_service_date* \n";
-        $whatsAppMsg .= "Next Service Due: *$serviceData->display_service_date* \n";
+        $whatsAppMsg .= "Next Service Due: *$serviceDataLastDate->display_service_date* \n";
         $whatsAppMsg .= "Location: Ampere Service Center, Vadodara \n \n";
         $whatsAppMsg .= "Our team has completed all required checks and maintenance as per AMC guidelines. Your vehicle is now ready for delivery. \n \n";
         $whatsAppMsg .= "For feedback or questions, feel free to reply to this message. \n";
