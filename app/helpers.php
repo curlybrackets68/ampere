@@ -21,3 +21,13 @@ if (!function_exists('getSecretFileData')) {
         }
     }
 }
+
+function shared_asset($path) {
+    $asset = $asset = asset('/' . $path);
+    if (env('SERVER_MODE') == 'live') {
+        $asset = asset('ampere-testing/' . $path);
+    } else if (env('SERVER_MODE') == 'test') {
+        $asset = asset('ampere/' . $path);
+    }
+    return $asset;
+}
