@@ -363,9 +363,9 @@
                         name: 'action'
                     }
                 ],
-                order: [
-                    [0, 'asc']
-                ],
+                // order: [
+                //     [0, 'asc']
+                // ],
                 createdRow: function(row, data, index) {
                     $('td', row).eq(0).css('text-align', 'left');
                     $('td', row).eq(1).css('text-align', 'left');
@@ -374,6 +374,11 @@
                     $('td', row).eq(4).css('text-align', 'left');
                     $('td', row).eq(5).css('text-align', 'left');
                 },
+                "rowCallback": function(row, data, index) {
+                    if (data.row_class == 'light-red') {
+                        $(row).addClass('light-red');
+                    }
+                }
             });
         }
 
@@ -559,7 +564,7 @@
                     for (let item of serviceData) {
                         let badge = 'text-bg-primary';
                         if (item.status == '1') {
-                            badge = 'text-bg-danger';
+                            badge = 'text-light-red';
                         }
                         tabContentHtml += `
                             <tr>
@@ -570,17 +575,17 @@
                                 <td class="alignTdCenter" style="width: 10%;">${item.service_by ?? ''}</td>
                                 <td class="alignTdCenter" style="width: 5%;">
                                 ${item.attachment_url ? `
-                                        <a href="${item.attachment_url}" download target="_blank" class="btn btn-sm btn-primary">
-                                            <i class="fa fa-download"></i> Download
-                                        </a>
-                                    ` : ''}
+                                            <a href="${item.attachment_url}" download target="_blank" class="btn btn-sm btn-primary">
+                                                <i class="fa fa-download"></i> Download
+                                            </a>
+                                        ` : ''}
                                 </td>
                                <td class="alignTdCenter" style="width: 20%;">
                                     ${item.status == 1 ? `<button class="btn btn-sm btn-primary amc-add-inquiry"
-                                                    data-id="${item.amc_master_details.id}"
-                                                    data-vehicle-number="${item.amc_master_details.vehicle_number}"
-                                                    data-customer-name="${item.amc_master_details.customer_name}"
-                                                    data-customer-number="${item.amc_master_details.contact_number}">Add inq</button>` : ''}
+                                                        data-id="${item.amc_master_details.id}"
+                                                        data-vehicle-number="${item.amc_master_details.vehicle_number}"
+                                                        data-customer-name="${item.amc_master_details.customer_name}"
+                                                        data-customer-number="${item.amc_master_details.contact_number}">Add inq</button>` : ''}
                                 </td>
 
                                 </tr>
@@ -613,7 +618,7 @@
                     for (let item of amcDetails) {
                         let badge = 'text-bg-primary';
                         if (item.status == '11') {
-                            badge = 'text-bg-danger';
+                            badge = 'text-light-red';
                         }
                         tabContentHtml += `<tr>
                                     <td class="alignTdCenter" style="width: 5%;">${serialNo++}</td>
@@ -705,7 +710,7 @@
         $(document).on('click', '#filterBtn', function() {
             $('#filter-form').toggleClass('d-none');
             amcMasterList();
-            $('#exportExcel').removeClass('d-none');
+            $('#exportExcel').toggleClass('d-none');
         });
         $(document).on('click', '.amc-add-inquiry', function() {
             console.log($(this).data('customer-name'));
@@ -773,7 +778,7 @@
                     $('#amcViewModal').modal('hide');
 
                 }
-               
+
             }
 
 

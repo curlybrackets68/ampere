@@ -17,7 +17,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.min.css"
         integrity="sha256-Qsx5lrStHZyR9REqhUF8iQt73X06c8LGIUPzpOhwRrI=" crossorigin="anonymous">
 
-    <link rel="stylesheet" href="{{ asset('dist/css/adminlte.css') }}">
+    <link rel="stylesheet" href="{{ shared_asset('assets/css/adminlte.css') }}">
 
     {{-- <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/dataTables.bootstrap4.min.css"> --}}
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
@@ -27,7 +27,7 @@
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 
 
-    {{-- <link href="{{ asset('../../dist/css/datatables.min.css') }}" rel="stylesheet"> --}}
+    {{-- <link href="{{ shared_asset('../../dist/css/datatables.min.css') }}" rel="stylesheet"> --}}
     @yield('css')
 </head>
 
@@ -51,7 +51,7 @@
         </nav> <!--end::Header--> <!--begin::Sidebar-->
         <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
             <div class="sidebar-brand"> <!--begin::Brand Link--> <a href="./index.html" class="brand-link">
-                    <!--begin::Brand Image--> <img src="{{ asset('dist/assets/img/AdminLTELogo.png') }}"
+                    <!--begin::Brand Image--> <img src="{{ shared_asset('assets/assets/img/AdminLTELogo.png') }}"
                         alt="AdminLTE Logo" class="brand-image opacity-75 shadow"><span
                         class="brand-text fw-light">AMPERE</span></a>
             </div>
@@ -93,11 +93,11 @@
             <!--end::Copyright-->
         </footer> <!--end::Footer-->
     </div> <!--end::App Wrapper--> <!--begin::Script--> <!--begin::Third Party Plugin(OverlayScrollbars)-->
-    <script src="{{ asset('dist/js/jquery-3.6.0.min.js') }}" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+    <script src="{{ shared_asset('assets/js/jquery-3.6.0.min.js') }}" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
         crossorigin="anonymous"></script>
-    {{-- <script src="{{ asset('../../dist/js/datatables.min.js') }}"></script> --}}
+    {{-- <script src="{{ shared_asset('../../dist/js/datatables.min.js') }}"></script> --}}
 
-    <script src="{{ asset('dist/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ shared_asset('assets/js/bootstrap.bundle.min.js') }}"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.3.0/browser/overlayscrollbars.browser.es6.min.js"
         integrity="sha256-H2VM7BKda+v2Z4+DRy69uknwxjyDRhszjXFhsL4gD3w=" crossorigin="anonymous"></script>
@@ -106,9 +106,9 @@
         integrity="sha256-whL0tQWoY1Ku1iskqPFvmZ+CHsvmRWx/PIoEvIeWh4I=" crossorigin="anonymous"></script>
     <!--end::Required Plugin(popperjs for Bootstrap 5)--><!--begin::Required Plugin(Bootstrap 5)-->
 
-    <script src="{{ asset('dist/js/adminlte.js') }}"></script> <!--end::Required Plugin(AdminLTE)-->
+    <script src="{{ shared_asset('assets/js/adminlte.js') }}"></script> <!--end::Required Plugin(AdminLTE)-->
     <!--begin::OverlayScrollbars Configure-->
-    <script src="{{ asset('dist/js/custom.js') }}"></script>
+    <script src="{{ shared_asset('assets/js/custom.js') }}"></script>
 
     <script src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
     <script src="https://cdn.datatables.net/2.1.8/js/dataTables.bootstrap4.js"></script>
