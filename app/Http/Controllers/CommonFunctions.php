@@ -184,22 +184,27 @@ trait CommonFunctions
         }
     }
 
-    public function sendWhatsAppMessageWithFile($mobileNumber, $message, $file)
+    public function sendWhatsAppMessageWithFile($mobileNumber, $message, $file, $fileName = '')
     {
+        if (empty($fileName)) {
+            $fileName = 'brochure.pdf';
+        } else {
+            $fileName = $fileName.'.pdf';
+        }
         $url = "https://wa.smsidea.com/api/v1/sendDocument";
         $whatsAppAPIKey = '6edc72b9f0884247ba0a630beb94c028';
-
         $data = [
             'key' => $whatsAppAPIKey,
             'to' => '91' . $mobileNumber,
             'caption' => $message,
             'isUrgent' => true,
             "url" => $file,
-            "filename" => "brochure.pdf"
+            "filename" => $fileName
         ];
         $response = Http::withOptions(['verify' => false])->post($url, $data);
         if ($response->successful()) {
             $responseDecode = $response->json();
+            
             if ($responseDecode['ErrorCode'] === '000') {
                 return true;
             } else {
@@ -277,8 +282,7 @@ trait CommonFunctions
             $fileName = 'amc_' . now()->format('Ymd_His') . '_' . $data['amc']->id . '.pdf';
         }
 
-        $publicFolder = public_path($folder);
-
+        $publicFolder = 'assets/temp';
         if (!file_exists($publicFolder)) {
             mkdir($publicFolder, 0775, true);
         }
@@ -288,7 +292,7 @@ trait CommonFunctions
 
         return [
             'full_path' => $fullPath,
-            'public_url' => url("{$folder}/{$fileName}")
+            'public_url' => url("{$publicFolder}/{$fileName}"),
         ];
     }
 }

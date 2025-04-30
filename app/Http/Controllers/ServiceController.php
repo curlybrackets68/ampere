@@ -170,7 +170,7 @@ class ServiceController extends Controller
             'inquiry_id' => 0,
             'type' => '6', // Service Module ID
             'type_id' => $service_id,
-            'remark'     => 'Serive Status Update ',
+            'remark'     => 'Servie Status Update ',
             'action_id'  => 1,
             'created_by' => Auth::id(),
         ]);

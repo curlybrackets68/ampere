@@ -60,9 +60,11 @@ class AMCCronJob extends Command
                     $message .= "To renew your AMC, reply to this message or call us at +91 90233 42463. \n\n";
                     $message .= "Thank you for trusting Ampere! \n";
 
-                    $sent = $this->sendWhatsAppMessageWithFile($amc->contact_number, $message, $pdfUrl['full_path']);
-                    if ($sent && File::exists($pdfUrl['full_path'])) {
-                        File::delete($pdfUrl['full_path']);
+                    // $sent = $this->sendWhatsAppMessageWithFile($amc->contact_number, $message, $pdfUrl['full_path']);
+
+                    $sent = $this->sendWhatsAppMessageWithFile($amc->contact_number, $message, $pdfUrl['public_url'], 'amc_pdf');
+                    if ($sent && File::exists($pdfUrl['public_url'])) {
+                        File::delete($pdfUrl['public_url']);
                     }
                     $this->info($message);
                     \Log::info($message);
@@ -98,9 +100,11 @@ class AMCCronJob extends Command
                 $messageDue .= "\n";
                 $messageDue .= "Thank you for trusting Ampere!\n";
 
-                $sent = $this->sendWhatsAppMessageWithFile($amcDue->contact_number, $messageDue, $pdfUrl['full_path']);
-                if ($sent && File::exists($pdfUrl['full_path'])) {
-                    File::delete($pdfUrl['full_path']);
+                // $sent = $this->sendWhatsAppMessageWithFile($amcDue->contact_number, $messageDue, $pdfUrl['full_path']);
+
+                $sent = $this->sendWhatsAppMessageWithFile($amcDue->contact_number, $messageDue, $pdfUrl['public_url'], 'amc_pdf');
+                if ($sent && File::exists($pdfUrl['public_url'])) {
+                    File::delete($pdfUrl['public_url']);
                 }
                 $this->info($messageDue);
                 \Log::info($messageDue);

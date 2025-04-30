@@ -64,9 +64,10 @@ class ServiceCronJob extends Command
                     $message .= "Thank you for choosing Ampere! \n";
                     $message .= "For assistance, call us at +91 90233 42463.\n";
 
-                    $sent = $this->sendWhatsAppMessageWithFile($amcQuery->contact_number, $message, $pdfUrl['full_path']);
-                    if ($sent && File::exists($pdfUrl['full_path'])) {
-                        File::delete($pdfUrl['full_path']);
+                    // $sent = $this->sendWhatsAppMessageWithFile($amcQuery->contact_number, $message, $pdfUrl['public_url']);
+                    $sent = $this->sendWhatsAppMessageWithFile($amcQuery->contact_number, $message, $pdfUrl['public_url'], 'amc_pdf');
+                    if ($sent && File::exists($pdfUrl['public_url'])) {
+                        File::delete($pdfUrl['public_url']);
                     }
                     $this->info($message);
                     \Log::info($message);
@@ -103,9 +104,10 @@ class ServiceCronJob extends Command
                 $messageOnDue .= "Thank you for choosing Ampere.   \n";
                 $messageOnDue .= "For assistance, call +91 90233 42463. \n";
 
-                $sent = $this->sendWhatsAppMessageWithFile($amcQuery->contact_number, $messageOnDue, $pdfUrl['full_path']);
-                if ($sent && File::exists($pdfUrl['full_path'])) {
-                    File::delete($pdfUrl['full_path']);
+                // $sent = $this->sendWhatsAppMessageWithFile($amcQuery->contact_number, $messageOnDue, $pdfUrl['public_url']);
+                $sent = $this->sendWhatsAppMessageWithFile($amcQuery->contact_number, $messageOnDue, $pdfUrl['public_url'], 'amc_pdf');
+                if ($sent && File::exists($pdfUrl['public_url'])) {
+                    File::delete($pdfUrl['public_url']);
                 }
                 $this->info($messageOnDue);
                 \Log::info($messageOnDue);
@@ -133,10 +135,10 @@ class ServiceCronJob extends Command
                 $messageDue .= "Note: Delay in service may impact your AMC coverage. \n\n";
                 $messageDue .= "Thank you for choosing Ampere.   \n";
                 $messageDue .= "Support: +91 90233 42463  \n";
-                $sent = $this->sendWhatsAppMessageWithFile($amcQuery->contact_number, $messageDue, $pdfUrl['full_path']);
-
-                if ($sent && File::exists($pdfUrl['full_path'])) {
-                    File::delete($pdfUrl['full_path']);
+                // $sent = $this->sendWhatsAppMessageWithFile($amcQuery->contact_number, $messageDue, $pdfUrl['public_url']);
+                $sent = $this->sendWhatsAppMessageWithFile($amcQuery->contact_number, $messageDue, $pdfUrl['public_url'], 'amc_pdf');
+                if ($sent && File::exists($pdfUrl['public_url'])) {
+                    File::delete($pdfUrl['public_url']);
                 }
                 $this->info($messageDue);
                 \Log::info($messageDue);
