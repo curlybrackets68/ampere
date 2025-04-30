@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exports\ServiceDetailsExport;
 use App\Models\AmcMaster;
+use App\Models\AmcPackageMaster;
 use App\Models\InquiryDetails;
 use App\Models\ServiceDetail;
 use App\Models\SystemLogs;
@@ -160,10 +161,46 @@ class ServiceController extends Controller
             }
         }
 
+        $serviceData = ServiceDetail::query()->where('id', $service_id)->first();
+
+        if (!Carbon::parse($serviceData->service_date)->isToday()) {
+            $pendingServices = ServiceDetail::where('amc_id', $amc_id)
+                ->where('status', '1')
+                ->orderBy('service_no', 'ASC')
+                ->get();
+        
+            if ($pendingServices->count() > 1) {
+                $firstServiceDate = Carbon::today();
+                $serviceDates = [$firstServiceDate];
+                $lastServiceDate = $firstServiceDate;
+        
+                // Generate service dates for all except last one
+                for ($i = 1; $i < $pendingServices->count() - 1; $i++) {
+                    if($i ==1){
+                        $nextServiceDate = $lastServiceDate->copy()->addDays(120);
+                    }else{
+                        $nextServiceDate = $lastServiceDate->copy()->addDays(119);
+                    }
+                    
+                    $serviceDates[] = $nextServiceDate;
+
+                    $lastServiceDate = $nextServiceDate;
+                }
+        
+                // Update all pending services except the last one
+                foreach ($pendingServices as $index => $service) {
+                    if ($index < count($pendingServices) - 1) {
+                        $service->service_date = $serviceDates[$index]->toDateString();
+                        $service->save();
+                    }
+                }
+            }
+        }
+       
         ServiceDetail::where('id', $service_id)->update($updateData);
 
-        $serviceData = ServiceDetail::query()->where('id', $service_id)->first();
         $serviceDataNewServiceData = ServiceDetail::query()->Where('amc_id', $amc_id)->orderBy('service_no', 'ASC')->where('status', '1')->first();
+
 
         $serviceDataLastDate = $serviceDataNewServiceData->display_service_date ?? '';
 
