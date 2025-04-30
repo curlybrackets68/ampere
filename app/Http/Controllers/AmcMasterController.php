@@ -26,7 +26,7 @@ class AmcMasterController extends Controller
     {
 
         if ($request->ajax()) {
-            $amcMasterList = AmcMaster::query()->select();
+            $amcMasterList = AmcMaster::query()->orderBy('amc_end_date');
 
             if ($request->action_type != 'report') {
                 //default list 
@@ -60,6 +60,13 @@ class AmcMasterController extends Controller
                 })
                 ->addColumn('contact_date', function ($row) {
                     return $this->formatDateTime('d-m-Y', $row->amc_start_date) . "<br>" . $this->formatDateTime('d-m-Y', $row->amc_end_date);
+                })
+                ->addColumn('row_class', function ($row) {
+                    $amcEndDate = Carbon::parse($row->amc_end_date);
+                    $today = Carbon::today();
+                    $diffInDays = $today->diffInDays($amcEndDate);
+
+                    return $diffInDays <= 10 ? 'light-red' : '';
                 })
                 ->addColumn('vehicle_model', function ($row) {
                     $vehicleName  = '';
@@ -113,7 +120,7 @@ class AmcMasterController extends Controller
                     $html .= '</div>';
                     return $html;
                 })
-                ->rawColumns(['action', 'customer_details', 'contact_date', 'vehicle_data', 'display_status', 'vehicle_model'])
+                ->rawColumns(['action', 'customer_details', 'contact_date', 'vehicle_data', 'display_status', 'vehicle_model', 'row_class'])
                 ->make(true);
         }
         $vehicle = Vehicle::pluck('name', 'id');
@@ -174,9 +181,9 @@ class AmcMasterController extends Controller
 
                     $serviceNo = 1;
                     foreach ($serviceDates as $serviceDate) {
-                        
+
                         $serviceData = [
-                            'service_no'=>$serviceNo,
+                            'service_no' => $serviceNo,
                             'amc_id' => $amcMasterId,
                             'service_date' => $serviceDate->format('Y-m-d H:i:s'),
                             'created_by' => Auth::id(),
@@ -203,7 +210,7 @@ class AmcMasterController extends Controller
                     $whatsAppMsg .= "Thank you for choosing Ampere! \n";
                     $whatsAppMsg .= "For queries, contact us at +91 90233 42463.";
                     $pdfUrl = $this->generateAndStorePdf('pdf.amc-pdf', ['amc' => $amcMaster], 'amc_pdfs');
-             
+
                     $data = $this->sendWhatsAppMessageWithFile($amcMaster->contact_number, $whatsAppMsg, $pdfUrl['public_url'], 'amc_pdf');
                 }
             }
@@ -243,12 +250,12 @@ class AmcMasterController extends Controller
         $amcMaster = AmcMaster::find($id);
         $amcPackageMasterData = AmcPackageMaster::where('vehicle_type', $amcMaster->vehicle_type)->get();
         $amcPackageMaster = [];
-        if($amcPackageMasterData){
-            foreach($amcPackageMasterData as $value){
+        if ($amcPackageMasterData) {
+            foreach ($amcPackageMasterData as $value) {
                 $amcPackageMaster[$value->id] = $value->service_count . ' Services';
             }
-        }  
-        return view('add-update-amc-master')->with(compact('amcMaster',  'vehicle',  'vehicleTypeArray', 'paymentTypeArray', 'amcDisplayNumber','amcPackageMaster'));
+        }
+        return view('add-update-amc-master')->with(compact('amcMaster',  'vehicle',  'vehicleTypeArray', 'paymentTypeArray', 'amcDisplayNumber', 'amcPackageMaster'));
     }
 
     /**
@@ -293,9 +300,9 @@ class AmcMasterController extends Controller
 
                     $serviceNo = 1;
                     foreach ($serviceDates as $serviceDate) {
-                        
+
                         $serviceData = [
-                            'service_no'=>$serviceNo,
+                            'service_no' => $serviceNo,
                             'amc_id' => $amcMasterId,
                             'service_date' => $serviceDate->format('Y-m-d H:i:s'),
                             'modified_by' => Auth::id(),
