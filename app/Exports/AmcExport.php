@@ -34,7 +34,7 @@ class AmcExport implements FromCollection, WithHeadings, WithCustomStartCell, Wi
     {
         $query = AmcMaster::query();
         if (! empty($this->startDate) && ! empty($this->endDate)) {
-            $query = $query->whereBetween(DB::raw('DATE(amc_masters.created_at)'), [$this->startDate, $this->endDate]);
+            $query = $query->whereBetween(DB::raw('DATE(amc_masters.amc_end_date)'), [$this->startDate, $this->endDate]);
         }
         if (!empty($this->exportChassisNumber)) {
             $query = $query->where('chassis_number', $this->exportChassisNumber);
