@@ -43,7 +43,7 @@
                                                 value="{{ old('name', $amcMaster->chassis_number ?? '') }}">
                                         </div>
                                     </div>
-                                    <div class="col-md-2">
+                                    <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Vehicle Type</label>
                                             <select class="form-select" name="vehicle_type" id="vehicle_type">
@@ -76,7 +76,7 @@
                                         </div>
 
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Package Type</label>
                                             <select class="form-select" name="amc_package_type_id" id="amc_package_type_id">
@@ -86,7 +86,7 @@
                                     </div>
                                 </div>
                                 <div class="row mt-2">
-                                    <div class="col-md-2">
+                                    <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Vehicle Number</label>
                                             <input type="text" class="form-control" id="vehicle_number"
@@ -95,7 +95,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-md-2">
+                                    <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Contact Number</label>
                                             <input type="text" class="form-control" id="contact_number"
@@ -111,7 +111,7 @@
                                                 value="{{ old('customer_name', $amcMaster->customer_name ?? '') }}">
                                         </div>
                                     </div>
-                                    <div class="col-md-5">
+                                    <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Address</label>
                                             <textarea class="form-control" rows="2" id="contact_address" placeholder="Enter Address" name="contact_address">{{ @$amcMaster->contact_address }}</textarea>
@@ -121,7 +121,7 @@
 
                                 </div>
                                 <div class="row mt-2">
-                                    <div class="col-md-2">
+                                    <div class="col-md-3">
                                         <div class="form-group">
                                             <label>AMC Start Date:</label>
                                             <div class="input-group date">
@@ -131,7 +131,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-2">
+                                    <div class="col-md-3">
                                         <div class="form-group">
                                             <label>AMC End Date</label>
                                             <input type="text" class="form-control" id="amc_end_date"
@@ -139,7 +139,7 @@
                                                 value="{{ old('amc_end_date', $amcMaster->amc_end_date ?? '') }}">
                                         </div>
                                     </div>
-                                    <div class="col-md-2">
+                                    <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Payment Type</label>
                                             <select class="form-select" name="payment_type" id="payment_type">
@@ -155,7 +155,7 @@
                                         </div>
 
                                     </div>
-                                    <div class="col-md-2">
+                                    <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Amount</label>
                                             <input type="text" class="form-control" id="amc_basic_price"

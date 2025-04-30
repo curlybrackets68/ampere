@@ -43,7 +43,6 @@ class ServiceController extends Controller
                 if (! empty($request->startDate) && ! empty($request->endDate)) {
                     $serviceList = $serviceList->whereBetween(DB::raw('DATE(service_details.service_date)'), [$request->startDate, $request->endDate]);
                 }
-             
             } else {
                 $serviceList = $serviceList->where('status', 1);
                 if (! empty($request->startDate) && ! empty($request->endDate)) {
@@ -83,26 +82,16 @@ class ServiceController extends Controller
                 })
                 ->addColumn('action', function ($row) {
                     $html = '';
-                    // $html .= '<div class="btn-group">';
-                    // $html .= '<button type="button" class="btn btn-tool dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">';
-                    // $html .= '<i class="bi bi-wrench"></i>';
-                    // $html .= '</button>';
-                    // $html .= '<div class="dropdown-menu dropdown-menu-end" role="menu" style="">';
-                    // if (checkRights('USER_AMC_ROLE_EDIT')) {
-                    //     $notPendingServiceCount = ServiceDetail::query()->where('amc_id', $row->id)->where('status', '!=', $this->getArrayIdByName($this->statusArray, 'Pending'))->get();
-
-                    //     if ($notPendingServiceCount->count() == 0) {
-                    //         $html .= '<a href="' . route('amc-master.edit', $row->id) . '"  class="dropdown-item">Edit</a>';
-                    //     }
-                    //     $html .= '<a href="' . route('amc-master.renew', $row->id) . '" class="dropdown-item">Renew</a>';
-                    // }
-                    // $html .= '<a href="' . route('amc-master.edit', $row->id) . '" class="dropdown-item">View</a>';
-                    // $html .= '<a href="' . route('amc.download', $row->id) . '" class="dropdown-item" target="_blank">PDF</a>';
-                    // if (Carbon::parse($row->amc_end_date)->isFuture()) {
-                    //     $html .= '<a href="javascript:void()" class="dropdown-item change-status" data-id="' . $row->id . '" data-status="' . $row->status . '">Status</a>';
-                    // }
-                    // $html .= '</div>';
-                    // $html .= '</div>';
+                    $html .= '<div class="btn-group">';
+                    $html .= '<button type="button" class="btn btn-tool dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">';
+                    $html .= '<i class="bi bi-wrench"></i>';
+                    $html .= '</button>';
+                    $html .= '<div class="dropdown-menu dropdown-menu-end" role="menu" style="">';
+                    if ($row->inquiry_flag == 1) {
+                        $html .= '<a href="#" class="dropdown-item amc-add-inquiry" data-service-id="' . $row->id . '" data-id="' . $row->amc_master_details->id . '" data-vehicle-number="' . $row->amc_master_details->vehicle_number . '" data-customer-name="' . $row->amc_master_details->customer_name . '" data-customer-number="' . $row->amc_master_details->contact_number . '">Add Inquiry</a>';
+                    }
+                    $html .= '</div>';
+                    $html .= '</div>';
                     return $html;
                 })
                 ->rawColumns(['action', 'contract_details', 'customer_details', 'service_date', 'service_details', 'vehicle_details', 'display_status', 'vehicle_model'])
@@ -110,12 +99,14 @@ class ServiceController extends Controller
         }
         $vehicle = Vehicle::pluck('name', 'id');
         $vehicleTypeArray = $this->vehicleTypeArray;
+        $serviceTypeArray = $this->serviceTypeArray;
+        $branch = $this->branchArray;
         $serviceStatus = [
             "1" => 'Pending',
             "2" => 'Completed',
         ];
 
-        return view('service-list')->with(compact('vehicle', 'vehicleTypeArray', 'serviceStatus'));
+        return view('service-list')->with(compact('vehicle', 'vehicleTypeArray', 'serviceStatus', 'serviceTypeArray', 'branch'));
     }
 
     public function addService(Request $request)
@@ -212,7 +203,7 @@ class ServiceController extends Controller
             $exportStatusId = $request->input('exportStatusId');
             $exportActionType = $request->input('exportActionType');
 
-            return Excel::download(new ServiceDetailsExport($exportStartDate, $exportEndDate, $exportChassisNumber, $exportVehicleNumber, $exportContactNumber, $exportVehicleType, $exportvehicleMasterId,$exportStatusId,$exportActionType), 'service.xlsx');
+            return Excel::download(new ServiceDetailsExport($exportStartDate, $exportEndDate, $exportChassisNumber, $exportVehicleNumber, $exportContactNumber, $exportVehicleType, $exportvehicleMasterId, $exportStatusId, $exportActionType), 'service.xlsx');
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
@@ -249,8 +240,14 @@ class ServiceController extends Controller
 
         $this->sendWhatsAppMessage($request->mobile, "Inquiry No # $latestNumber added successfully. We will contact you soon.");
 
-        $serviceData = ServiceDetail::query()->where('status', 1)->where('amc_id', $request->amc_id)->orderBy('service_date', 'ASC')->first();
-        $serviceData->update(['inquiry_id' => $inquirySave->id, 'inquiry_flag' => 2]);
+        if (isset($request->inquiry_service_id) && !empty($request->inquiry_service_id)) {
+            $serviceData = ServiceDetail::query()->where('id', $request->inquiry_service_id)->first();
+            $serviceData->update(['inquiry_id' => $inquirySave->id, 'inquiry_flag' => 2]);
+        } else {
+            $serviceData = ServiceDetail::query()->where('status', 1)->where('amc_id', $request->amc_id)->orderBy('service_date', 'ASC')->first();
+            $serviceData->update(['inquiry_id' => $inquirySave->id, 'inquiry_flag' => 2]);
+        }
+
         return $this->successResponse([], "Inquiry No # $latestNumber added successfully. We will contact you soon.");
     }
 }

@@ -100,7 +100,8 @@
                                                 @endforelse
                                             </select>
                                         </div>
-                                    </div><div class="col-md-3">
+                                    </div>
+                                    <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Status</label>
                                             <select class="form-select" id="status_id" name="status_id">
@@ -112,7 +113,7 @@
                                             </select>
                                         </div>
                                     </div>
-                                  
+
                                     <div class="col-md-2" style="margin-top: 31px;">
                                         <button type="button" class="btn btn-primary" id="searchReport">Search</button>
                                     </div>
@@ -139,6 +140,66 @@
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="amcAddInquiryModel" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true"
+        data-bs-backdrop="static">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">AMC Add Inquiry Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label>Name</label>
+                            <input type="text" class="form-control" id="inquiry_name" name="inquiry_name" />
+                            <input type="hidden" class="form-control" id="inquiry_amc_id" name="inquiry_amc_id" />
+                            <input type="hidden" class="form-control" id="inquiry_service_id"
+                                name="inquiry_service_id" />
+                        </div>
+                        <div class="col-md-3">
+                            <label>Mobile</label>
+                            <input type="text" class="form-control" id="inquiry_mobile" name="inquiry_mobile" />
+                        </div>
+                        <div class="col-md-3">
+                            <label>Vehicle Number</label>
+
+                            <input type="text" class="form-control" id="inquiry_vehicle_no"
+                                name="inquiry_vehicle_no" />
+                        </div>
+                        <div class="col-md-3">
+                            <label>Select Branch</label>
+                            <select class="form-select" id="inquiry_branch">
+                                <option value="">Select Branch</option>
+                                @forelse (@$branch as $key => $value)
+                                    <option value="{{ $key }}">
+                                        {{ $value }}</option>
+                                @empty
+                                @endforelse
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label>Select Service Type</label>
+                            <select class="form-select" id="inquiry_service_type">
+                                <option value="">Select Service Type</option>
+                                @forelse (@$serviceTypeArray as $key => $value)
+                                    <option value="{{ $key }}">
+                                        {{ $value }}</option>
+                                @empty
+                                @endforelse
+                            </select>
+                        </div>
+
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="addInquiryBtn">Save</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
@@ -241,7 +302,7 @@
                     {
                         data: 'customer_details',
                         name: 'customer_details'
-                    },{
+                    }, {
                         data: 'vehicle_details',
                         name: 'vehicle_details'
                     },
@@ -275,11 +336,11 @@
         $('#serviceListTable').on('draw.dt', function() {
             $('[data-toggle="dropdown"]').dropdown();
         });
-      
+
         $(document).on('click', '#exportExcel', function() {
             $('#exportExcelForm').submit();
         });
-       
+
         $(document).on('click', '#filterBtn', function() {
             $('#filter-form').toggleClass('d-none');
             let startDate = $('#datePeriod').data('daterangepicker').startDate.format('YYYY-MM-DD');
@@ -294,6 +355,91 @@
                 vehicle_master_id: '',
             };
             serviceList(filter)
+        });
+
+        $(document).on('click', '.amc-add-inquiry', function() {
+            console.log($(this).data('customer-name'));
+            $('#inquiry_name').val($(this).data('customer-name'));
+            $('#inquiry_mobile').val($(this).data('customer-number'));
+            $('#inquiry_vehicle_no').val($(this).data('vehicle-number'));
+            $('#inquiry_amc_id').val($(this).data('id'));
+            $('#inquiry_service_id').val($(this).data('service-id'));
+            $('#inquiry_service_type').val('');
+            $('#inquiry_branch').val('');
+            $('#amcAddInquiryModel').modal('show');
+
+        });
+        $(document).on('click', '#addInquiryBtn', async function() {
+
+            let inquiry_name = $('#inquiry_name').val();
+            let inquiry_mobile = $('#inquiry_mobile').val();
+            let inquiry_vehicle_no = $('#inquiry_vehicle_no').val();
+            let inquiry_service_type = $('#inquiry_service_type').val();
+            let branch_id = $('#inquiry_branch').val();
+            let amc_id = $('#inquiry_amc_id').val();
+            let inquiry_service_id = $('#inquiry_service_id').val();
+            let formData = new FormData();
+
+            let isValid = true;
+            if (inquiry_name === '') {
+                $('#inquiry_name').after(
+                    '<small class="error-message text-danger">Enter Name.</small>');
+                isValid = false;
+            }
+            if (inquiry_mobile === '') {
+                $('#inquiry_mobile').after(
+                    '<small class="error-message text-danger">Mobile number is required.</small>');
+                isValid = false;
+            } else if (!/^\d{10}$/.test(inquiry_mobile)) {
+                $('#inquiry_mobile').after(
+                    '<small class="error-message text-danger">Enter a valid 10-digit mobile number.</small>'
+                );
+                isValid = false;
+            }
+
+            if (inquiry_service_type === '') {
+                $('#inquiry_service_type').after(
+                    '<small class="error-message text-danger">Please Select servie type.</small>');
+                isValid = false;
+            }
+            if (branch_id === '') {
+                $('#inquiry_branch').after(
+                    '<small class="error-message text-danger">Please Select branch.</small>');
+                isValid = false;
+            }
+            formData.append('_token', '{{ csrf_token() }}');
+            formData.append('name', inquiry_name);
+            formData.append('mobile', inquiry_mobile);
+            formData.append('vehicle_no', inquiry_vehicle_no);
+            formData.append('branch_id', branch_id);
+            formData.append('amc_id', amc_id);
+            formData.append('inquiry_service_id', inquiry_service_id);
+
+            if (isValid) {
+                let response = await apiCallPost('{{ route('amc-master-service.add-service-inquiry') }}',
+                    formData);
+
+                if (response.code == '1') {
+
+                    showToast('success', response.message);
+                    $('#amcAddInquiryModel').modal('hide');
+                }
+                let startDate = $('#datePeriod').data('daterangepicker').startDate.format('YYYY-MM-DD');
+                let endDate = $('#datePeriod').data('daterangepicker').endDate.format('YYYY-MM-DD');
+                let filter = {
+                    startDate: startDate,
+                    endDate: endDate,
+                    chassis_number: '',
+                    vehicle_number: '',
+                    contact_number: '',
+                    vehicle_type: '',
+                    vehicle_master_id: '',
+                };
+                serviceList(filter);
+
+            }
+
+
         });
     </script>
 @endsection
