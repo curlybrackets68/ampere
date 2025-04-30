@@ -203,8 +203,7 @@ class AmcMasterController extends Controller
                     $whatsAppMsg .= "Thank you for choosing Ampere! \n";
                     $whatsAppMsg .= "For queries, contact us at +91 90233 42463.";
                     $pdfUrl = $this->generateAndStorePdf('pdf.amc-pdf', ['amc' => $amcMaster], 'amc_pdfs');
-
-                    // $this->sendWhatsAppMessage($amcMaster->contact_number, $whatsAppMsg);
+             
                     $data = $this->sendWhatsAppMessageWithFile($amcMaster->contact_number, $whatsAppMsg, $pdfUrl['public_url'], 'amc_pdf');
                 }
             }
