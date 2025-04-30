@@ -12,7 +12,7 @@ class AmcPackageMaster extends Model
     protected $fillable = [
         'vehicle_type',
         'service_count',
-        'duration',
+        'price',
         'time_period',
         'created_by',
         'modified_by',

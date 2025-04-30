@@ -95,7 +95,7 @@ class AmcMaster extends Model
         $name = '';
         $query = AmcPackageMaster::find($this->amc_package_type_id);
         if ($query) {
-            $name = "$query->service_count services - $query->duration duration $query->time_period months";
+            $name = "$query->service_count services - $query->price duration $query->time_period months";
         }
         return $name;
     }

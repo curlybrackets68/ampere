@@ -42,7 +42,7 @@
                                                 value="{{ old('name', $amcMaster->chassis_number ?? '') }}" readonly>
                                         </div>
                                     </div>
-                                    <div class="col-md-2">
+                                    <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Vehicle Type</label>
                                             <select class="form-select" name="vehicle_type" id="vehicle_type" disabled="true">
@@ -75,7 +75,7 @@
                                         </div>
 
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Package Type</label>
                                             <select class="form-select" name="amc_package_type_id" id="amc_package_type_id">
@@ -85,7 +85,7 @@
                                     </div>
                                 </div>
                                 <div class="row mt-2">
-                                    <div class="col-md-2">
+                                    <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Vehicle Number</label>
                                             <input type="text" class="form-control" id="vehicle_number"
@@ -94,7 +94,7 @@
                                         </div>
                                     </div>
                                     
-                                    <div class="col-md-2">
+                                    <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Contact Number</label>
                                             <input type="text" class="form-control" id="contact_number"
@@ -110,7 +110,7 @@
                                                 value="{{ old('customer_name', $amcMaster->customer_name ?? '') }}">
                                         </div>
                                     </div>
-                                    <div class="col-md-5">
+                                    <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Address</label>
                                             <textarea class="form-control" rows="2"  id="contact_address"
@@ -121,7 +121,7 @@
                                     
                                 </div>
                                 <div class="row mt-2">
-                                    <div class="col-md-2">
+                                    <div class="col-md-3">
                                         <div class="form-group">
                                             <label>AMC Start Date:</label>
                                             <div class="input-group date">
@@ -131,7 +131,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-2">
+                                    <div class="col-md-3">
                                         <div class="form-group">
                                             <label>AMC End Date</label>
                                             <input type="text" class="form-control" id="amc_end_date"
@@ -139,7 +139,7 @@
                                                 value="{{ old('amc_end_date', $amcMaster->amc_end_date ?? '') }}">
                                         </div>
                                     </div>
-                                    <div class="col-md-2">
+                                    <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Payment Type</label>
                                             <select class="form-select" name="payment_type" id="payment_type">
@@ -155,16 +155,18 @@
                                         </div>
 
                                     </div>
-                                    <div class="col-md-2">
+                                    <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Amount</label>
                                             <input type="text" class="form-control" id="amc_basic_price"
                                                 placeholder="Amount" name="amc_basic_price"
                                                 value="{{ old('amc_basic_price', $amcMaster->amc_basic_price ?? '') }}"
-                                                oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
+                                                oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" readonly>
                                                 
                                         </div>
                                     </div>
+                                </div>
+                                <div class="row mt-2">
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Transaction Details</label>
@@ -233,7 +235,7 @@
                             const text =
                                 `${item.service_count} Services`;
                             dropdown.append(
-                                `<option value="${item.id}" data-time-period="${item.time_period}">${text}</option>`
+                                `<option value="${item.id}" data-time-period="${item.time_period}" data-amount="${item.price}">${text}</option>`
                             );
                         });
                         $('#amc_package_type_id').trigger('change');
@@ -256,6 +258,9 @@
             let amc_package_type_id = $('#amc_package_type_id').val();
             let contact_number = $('#contact_number').val();
             let customer_name = $('#customer_name').val();
+            let amc_basic_price = $('#amc_basic_price').val();
+            let payment_type = $('#payment_type').val();
+
 
             let isValid = true;
 
@@ -294,6 +299,11 @@
                     '<small class="error-message text-danger">Customer name is required.</small>');
                 isValid = false;
             }
+            if (payment_type === '') {
+                $('#payment_type').after(
+                    '<small class="error-message text-danger">Please select payment type.</small>');
+                isValid = false;
+            }
 
             if (isValid) {
                 loaderButton('addUpdateAmcMaster', true);
@@ -308,7 +318,8 @@
         function calculateAmcEndDate() {
             let timePeriod = parseInt($('#amc_package_type_id option:selected').data('time-period'));
             let startDateStr = $('#amc_start_date').val();
-
+            let amount = parseInt($(this).find(':selected').data('amount'));
+            
             if (timePeriod && startDateStr) {
                 let [day, month, year] = startDateStr.split('-');
                 let startDate = new Date(`${year}-${month}-${day}`);
@@ -326,10 +337,20 @@
             } else {
                 $('#amc_end_date').val('');
             }
+            $('#amc_basic_price').val(amount);
         }
 
-        $(document).on('change', '#amc_package_type_id', calculateAmcEndDate);
-
+        $(document).on('change', '#amc_package_type_id', function() {
+            calculateAmcEndDate();
+            let timePeriod = parseInt($(this).find(':selected').data('time-period'));
+            let amount = parseInt($(this).find(':selected').data('amount'));
+            if (timePeriod) {
+                $('#amc_start_date').attr('max', moment().add(timePeriod, 'months').format('DD-MM-YYYY'));
+            } else {
+                $('#amc_start_date').removeAttr('max');
+            }
+            $('#amc_basic_price').val(amount);
+        });
         $(document).on('change', '#amc_start_date', calculateAmcEndDate);
     </script>
 @endsection

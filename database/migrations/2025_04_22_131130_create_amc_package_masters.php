@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->tinyInteger('vehicle_type')->default(1)->comment('1 = New, 2 = Old');
             $table->integer('service_count')->default(0);
-            $table->integer('duration')->default(0);
+            $table->integer('price')->default(0);
             $table->integer('time_period')->default(0);
             $table->integer('created_by')->default(0);
             $table->integer('modified_by')->default(0);

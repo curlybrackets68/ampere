@@ -196,7 +196,7 @@ class AmcMasterController extends Controller
                     $startDate = $this->formatDateTime('d-M-Y', $amcMaster->amc_start_date);
                     $endDate = $this->formatDateTime('d-M-Y', $amcMaster->amc_end_date);
                     $vehicleName  = Vehicle::find($amcMaster->vehicle_master_id)->first()->name ?? '';
-                    $packageString = $amcPackageMasterData->service_count . ' Sevices - ' . $amcPackageMasterData->duration . ' duration ' . $amcPackageMasterData->time_period . 'months';
+                    $packageString = $amcPackageMasterData->service_count . ' Sevices - ' . $amcPackageMasterData->price . ' duration ' . $amcPackageMasterData->time_period . 'months';
                     $whatsAppMsg = "Hi $amcMaster->customer_name \n \n";
 
                     $whatsAppMsg .= "Your AMC contract has been successfully generated for your vehicle *$amcMaster->vehicle_number* \n \n";
