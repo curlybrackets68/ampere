@@ -18,9 +18,9 @@ class AmcExport implements FromCollection, WithHeadings, WithCustomStartCell, Wi
      * @return \Illuminate\Support\Collection
      */
 
-    protected $startDate, $endDate, $exportChassisNumber, $exportVehicleNumber, $exportContactNumber, $exportVehicleType, $exportvehicleMasterId;
+    protected $startDate, $endDate, $exportChassisNumber, $exportVehicleNumber, $exportContactNumber, $exportVehicleType, $exportVehicleMasterId;
 
-    public function __construct($startDate = '', $endDate = '', $exportChassisNumber = '', $exportVehicleNumber = '', $exportContactNumber = '', $exportVehicleType = '', $exportvehicleMasterId = '')
+    public function __construct($startDate = '', $endDate = '', $exportChassisNumber = '', $exportVehicleNumber = '', $exportContactNumber = '', $exportVehicleType = '', $exportVehicleMasterId = '')
     {
         $this->startDate = $this->formatDateTime('Y-m-d', $startDate);
         $this->endDate   = $this->formatDateTime('Y-m-d', $endDate);
@@ -28,7 +28,7 @@ class AmcExport implements FromCollection, WithHeadings, WithCustomStartCell, Wi
         $this->exportVehicleNumber   = $exportVehicleNumber;
         $this->exportContactNumber   = $exportContactNumber;
         $this->exportVehicleType   = $exportVehicleType;
-        $this->exportvehicleMasterId   = $exportvehicleMasterId;
+        $this->exportVehicleMasterId   = $exportVehicleMasterId;
     }
     public function collection()
     {
@@ -48,8 +48,8 @@ class AmcExport implements FromCollection, WithHeadings, WithCustomStartCell, Wi
         if (!empty($this->exportVehicleType)) {
             $query = $query->where('vehicle_type', $this->exportVehicleType);
         }
-        if (!empty($this->exportvehicleMasterId)) {
-            $query = $query->where('vehicle_master_id', $this->exportvehicleMasterId);
+        if (!empty($this->exportVehicleMasterId)) {
+            $query = $query->where('vehicle_master_id', $this->exportVehicleMasterId);
         }
 
         $results = $query->get();
@@ -105,7 +105,14 @@ class AmcExport implements FromCollection, WithHeadings, WithCustomStartCell, Wi
         return [
             BeforeSheet::class => function (BeforeSheet $event) {
                 $sheet = $event->sheet->getDelegate();
-                $sheet->setCellValue('A1', "Report Date: " . $this->startDate . " TO " . $this->endDate);
+
+                $sheet->setCellValue('A1', "Report Date: " . $this->formatDateTime('d-M-Y', $this->startDate) . " TO " . $this->formatDateTime('d-M-Y', $this->endDate));
+
+                $sheet->mergeCells('A1:M1');
+
+                $sheet->getStyle('A1')->getFont()->setBold(true);
+
+                $sheet->getStyle('A1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
             },
         ];
     }

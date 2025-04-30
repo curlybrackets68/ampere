@@ -25,7 +25,7 @@
                         <div class="card-header">
                             <h5 class="card-title">AMC Master</h5>
                             <div class="d-flex justify-content-end">
-                                <a href="javascript:void(0);" class="btn btn-primary btn-sm me-2" id="exportExcel">
+                                <a href="javascript:void(0);" class="btn btn-primary btn-sm me-2 d-none" id="exportExcel">
                                     <form action="{{ route('user.amc.excel.export') }}" method="POST" id="exportExcelForm">
                                         @csrf
                                         {{ Form::hidden('exportStartDate', null, ['id' => 'exportStartDate']) }}
@@ -34,7 +34,7 @@
                                         {{ Form::hidden('exportVehicleNumber', null, ['id' => 'exportVehicleNumber']) }}
                                         {{ Form::hidden('exportContactNumber', null, ['id' => 'exportContactNumber']) }}
                                         {{ Form::hidden('exportVehicleType', null, ['id' => 'exportVehicleType']) }}
-                                        {{ Form::hidden('exportvehicleMasterId', null, ['id' => 'exportvehicleMasterId']) }}
+                                        {{ Form::hidden('exportVehicleMasterId', null, ['id' => 'exportVehicleMasterId']) }}
 
                                         <i class="bi bi-cloud-download me-1 align-middle me-1"></i> Export
                                     </form>
@@ -302,7 +302,7 @@
             $('#exportVehicleNumber').val(vehicle_number);
             $('#exportContactNumber').val(contact_number);
             $('#exportVehicleType').val(vehicle_type);
-            $('#exportvehicleMasterId').val(vehicle_master_id);
+            $('#exportVehicleMasterId').val(vehicle_master_id);
 
             let filter = {
                 startDate: startDate,
@@ -704,7 +704,8 @@
         }
         $(document).on('click', '#filterBtn', function() {
             $('#filter-form').toggleClass('d-none');
-            amcMasterList()
+            amcMasterList();
+            $('#exportExcel').removeClass('d-none');
         });
         $(document).on('click', '.amc-add-inquiry', function() {
             console.log($(this).data('customer-name'));
