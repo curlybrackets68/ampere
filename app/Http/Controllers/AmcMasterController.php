@@ -461,9 +461,9 @@ class AmcMasterController extends Controller
             $exportVehicleNumber = $request->input('exportVehicleNumber');
             $exportContactNumber = $request->input('exportContactNumber');
             $exportVehicleType = $request->input('exportVehicleType');
-            $exportvehicleMasterId = $request->input('exportvehicleMasterId');
+            $exportVehicleMasterId = $request->input('exportVehicleMasterId');
 
-            return Excel::download(new AmcExport($exportStartDate, $exportEndDate, $exportChassisNumber, $exportVehicleNumber, $exportContactNumber, $exportVehicleType, $exportvehicleMasterId), 'amc.xlsx');
+            return Excel::download(new AmcExport($exportStartDate, $exportEndDate, $exportChassisNumber, $exportVehicleNumber, $exportContactNumber, $exportVehicleType, $exportVehicleMasterId), 'amc.xlsx');
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
