@@ -55,7 +55,7 @@ class AmcMaster extends Model
         'amc_package_type_name',
         'vehicle_type_name',
         'payment_type_name',
-        'status_name'
+        'status_name',
     ];
     /**
      * @param string[] $fillable
@@ -99,6 +99,7 @@ class AmcMaster extends Model
         }
         return $name;
     }
+   
 
     function getVehicleTypeNameAttribute()
     {
@@ -115,5 +116,11 @@ class AmcMaster extends Model
     function getStatusNameAttribute()
     {
         return $this->statusArray[$this->status];
+    }
+    function getAmcPackageTypeDetailsAttribute()
+    {
+        $query = AmcPackageMaster::where('id',$this->amc_package_type_id)->first();
+       
+        return $query;
     }
 }

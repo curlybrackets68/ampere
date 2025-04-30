@@ -161,8 +161,18 @@
                 startDate: moment().startOf('month'),
                 endDate: moment().endOf('month')
             });
-
-            serviceList();
+            let startDate = $('#datePeriod').data('daterangepicker').startDate.format('YYYY-MM-DD');
+            let endDate = $('#datePeriod').data('daterangepicker').endDate.format('YYYY-MM-DD');
+            let filter = {
+                startDate: startDate,
+                endDate: endDate,
+                chassis_number: '',
+                vehicle_number: '',
+                contact_number: '',
+                vehicle_type: '',
+                vehicle_master_id: '',
+            };
+            serviceList(filter);
         });
 
         $(document).on('input', '#mobile', function() {
@@ -179,6 +189,7 @@
             let contact_number = $('#contact_number').val();
             let vehicle_type = $('#vehicle_type').val();
             let vehicle_master_id = $('#vehicle_master_id').val();
+            let status_id = $('#status_id').val();
 
             $('#exportStartDate').val(startDate);
             $('#exportEndDate').val(endDate);
@@ -187,6 +198,8 @@
             $('#exportContactNumber').val(contact_number);
             $('#exportVehicleType').val(vehicle_type);
             $('#exportvehicleMasterId').val(vehicle_master_id);
+            $('#exportActionType').val('report');
+            $('#exportStatusId').val(status_id);
 
             let filter = {
                 startDate: startDate,
@@ -196,6 +209,8 @@
                 contact_number: contact_number,
                 vehicle_type: vehicle_type,
                 vehicle_master_id: vehicle_master_id,
+                action_type: 'report',
+                status_id: status_id,
             };
 
 
@@ -267,7 +282,18 @@
        
         $(document).on('click', '#filterBtn', function() {
             $('#filter-form').toggleClass('d-none');
-            serviceList()
+            let startDate = $('#datePeriod').data('daterangepicker').startDate.format('YYYY-MM-DD');
+            let endDate = $('#datePeriod').data('daterangepicker').endDate.format('YYYY-MM-DD');
+            let filter = {
+                startDate: startDate,
+                endDate: endDate,
+                chassis_number: '',
+                vehicle_number: '',
+                contact_number: '',
+                vehicle_type: '',
+                vehicle_master_id: '',
+            };
+            serviceList(filter)
         });
     </script>
 @endsection

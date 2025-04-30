@@ -11,6 +11,7 @@ use App\Models\Vehicle;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Maatwebsite\Excel\Facades\Excel;
 use PhpOffice\PhpSpreadsheet\Calculation\Web\Service;
@@ -23,14 +24,8 @@ class ServiceController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $serviceList = ServiceDetail::query()->where('status', 2);
-
-
-
-            if ($request->action_type != 'report') {
-                //default list 
-                $serviceList = $serviceList->where('status', 2);
-            } else {
+            $serviceList = ServiceDetail::query();
+            if (isset($request->action_type) && !empty($request->action_type)) {
                 $amcIds = AmcMaster::query()
                     ->when(!empty($request->chassis_number), fn($q) => $q->where('chassis_number', $request->chassis_number))
                     ->when(!empty($request->vehicle_number), fn($q) => $q->where('vehicle_number', $request->vehicle_number))
@@ -39,12 +34,25 @@ class ServiceController extends Controller
                     ->when(!empty($request->vehicle_master_id), fn($q) => $q->where('vehicle_master_id', $request->vehicle_master_id))
                     ->pluck('id')
                     ->toArray();
-
                 if (!empty($amcIds)) {
                     $serviceList = $serviceList->whereIn('amc_id', $amcIds);
                 }
+                if (!empty($request->status_id)) {
+                    $serviceList = $serviceList->where('status', $request->status_id);
+                }
+                if (! empty($request->startDate) && ! empty($request->endDate)) {
+                    $serviceList = $serviceList->whereBetween(DB::raw('DATE(service_details.service_date)'), [$request->startDate, $request->endDate]);
+                }
+             
+            } else {
+                $serviceList = $serviceList->where('status', 1);
+                if (! empty($request->startDate) && ! empty($request->endDate)) {
+                    $serviceList = $serviceList->whereBetween(DB::raw('DATE(service_details.service_date)'), [$request->startDate, $request->endDate]);
+                }
+                $serviceList = $serviceList->orwhere(DB::raw('DATE(service_details.service_date)'), '<', $request->startDate);
             }
 
+            // dd($serviceList->toRawSql());
 
             return DataTables::of($serviceList)
                 ->addIndexColumn()
@@ -57,9 +65,9 @@ class ServiceController extends Controller
                 })
                 ->addColumn('service_date', function ($row) {
                     return $this->formatDateTime('d-m-Y', $row->service_date);
-                }) 
+                })
                 ->addColumn('service_details', function ($row) {
-                    return $row->service_no."<br>".$this->formatDateTime('d-m-Y', $row->service_date);
+                    return $row->service_no . "<br>" . $this->formatDateTime('d-m-Y', $row->service_date);
                 })
                 ->addColumn('service_by', function ($row) {
                     return $row->service_by;
@@ -67,7 +75,6 @@ class ServiceController extends Controller
                 ->addColumn('vehicle_details', function ($row) {
                     $vehicleName  = Vehicle::find($row->amc_master_details->vehicle_master_id)->first()->name ?? '';
                     return $this->getArrayNameById($this->vehicleTypeArray, $row->amc_master_details->vehicle_type) . '<br>' . $vehicleName . '<br>' . $row->amc_master_details->vehicle_number;
-                  
                 })
                 ->addColumn('display_status', function ($row) {
                     $class = 'warning';
@@ -98,7 +105,7 @@ class ServiceController extends Controller
                     // $html .= '</div>';
                     return $html;
                 })
-                ->rawColumns(['action', 'contract_details', 'customer_details', 'service_date','service_details','vehicle_details', 'display_status', 'vehicle_model'])
+                ->rawColumns(['action', 'contract_details', 'customer_details', 'service_date', 'service_details', 'vehicle_details', 'display_status', 'vehicle_model'])
                 ->make(true);
         }
         $vehicle = Vehicle::pluck('name', 'id');
@@ -164,11 +171,11 @@ class ServiceController extends Controller
 
         ServiceDetail::where('id', $service_id)->update($updateData);
 
-        $serviceData = ServiceDetail::query()->where('id',$service_id)->first();
-        $serviceDataNewServiceData = ServiceDetail::query()->Where('amc_id',$amc_id)->orderBy('service_no','ASC')->where('status','1')->first();
+        $serviceData = ServiceDetail::query()->where('id', $service_id)->first();
+        $serviceDataNewServiceData = ServiceDetail::query()->Where('amc_id', $amc_id)->orderBy('service_no', 'ASC')->where('status', '1')->first();
 
-        $serviceDataLastDate = $serviceDataNewServiceData->display_service_date??'';
-        
+        $serviceDataLastDate = $serviceDataNewServiceData->display_service_date ?? '';
+
         SystemLogs::create([
             'inquiry_id' => 0,
             'type' => '6', // Service Module ID
@@ -202,8 +209,10 @@ class ServiceController extends Controller
             $exportContactNumber = $request->input('exportContactNumber');
             $exportVehicleType = $request->input('exportVehicleType');
             $exportvehicleMasterId = $request->input('exportvehicleMasterId');
+            $exportStatusId = $request->input('exportStatusId');
+            $exportActionType = $request->input('exportActionType');
 
-            return Excel::download(new ServiceDetailsExport($exportStartDate, $exportEndDate, $exportChassisNumber, $exportVehicleNumber, $exportContactNumber, $exportVehicleType, $exportvehicleMasterId), 'service.xlsx');
+            return Excel::download(new ServiceDetailsExport($exportStartDate, $exportEndDate, $exportChassisNumber, $exportVehicleNumber, $exportContactNumber, $exportVehicleType, $exportvehicleMasterId,$exportStatusId,$exportActionType), 'service.xlsx');
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }

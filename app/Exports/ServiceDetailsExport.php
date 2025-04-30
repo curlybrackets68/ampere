@@ -5,6 +5,7 @@ namespace App\Exports;
 
 use App\Http\Controllers\CommonFunctions;
 use App\Models\AmcMaster;
+use App\Models\AmcPackageMaster;
 use App\Models\ServiceDetail;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\FromCollection;
@@ -20,9 +21,9 @@ class ServiceDetailsExport implements FromCollection, WithHeadings, WithCustomSt
      * @return \Illuminate\Support\Collection
      */
 
-    protected $startDate, $endDate, $exportChassisNumber, $exportVehicleNumber, $exportContactNumber, $exportVehicleType, $exportvehicleMasterId;
+    protected $startDate, $endDate, $exportChassisNumber, $exportVehicleNumber, $exportContactNumber, $exportVehicleType, $exportvehicleMasterId, $exportStatusId, $exportActionType;
 
-    public function __construct($startDate = '', $endDate = '', $exportChassisNumber = '', $exportVehicleNumber = '', $exportContactNumber = '', $exportVehicleType = '', $exportvehicleMasterId = '')
+    public function __construct($startDate = '', $endDate = '', $exportChassisNumber = '', $exportVehicleNumber = '', $exportContactNumber = '', $exportVehicleType = '', $exportvehicleMasterId = '', $exportStatusId = '',$exportActionType='')
     {
         $this->startDate = $this->formatDateTime('Y-m-d', $startDate);
         $this->endDate   = $this->formatDateTime('Y-m-d', $endDate);
@@ -31,47 +32,58 @@ class ServiceDetailsExport implements FromCollection, WithHeadings, WithCustomSt
         $this->exportContactNumber   = $exportContactNumber;
         $this->exportVehicleType   = $exportVehicleType;
         $this->exportvehicleMasterId   = $exportvehicleMasterId;
+        $this->exportStatusId   = $exportStatusId;
+        $this->exportActionType   = $exportActionType;
     }
     public function collection()
     {
-        $amcQuery = AmcMaster::query();
-        $seriveQuery = ServiceDetail::query();
-        if (! empty($this->startDate) && ! empty($this->endDate)) {
-            $seriveQuery = $seriveQuery->whereBetween(DB::raw('DATE(service_details.service_date)'), [$this->startDate, $this->endDate]);
+        $serviceList = ServiceDetail::query();
+        if (isset($this->exportActionType) && !empty($this->exportActionType)) {
+            $amcIds = AmcMaster::query()
+                ->when(!empty($this->exportChassisNumber), fn($q) => $q->where('chassis_number', $this->exportChassisNumber))
+                ->when(!empty($this->exportVehicleNumber), fn($q) => $q->where('vehicle_number', $this->exportVehicleNumber))
+                ->when(!empty($this->exportContactNumber), fn($q) => $q->where('contact_number', $this->exportContactNumber))
+                ->when(!empty($this->exportVehicleType), fn($q) => $q->where('vehicle_type', $this->exportVehicleType))
+                ->when(!empty($this->exportvehicleMasterId), fn($q) => $q->where('vehicle_master_id', $this->exportvehicleMasterId))
+                ->pluck('id')
+                ->toArray();
+            if (!empty($amcIds)) {
+                $serviceList = $serviceList->whereIn('amc_id', $amcIds);
+            }
+            if (!empty($this->status_id)) {
+                $serviceList = $serviceList->where('status', $this->exportStatusId);
+            }
+            if (! empty($this->startDate) && ! empty($this->endDate)) {
+                $serviceList = $serviceList->whereBetween(DB::raw('DATE(service_details.service_date)'), [$this->startDate, $this->endDate]);
+            }
+        } else {
+            $serviceList = $serviceList->where('status', 1);
+            if (! empty($this->startDate) && ! empty($this->endDate)) {
+                $serviceList = $serviceList->whereBetween(DB::raw('DATE(service_details.service_date)'), [$this->startDate, $this->endDate]);
+            }
+            $serviceList = $serviceList->orwhere(DB::raw('DATE(service_details.service_date)'), '<', $this->startDate);
         }
-        $amcIds = AmcMaster::query()
-            ->when(!empty($this->exportChassisNumber), fn($q) => $q->where('chassis_number',  $this->exportChassisNumber))
-            ->when(!empty($this->exportVehicleNumber), fn($q) => $q->where('vehicle_number', $this->exportVehicleNumber))
-            ->when(!empty($this->exportContactNumber), fn($q) => $q->where('contact_number', $this->exportContactNumber))
-            ->when(!empty($this->exportVehicleType), fn($q) => $q->where('vehicle_type', $this->exportVehicleType))
-            ->when(!empty($this->exportvehicleMasterId), fn($q) => $q->where('vehicle_master_id', $this->exportvehicleMasterId))
-            ->pluck('id')
-            ->toArray();
-
-        if (!empty($amcIds)) {
-            $seriveQuery = $seriveQuery->whereIn('amc_id', $amcIds);
-        }
-        $results = $seriveQuery->get();
-
+        $results = $serviceList->get();
+      
         $data     = [];
         foreach ($results as $row) {
             $data[] = [
-                $row->amc_display_number,
-                $row->vehicle_type_name,
-                $row->display_amc_start_date,
-                $row->display_amc_end_date,
-                $row->chassis_number,
-                $row->vehicle_number,
-                $row->amc_package_type_name,
-                $row->customer_name,
-                $row->contact_number,
-                $row->payment_type_name,
-                $row->transaction_details,
-                $row->amc_basic_price,
+                $row->amc_master_details->vehicle_type_name,
+                $row->amc_master_details->chassis_number,
+                $row->amc_master_details->vehicle_number,
+                $row->amc_master_details->display_amc_start_date,
+                $row->amc_master_details->display_amc_end_date,
+                $row->amc_master_details->customer_name,
+                $row->amc_master_details->contact_number,
+                $row->service_no,
+                $row->display_service_date,
+                $row->service_remark,
                 $row->status_name,
+                $row->service_by,
+                $row->amc_master_details->status_name,
             ];
         }
-
+       
         return collect($data);
     }
     public function headings(): array
