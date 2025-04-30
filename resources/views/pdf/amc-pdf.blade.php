@@ -54,8 +54,14 @@
         <table>
             <tr>
                 <td>
-                    <img src="{{ public_path('dist/assets/img/pdf-header.png') }}"
-                        style="width: 100% !important; margin-top: -30px;">
+                    @if (env('SERVER_MODE') == 'live' || env('SERVER_MODE') == 'test')
+                        <img src="{{ url('assets/assets/img/pdf-header.png') }}"
+                            style="width: 100% !important; margin-top: -30px;">
+                    @else
+                        <img src="{{ public_path('assets/assets/img/pdf-header.png') }}"
+                            style="width: 100% !important; margin-top: -30px;">
+                    @endif
+
                 </td>
             </tr>
         </table>
