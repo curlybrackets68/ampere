@@ -710,7 +710,7 @@
         $(document).on('click', '#filterBtn', function() {
             $('#filter-form').toggleClass('d-none');
             amcMasterList();
-            $('#exportExcel').removeClass('d-none');
+            $('#exportExcel').toggleClass('d-none');
         });
         $(document).on('click', '.amc-add-inquiry', function() {
             console.log($(this).data('customer-name'));
