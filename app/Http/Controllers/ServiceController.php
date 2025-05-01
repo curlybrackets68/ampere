@@ -219,29 +219,30 @@ class ServiceController extends Controller
         $serviceData = ServiceDetail::query()->where('id', $service_id)->first();
 
         $serviceDataLastDate = $serviceDataNewServiceData->display_service_date ?? '';
+        $checkPendingServiceCount = ServiceDetail::where('amc_id', $amc_id)
+            ->where('status', '1')
+            ->count();
 
         // Log
         SystemLogs::create([
             'inquiry_id' => 0,
             'type' => '6', // Service Module ID
             'type_id' => $service_id,
-            'remark'     => 'Service Status Update ',
+            'remark'     => 'Serive Status Update ',
             'action_id'  => 1,
             'created_by' => Auth::id(),
         ]);
-        $checkPendingServiceCount = ServiceDetail::where('amc_id', $amc_id)
-        ->where('status', '1')
-        ->count();
+
         // WhatsApp Message
         $whatsAppMsg = "Hi $amcMaster->customer_name \n\n";
         $whatsAppMsg .= "Your vehicle *$amcMaster->vehicle_number* has been successfully serviced under AMC Contract ID: *$amcMaster->amc_display_number* \n\n";
         $whatsAppMsg .= "Service Date: *$serviceData->display_service_date* \n";
 
-        if (!empty($serviceDataLastDate)) {
+        if (!empty($checkPendingServiceCount)) {
             $whatsAppMsg .= "Next Service Due: *$serviceDataLastDate* \n";
             $whatsAppMsg .= "Pending Service: *$checkPendingServiceCount* \n";
         }
-
+        
         $whatsAppMsg .= "Location: Ampere Service Center, Vadodara \n\n";
         $whatsAppMsg .= "Our team has completed all required checks and maintenance as per AMC guidelines. Your vehicle is now ready for delivery. \n\n";
         $whatsAppMsg .= "For feedback or questions, feel free to reply to this message. \n";
@@ -250,14 +251,30 @@ class ServiceController extends Controller
 
         $pdfUrl = $this->generateAndStorePdf('pdf.amc-pdf', ['amc' => $amcMaster], 'amc_pdfs');
         $data = $this->sendWhatsAppMessageWithFile($amcMaster->contact_number, $whatsAppMsg, $pdfUrl['public_url'], 'amc_pdf');
+       
+       
+         
+        
+       
 
         // Check if all services are completed
-      
+        $checkPendingServiceCount = ServiceDetail::where('amc_id', $amc_id)
+            ->where('status', '1')
+            ->count();
 
         if ($checkPendingServiceCount == 0) {
             $amcMaster->update([
                 'status' => $this->getArrayIdByName($this->statusArray, 'Deactive')
             ]);
+            
+            $whatsLast = "Dear sir, \n\n";
+            $whatsLast .= "You have availed all the services under the AMC contract. Renew it today to keep your electric scooter up to date and in proper state.\n\n";
+            $whatsLast .= "Irregular servicing can lead to loss of warranty benefits.\n\n";
+            $whatsLast .= "To renew your contract,\n\n";
+            $whatsLast .= "Call now on\n\n";
+            $whatsLast .="9023342463";
+            
+            $this->sendWhatsAppMessage($amcMaster->contact_number, $whatsLast);
         }
 
         return redirect()->route('amc-master-service.index')->with('success', 'Service Update successfully!');
