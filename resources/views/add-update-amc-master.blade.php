@@ -28,7 +28,7 @@
                                     <div class="input-group date">
                                         <input type="text" id="amc_display_number" name="amc_display_number"
                                             class="form-control"
-                                            value="{{ old('name', $amcMaster->amc_display_number ?? $amcDisplayNumber) }}">
+                                            value="{{ old('name', $amcMaster->amc_display_number ?? $amcDisplayNumber) }}" readonly>
                                     </div>
                                 </div>
 

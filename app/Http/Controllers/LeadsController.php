@@ -116,6 +116,11 @@ class LeadsController extends Controller
             }
 
             $this->sendWhatsAppMessageWithFile($request->mobile, $message, $pdfUrl);
+
+            for ($i = 1; $i <= 5; $i++) {
+                $imageUrl = 'https://chiragautomotive.com/ampere-testing/assets/pdf/images/magnus/' . $i . '.jpg';
+                $this->sendWhatsAppMessageWithFile($request->mobile, '', $imageUrl);
+            }
             SystemLogs::create([
                 'inquiry_id' => 0,
                 'type' => '3',

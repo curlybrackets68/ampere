@@ -24,9 +24,9 @@ if (!function_exists('getSecretFileData')) {
 
 function shared_asset($path) {
     $asset = '';
-    if (env('SERVER_MODE') == 'live') {
+    if (env('SERVER_MODE') == 'test') {
         $asset = asset('ampere-testing/' . $path);
-    } else if (env('SERVER_MODE') == 'test') {
+    } else if (env('SERVER_MODE') == 'live') {
         $asset = asset('ampere/' . $path);
     } else if (env('SERVER_MODE') == 'local') {
         $asset = asset('/' . $path);
