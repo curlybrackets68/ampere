@@ -200,7 +200,7 @@ class ServiceController extends Controller
         ServiceDetail::where('id', $service_id)->update($updateData);
 
         $serviceDataNewServiceData = ServiceDetail::query()->Where('amc_id', $amc_id)->orderBy('service_no', 'ASC')->where('status', '1')->first();
-
+        $serviceData = ServiceDetail::query()->where('id', $service_id)->first();
 
         $serviceDataLastDate = $serviceDataNewServiceData->display_service_date ?? '';
 

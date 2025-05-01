@@ -358,6 +358,7 @@
         });
 
         $(document).on('click', '.amc-add-inquiry', function() {
+            loaderButton('addInquiryBtn', false);
             console.log($(this).data('customer-name'));
             $('#inquiry_name').val($(this).data('customer-name'));
             $('#inquiry_mobile').val($(this).data('customer-number'));
@@ -367,6 +368,7 @@
             $('#inquiry_service_type').val('');
             $('#inquiry_branch').val('');
             $('#amcAddInquiryModel').modal('show');
+            
 
         });
         $(document).on('click', '#addInquiryBtn', async function() {
@@ -416,6 +418,7 @@
             formData.append('inquiry_service_id', inquiry_service_id);
 
             if (isValid) {
+                 loaderButton('addInquiryBtn', true);
                 let response = await apiCallPost('{{ route('amc-master-service.add-service-inquiry') }}',
                     formData);
 

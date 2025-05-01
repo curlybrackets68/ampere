@@ -713,7 +713,7 @@
             $('#exportExcel').toggleClass('d-none');
         });
         $(document).on('click', '.amc-add-inquiry', function() {
-            console.log($(this).data('customer-name'));
+              loaderButton('addInquiryBtn', false);
             $('#inquiry_name').val($(this).data('customer-name'));
             $('#inquiry_mobile').val($(this).data('customer-number'));
             $('#inquiry_vehicle_no').val($(this).data('vehicle-number'));
@@ -769,6 +769,7 @@
             formData.append('amc_id', amc_id);
 
             if (isValid) {
+                loaderButton('addInquiryBtn', true);
                 let response = await apiCallPost('{{ route('amc-master-service.add-service-inquiry') }}',
                     formData);
                 amcMasterList();
