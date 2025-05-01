@@ -525,4 +525,118 @@ class AmcMasterController extends Controller
             return response()->json(['code' => 0, 'message' => 'Chassis number is available']);
         }
     }
+
+    public function dueList(Request $request){
+
+        if ($request->ajax()) {
+            $amcMasterList = AmcMaster::query()->where('status',$this->getArrayIdByName($this->statusArray, 'Deactive'))->Where('renew_status', $this->getArrayIdByName($this->statusArray, 'New'))->orderBy('amc_end_date');
+
+            // if ($request->action_type != 'report') {
+            //     //default list 
+            //     $amcMasterList = $amcMasterList->where('renew_status', $this->getArrayIdByName($this->statusArray, 'New'));
+            // }
+            if (checkRights('USER_AMC_ROLE_VIEW') && !checkRights('USER_AMC_ROLE_VIEW_ALL')) {
+                $amcMasterList = $amcMasterList->where('created_by', Auth::id());
+            }
+            // if (! empty($request->startDate) && ! empty($request->endDate)) {
+            //     $amcMasterList = $amcMasterList->whereBetween(DB::raw('DATE(amc_end_date)'), [$request->startDate, $request->endDate]);
+            // }
+            // if (!empty($request->chassis_number)) {
+            //     $amcMasterList = $amcMasterList->where('chassis_number', $request->chassis_number);
+            // }
+            // if (!empty($request->vehicle_number)) {
+            //     $amcMasterList = $amcMasterList->where('vehicle_number', $request->vehicle_number);
+            // }
+            // if (!empty($request->contact_number)) {
+            //     $amcMasterList = $amcMasterList->where('contact_number', $request->contact_number);
+            // }
+            // if (!empty($request->vehicle_type)) {
+            //     $amcMasterList = $amcMasterList->where('vehicle_type', $request->vehicle_type);
+            // }
+            // if (!empty($request->vehicle_master_id)) {
+            //     $amcMasterList = $amcMasterList->where('vehicle_master_id', $request->vehicle_master_id);
+            // }
+            // if (!empty($request->amc_status_id)) {
+            //     $amcMasterList = $amcMasterList->where('status', $request->amc_status_id);
+            // }
+
+            return DataTables::of($amcMasterList)
+                ->addIndexColumn()
+
+                ->addColumn('customer_details', function ($row) {
+                    return $row->customer_name . "<br>" . $row->contact_number;
+                })
+                ->addColumn('contact_date', function ($row) {
+                    return $this->formatDateTime('d-m-Y', $row->amc_start_date) . "<br>" . $this->formatDateTime('d-m-Y', $row->amc_end_date);
+                })
+                ->addColumn('row_class', function ($row) {
+                    return 'light-red';
+                })
+                ->addColumn('vehicle_model', function ($row) {
+                    $vehicleName  = '';
+                    $query = Vehicle::find($row->vehicle_master_id);
+                    if ($query) {
+                        $vehicleName =  $query->name ?? '';
+                    }
+
+                    return $this->getArrayNameById($this->vehicleTypeArray, $row->vehicle_type) . '<br>' . $vehicleName;
+                })->addColumn('vehicle_data', function ($row) {
+                    return $row->chassis_number . "<br>" . $row->vehicle_number;
+                })
+                ->addColumn('display_status', function ($row) {
+                    $class = 'warning';
+                    $serviceData = ServiceDetail::query()->where('status', 1)->where('inquiry_flag', 2)->where('inquiry_id', '!=', 0)->where('amc_id', $row->id)->orderBy('service_date', 'ASC')->first();
+                    $htmlInfo = '';
+                    if ($serviceData) {
+                        if (checkRights('USER_INQUIRY_ROLE_VIEW') || checkRights('USER_INQUIRY_ROLE_VIEW_ALL')) {
+                            $htmlInfo = '<a href="' . route('inquiry') . '" class=""><i class="bi bi-info-circle-fill"></i></a>';
+                        } else {
+                            $htmlInfo = '<a href="#" class="btn btn-' . $class . ' btn-sm " data-id="' . $row->id . '" data-status="' . $row->status_id . '">' . $this->getArrayNameById($this->statusArray, $row->status) . '</a>';
+                        }
+                    }
+
+                    $html = '<a href="" class="btn btn-' . $class . ' btn-sm " data-id="' . $row->id . '" data-status="' . $row->status_id . '">' . $this->getArrayNameById($this->statusArray, $row->status) . '</a> <br> ' . $htmlInfo;
+                    return $html;
+                })
+                ->addColumn('action', function ($row) {
+                    $html = '';
+                    $html .= '<div class="btn-group">';
+                    $html .= '<button type="button" class="btn btn-tool dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">';
+                    $html .= '<i class="bi bi-wrench"></i>';
+                    $html .= '</button>';
+                    $html .= '<div class="dropdown-menu dropdown-menu-end" role="menu" style="">';
+                    if (checkRights('USER_AMC_ROLE_EDIT')) {
+                        $notPendingServiceCount = ServiceDetail::query()->where('amc_id', $row->id)->where('status', '!=', $this->getArrayIdByName($this->statusArray, 'Pending'))->get();
+
+                        if ($notPendingServiceCount->count() == 0) {
+                            $html .= '<a href="' . route('amc-master.edit', $row->id) . '"  class="dropdown-item">Edit</a>';
+                        }
+                        if($row->status == $this->getArrayIdByName($this->statusArray, 'Deactive') && $row->renew_status == $this->getArrayIdByName($this->statusArray, 'New')) {
+                            $html .= '<a href="' . route('amc-master.renew', $row->id) . '" class="dropdown-item">Renew</a>';
+                        }
+                    }
+                    $html .= '<a href="javascript:void(0);" class="dropdown-item amc-view" data-id="' . $row->id . '">View</a>';
+                    $html .= '<a href="' . route('amc.download', $row->id) . '" class="dropdown-item" target="_blank">PDF</a>';
+
+                    $html .= '<a href="#" class="dropdown-item amc-add-inquiry" data-id="' . $row->id . '" data-vehicle-number="' . $row->vehicle_number . '" data-customer-name="' . $row->customer_name . '" data-customer-number="' . $row->contact_number . '">Add Inquiry</a>';
+                    if (Carbon::parse($row->amc_end_date)->isFuture()) {
+                        $html .= '<a href="javascript:void(0);" class="dropdown-item change-status" data-id="' . $row->id . '" data-status="' . $row->status . '">Status</a>';
+                    }
+                    $html .= '</div>';
+                    $html .= '</div>';
+                    return $html;
+                })
+                ->rawColumns(['action', 'customer_details', 'contact_date', 'vehicle_data', 'display_status', 'vehicle_model', 'row_class'])
+                ->make(true);
+        }
+        $vehicle = Vehicle::pluck('name', 'id');
+        $vehicleTypeArray = $this->vehicleTypeArray;
+        $serviceTypeArray = $this->serviceTypeArray;
+        $branch = $this->branchArray;
+        $serviceStatus = [
+            "10" => 'Active',
+            "11" => 'Deactive',
+        ];
+        return view('amc-due-list')->with(compact('vehicle', 'vehicleTypeArray', 'branch', 'serviceTypeArray', 'serviceStatus'));
+    }
 }

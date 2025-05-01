@@ -1,7 +1,7 @@
 @extends('master')
 
 @section('title')
-    AMC Master | AMPERE
+    AMC Master Due List | AMPERE
 @endsection
 
 @section('css')
@@ -23,7 +23,7 @@
                 <div class="col-md-12">
                     <div class="card mb-4">
                         <div class="card-header">
-                            <h5 class="card-title">AMC Master</h5>
+                            <h5 class="card-title">AMC Master Due List</h5>
                             <div class="d-flex justify-content-end">
                                 <a href="javascript:void(0);" class="btn btn-primary btn-sm me-2 d-none" id="exportExcel">
                                     <form action="{{ route('user.amc.excel.export') }}" method="POST" id="exportExcelForm">
@@ -40,14 +40,12 @@
                                         <i class="bi bi-cloud-download me-1 align-middle me-1"></i> Export
                                     </form>
                                 </a>
-                                <a class="btn btn-info btn-sm mr-2" href="{{route('amc-master.due-list')}}" target="_blank">
-                                    <i class="bi bi-funnel-fill align-middle me-1"></i>Due List</a>
-                                <a class="btn btn-info btn-sm mr-2" href="#" id="filterBtn">
+                                {{-- <a class="btn btn-info btn-sm mr-2" href="#" id="filterBtn">
                                     <i class="bi bi-funnel-fill align-middle me-1"></i>Filter</a>
                                 @if (checkRights('USER_AMC_ROLE_CREATE'))
                                     <a class="btn btn-info btn-sm" href="{{ route('amc-master.create') }}">
                                         <i class="bi bi-plus me-1 align-middle me-1"></i> Add AMC</a>
-                                @endif
+                                @endif --}}
 
 
 
@@ -55,7 +53,7 @@
                         </div>
                         <div class="card-body">
 
-                            <div id="filter-form" class="d-none">
+                            {{-- <div id="filter-form" class="d-none">
                                 <div class="row mt-3">
                                     <div class="col-md-3">
                                         <div class="form-group">
@@ -130,9 +128,9 @@
                                     </div>
                                 </div>
                             </div>
-                            <hr>
+                            <hr> --}}
                             <div class="row mt-3">
-                                <table class="table table-bordered table-hover" style="width:100%" id="amcMasterTable">
+                                <table class="table table-bordered table-hover" style="width:100%" id="amcMasterDueTable">
                                     <thead>
                                         <tr>
                                             <th style="text-align: left;">Sr. No</th>
@@ -270,30 +268,8 @@
 
     <script>
         $(document).ready(function() {
-            $('#datePeriod').daterangepicker({
-                timePicker: false,
-                timePicker24Hour: true,
-                timePickerIncrement: 1,
-                locale: {
-                    format: 'DD-MM-YYYY'
-                },
-                startDate: moment().startOf('month'),
-                endDate: moment().endOf('month')
-            });
-
-            let startDate = $('#datePeriod').data('daterangepicker').startDate.format('YYYY-MM-DD');
-            let endDate = $('#datePeriod').data('daterangepicker').endDate.format('YYYY-MM-DD');
-            let searchStatusId = $('#searchStatusId').val();
-            let branchId = $('#branchId').val();
-
-            // let filterData = {
-            //     actionType: 'report',
-            //     startDate: '',
-            //     endDate: '',
-            //     statusId: searchStatusId,
-            //     branchId: branchId
-            // };
-            amcMasterList();
+            
+            amcMasterDueList();
         });
 
         $(document).on('input', '#mobile', function() {
@@ -333,18 +309,18 @@
                 amc_status_id: amc_status_id,
             };
 
-            amcMasterList(filter);
+            amcMasterDueList(filter);
             $('#exportExcel').removeClass('d-none');
         });
 
-        function amcMasterList(filter = []) {
-            $('#amcMasterTable').DataTable({
+        function amcMasterDueList(filter = []) {
+            $('#amcMasterDueTable').DataTable({
                 serverSide: false,
                 processing: true,
                 destroy: true,
                 responsive: true,
                 ajax: {
-                    url: '{{ route('amc-master.index') }}',
+                    url: '{{ route('amc-master.due-list') }}',
                     data: filter
                 },
                 columns: [{
@@ -393,14 +369,15 @@
                     $('td', row).eq(5).css('text-align', 'left');
                 },
                 "rowCallback": function(row, data, index) {
-                    if (data.row_class == 'light-red') {
-                        $(row).addClass('light-red');
-                    }
+                    // if (data.row_class == 'light-red') {
+                    //     $(row).addClass('light-red');
+                    // }
+                    $(row).addClass('light-red');
                 }
             });
         }
 
-        $('#amcMasterTable').on('draw.dt', function() {
+        $('#amcMasterDueTable').on('draw.dt', function() {
             $('[data-toggle="dropdown"]').dropdown();
         });
         $(document).on('click', '#exportExcel', function() {
@@ -450,7 +427,7 @@
                 success: async function(response) {
                     if (response.code == '1') {
                         $('#statusModal').modal('hide');
-                        await amcMasterList();
+                        await amcMasterDueList();
                         showToast('success', response.message);
                     } else {
                         showToast('error', response.message);
@@ -590,17 +567,17 @@
                                 <td class="alignTdCenter" style="width: 10%;">${item.service_by ?? ''}</td>
                                 <td class="alignTdCenter" style="width: 5%;">
                                 ${item.attachment_url ? `
-                                                        <a href="${item.attachment_url}" download target="_blank" class="btn btn-sm btn-primary">
-                                                            <i class="fa fa-download"></i> Download
-                                                        </a>
-                                                    ` : ''}
+                                                <a href="${item.attachment_url}" download target="_blank" class="btn btn-sm btn-primary">
+                                                    <i class="fa fa-download"></i> Download
+                                                </a>
+                                            ` : ''}
                                 </td>
                                <td class="alignTdCenter" style="width: 20%;">
                                     ${item.status == 1 ? `<button class="btn btn-sm btn-primary amc-add-inquiry"
-                                                                    data-id="${item.amc_master_details.id}"
-                                                                    data-vehicle-number="${item.amc_master_details.vehicle_number}"
-                                                                    data-customer-name="${item.amc_master_details.customer_name}"
-                                                                    data-customer-number="${item.amc_master_details.contact_number}">Add inq</button>` : ''}
+                                                            data-id="${item.amc_master_details.id}"
+                                                            data-vehicle-number="${item.amc_master_details.vehicle_number}"
+                                                            data-customer-name="${item.amc_master_details.customer_name}"
+                                                            data-customer-number="${item.amc_master_details.contact_number}">Add inq</button>` : ''}
                                 </td>
 
                                 </tr>
@@ -725,7 +702,7 @@
         $(document).on('click', '#filterBtn', function() {
             $('#filter-form').toggleClass('d-none');
             $('#exportExcel').toggleClass('d-none');
-            amcMasterList();
+            amcMasterDueList();
         });
         $(document).on('click', '.amc-add-inquiry', function() {
             loaderButton('addInquiryBtn', false);
@@ -787,7 +764,7 @@
                 loaderButton('addInquiryBtn', true);
                 let response = await apiCallPost('{{ route('amc-master-service.add-service-inquiry') }}',
                     formData);
-                amcMasterList();
+                amcMasterDueList();
                 if (response.code == '1') {
                     showToast('success', response.message);
                     $('#amcAddInquiryModel').modal('hide');
