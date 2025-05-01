@@ -54,6 +54,9 @@ class AmcMasterController extends Controller
             if (!empty($request->vehicle_master_id)) {
                 $amcMasterList = $amcMasterList->where('vehicle_master_id', $request->vehicle_master_id);
             }
+            if (!empty($request->amc_status_id)) {
+                $amcMasterList = $amcMasterList->where('status', $request->amc_status_id);
+            }
 
             return DataTables::of($amcMasterList)
                 ->addIndexColumn()
@@ -109,7 +112,10 @@ class AmcMasterController extends Controller
                         if ($notPendingServiceCount->count() == 0) {
                             $html .= '<a href="' . route('amc-master.edit', $row->id) . '"  class="dropdown-item">Edit</a>';
                         }
-                        $html .= '<a href="' . route('amc-master.renew', $row->id) . '" class="dropdown-item">Renew</a>';
+                        if($row->status == $this->getArrayIdByName($this->statusArray, 'Active') && $row->renew_status == $this->getArrayIdByName($this->statusArray, 'New')) {
+
+                            $html .= '<a href="' . route('amc-master.renew', $row->id) . '" class="dropdown-item">Renew</a>';
+                        }
                     }
                     $html .= '<a href="javascript:void(0);" class="dropdown-item amc-view" data-id="' . $row->id . '">View</a>';
                     $html .= '<a href="' . route('amc.download', $row->id) . '" class="dropdown-item" target="_blank">PDF</a>';
@@ -129,8 +135,11 @@ class AmcMasterController extends Controller
         $vehicleTypeArray = $this->vehicleTypeArray;
         $serviceTypeArray = $this->serviceTypeArray;
         $branch = $this->branchArray;
-
-        return view('amc-master-list')->with(compact('vehicle', 'vehicleTypeArray', 'branch', 'serviceTypeArray'));
+        $serviceStatus = [
+            "10" => 'Active',
+            "11" => 'Deactive',
+        ];
+        return view('amc-master-list')->with(compact('vehicle', 'vehicleTypeArray', 'branch', 'serviceTypeArray', 'serviceStatus'));
     }
 
     /**
@@ -471,8 +480,9 @@ class AmcMasterController extends Controller
             $exportContactNumber = $request->input('exportContactNumber');
             $exportVehicleType = $request->input('exportVehicleType');
             $exportVehicleMasterId = $request->input('exportVehicleMasterId');
+            $exportAmcStatusId = $request->input('exportAmcStatusId');
 
-            return Excel::download(new AmcExport($exportStartDate, $exportEndDate, $exportChassisNumber, $exportVehicleNumber, $exportContactNumber, $exportVehicleType, $exportVehicleMasterId), 'amc.xlsx');
+            return Excel::download(new AmcExport($exportStartDate, $exportEndDate, $exportChassisNumber, $exportVehicleNumber, $exportContactNumber, $exportVehicleType, $exportVehicleMasterId, $exportAmcStatusId), 'amc.xlsx');
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }

@@ -18,9 +18,9 @@ class AmcExport implements FromCollection, WithHeadings, WithCustomStartCell, Wi
      * @return \Illuminate\Support\Collection
      */
 
-    protected $startDate, $endDate, $exportChassisNumber, $exportVehicleNumber, $exportContactNumber, $exportVehicleType, $exportVehicleMasterId;
+    protected $startDate, $endDate, $exportChassisNumber, $exportVehicleNumber, $exportContactNumber, $exportVehicleType, $exportVehicleMasterId, $exportAmcStatusId;
 
-    public function __construct($startDate = '', $endDate = '', $exportChassisNumber = '', $exportVehicleNumber = '', $exportContactNumber = '', $exportVehicleType = '', $exportVehicleMasterId = '')
+    public function __construct($startDate = '', $endDate = '', $exportChassisNumber = '', $exportVehicleNumber = '', $exportContactNumber = '', $exportVehicleType = '', $exportVehicleMasterId = '', $exportAmcStatusId = '')
     {
         $this->startDate = $this->formatDateTime('Y-m-d', $startDate);
         $this->endDate   = $this->formatDateTime('Y-m-d', $endDate);
@@ -29,6 +29,7 @@ class AmcExport implements FromCollection, WithHeadings, WithCustomStartCell, Wi
         $this->exportContactNumber   = $exportContactNumber;
         $this->exportVehicleType   = $exportVehicleType;
         $this->exportVehicleMasterId   = $exportVehicleMasterId;
+        $this->exportAmcStatusId   = $exportAmcStatusId;
     }
     public function collection()
     {
@@ -50,6 +51,9 @@ class AmcExport implements FromCollection, WithHeadings, WithCustomStartCell, Wi
         }
         if (!empty($this->exportVehicleMasterId)) {
             $query = $query->where('vehicle_master_id', $this->exportVehicleMasterId);
+        }
+        if (!empty($this->exportAmcStatusId)) {
+            $query = $query->where('status', $this->exportAmcStatusId);
         }
 
         $results = $query->get();

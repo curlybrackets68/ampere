@@ -216,7 +216,9 @@ class ServiceController extends Controller
 
         $whatsAppMsg .= "Your vehicle *$amcMaster->vehicle_number* has been successfully serviced under AMC Contract ID: *$amcMaster->amc_display_number* \n \n";
         $whatsAppMsg .= "Service Date: *$serviceData->display_service_date* \n";
-        $whatsAppMsg .= "Next Service Due: *$serviceDataLastDate* \n";
+        if(!empty($serviceDataLastDate)){
+            $whatsAppMsg .= "Next Service Due: *$serviceDataLastDate* \n";
+        }
         $whatsAppMsg .= "Location: Ampere Service Center, Vadodara \n \n";
         $whatsAppMsg .= "Our team has completed all required checks and maintenance as per AMC guidelines. Your vehicle is now ready for delivery. \n \n";
         $whatsAppMsg .= "For feedback or questions, feel free to reply to this message. \n";
@@ -224,6 +226,14 @@ class ServiceController extends Controller
         $whatsAppMsg .= "Support: +91 90233 42463";
 
         $this->sendWhatsAppMessage($amcMaster->contact_number, $whatsAppMsg);
+
+        $checkPendingServiceCount = ServiceDetail::where('amc_id', $amc_id)
+        ->where('status', '1')
+        ->count();
+        if($checkPendingServiceCount == 0){
+            $amcMaster->update(['status' => $this->getArrayIdByName($this->statusArray, 'Deactive')]);
+        }
+
         return redirect()->route('amc-master-service.index')->with('success', 'Service Update successfully!');
     }
 

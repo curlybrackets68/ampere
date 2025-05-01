@@ -35,6 +35,7 @@
                                         {{ Form::hidden('exportContactNumber', null, ['id' => 'exportContactNumber']) }}
                                         {{ Form::hidden('exportVehicleType', null, ['id' => 'exportVehicleType']) }}
                                         {{ Form::hidden('exportVehicleMasterId', null, ['id' => 'exportVehicleMasterId']) }}
+                                        {{ Form::hidden('exportAmcStatusId', null, ['id' => 'exportAmcStatusId']) }}
 
                                         <i class="bi bi-cloud-download me-1 align-middle me-1"></i> Export
                                     </form>
@@ -104,6 +105,18 @@
                                             <select class="form-select" id="vehicle_master_id" name="vehicle_master_id">
                                                 <option value="">Select Vehicle Model</option>
                                                 @forelse (@$vehicle as $key => $value)
+                                                    <option value="{{ $key }}">{{ $value }}</option>
+                                                @empty
+                                                @endforelse
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label>Status</label>
+                                            <select class="form-select" id="amc_status_id" name="amc_status_id">
+                                                <option value="">Select Status</option>
+                                                @forelse (@$serviceStatus as $key => $value)
                                                     <option value="{{ $key }}">{{ $value }}</option>
                                                 @empty
                                                 @endforelse
@@ -295,6 +308,7 @@
             let contact_number = $('#contact_number').val();
             let vehicle_type = $('#vehicle_type').val();
             let vehicle_master_id = $('#vehicle_master_id').val();
+            let amc_status_id = $('#amc_status_id').val();
 
             $('#exportStartDate').val(startDate);
             $('#exportEndDate').val(endDate);
@@ -303,6 +317,7 @@
             $('#exportContactNumber').val(contact_number);
             $('#exportVehicleType').val(vehicle_type);
             $('#exportVehicleMasterId').val(vehicle_master_id);
+            $('#exportAmcStatusId').val(amc_status_id);
 
             let filter = {
                 startDate: startDate,
@@ -313,6 +328,7 @@
                 vehicle_type: vehicle_type,
                 vehicle_master_id: vehicle_master_id,
                 action_type: 'report',
+                amc_status_id: amc_status_id,
             };
 
             amcMasterList(filter);
@@ -575,17 +591,17 @@
                                 <td class="alignTdCenter" style="width: 10%;">${item.service_by ?? ''}</td>
                                 <td class="alignTdCenter" style="width: 5%;">
                                 ${item.attachment_url ? `
-                                            <a href="${item.attachment_url}" download target="_blank" class="btn btn-sm btn-primary">
-                                                <i class="fa fa-download"></i> Download
-                                            </a>
-                                        ` : ''}
+                                                <a href="${item.attachment_url}" download target="_blank" class="btn btn-sm btn-primary">
+                                                    <i class="fa fa-download"></i> Download
+                                                </a>
+                                            ` : ''}
                                 </td>
                                <td class="alignTdCenter" style="width: 20%;">
                                     ${item.status == 1 ? `<button class="btn btn-sm btn-primary amc-add-inquiry"
-                                                        data-id="${item.amc_master_details.id}"
-                                                        data-vehicle-number="${item.amc_master_details.vehicle_number}"
-                                                        data-customer-name="${item.amc_master_details.customer_name}"
-                                                        data-customer-number="${item.amc_master_details.contact_number}">Add inq</button>` : ''}
+                                                            data-id="${item.amc_master_details.id}"
+                                                            data-vehicle-number="${item.amc_master_details.vehicle_number}"
+                                                            data-customer-name="${item.amc_master_details.customer_name}"
+                                                            data-customer-number="${item.amc_master_details.contact_number}">Add inq</button>` : ''}
                                 </td>
 
                                 </tr>
@@ -709,11 +725,11 @@
         }
         $(document).on('click', '#filterBtn', function() {
             $('#filter-form').toggleClass('d-none');
-            amcMasterList();
             $('#exportExcel').toggleClass('d-none');
+            amcMasterList();
         });
         $(document).on('click', '.amc-add-inquiry', function() {
-              loaderButton('addInquiryBtn', false);
+            loaderButton('addInquiryBtn', false);
             $('#inquiry_name').val($(this).data('customer-name'));
             $('#inquiry_mobile').val($(this).data('customer-number'));
             $('#inquiry_vehicle_no').val($(this).data('vehicle-number'));
