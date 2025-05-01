@@ -1,7 +1,7 @@
 @extends('master')
 
 @section('title')
-    Add Update AMC | AMPERE
+    Add Update AMC Service | AMPERE
 @endsection
 
 @section('css')
@@ -20,7 +20,8 @@
 
                         <div class="card mb-4">
                             <div class="card-header">
-                                <h5 class="card-title">{{ isset($amcMaster) ? 'Update AMC Master' : 'Add AMC Master' }}</h5>
+                                <h5 class="card-title">
+                                    {{ isset($amcMaster) ? 'Update AMC Master' : 'Add AMC Service Details' }}</h5>
                             </div>
                             <div class="card-body">
                                 <div class="row">
@@ -98,24 +99,24 @@
                             </div>
                             <div class="card-body">
                                 <div class="row mt-3">
-                                    <table class="table table-bordered table-hover" style="width:100%"
-                                        id="amcMasterSeriveTable">
-                                        <thead>
-                                            <tr>
-                                                <th style="text-align: left;">Sr. No</th>
-                                                <th style="text-align: left;">Service Date</th>
-                                                <th style="text-align: left;">Customer Number</th>
-                                                <th style="text-align: left;">Remark</th>
-                                                <th style="text-align: left;">Attchment</th>
-                                                <th style="text-align: left;">Service By</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered table-hover" style="width:100%"
+                                            id="amcMasterSeriveTable">
+                                            <thead>
+                                                <tr>
+                                                    <th style="text-align: left;">Sr. No</th>
+                                                    <th style="text-align: left;">Service Date</th>
+                                                    <th style="text-align: left;">Customer Number</th>
+                                                    <th style="text-align: left;">Remark</th>
+                                                    <th style="text-align: left;">Attchment</th>
+                                                    <th style="text-align: left;">Service By</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
 
-                                        </tbody>
-                                    </table>
-
-
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
 
@@ -179,10 +180,10 @@
                                     <td>${item.service_remark ?? ''}</td>
                                     <td>
                                         ${item.attachment_url ? `
-                                                <a href="${item.attachment_url}" download target="_blank" class="btn btn-sm btn-primary">
-                                                    <i class="fa fa-download"></i> Download
-                                                </a>
-                                            ` : ''}
+                                                    <a href="${item.attachment_url}" download target="_blank" class="btn btn-sm btn-primary">
+                                                        <i class="fa fa-download"></i> Download
+                                                    </a>
+                                                ` : ''}
                                     </td>
                                     <td>${item.service_by ?? ''}</td>
                                 </tr>

@@ -111,13 +111,13 @@
                                                 value="{{ old('customer_name', $amcMaster->customer_name ?? '') }}">
                                         </div>
                                     </div>
-                                    <div class="col-md-3">
+                                    {{-- <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Address</label>
                                             <textarea class="form-control" rows="2" id="contact_address" placeholder="Enter Address" name="contact_address">{{ @$amcMaster->contact_address }}</textarea>
 
                                         </div>
-                                    </div>
+                                    </div> --}}
 
                                 </div>
                                 <div class="row mt-2">
