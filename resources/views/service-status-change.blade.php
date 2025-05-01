@@ -20,7 +20,8 @@
 
                         <div class="card mb-4">
                             <div class="card-header">
-                                <h5 class="card-title">{{ isset($amcMaster) ? 'Update AMC Master' : 'Add AMC Service Details' }}</h5>
+                                <h5 class="card-title">
+                                    {{ isset($amcMaster) ? 'Update AMC Master' : 'Add AMC Service Details' }}</h5>
                             </div>
                             <div class="card-body">
                                 <div class="row">
@@ -112,7 +113,7 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-    
+
                                             </tbody>
                                         </table>
                                     </div>
@@ -179,15 +180,23 @@
                                     <td>${item.service_remark ?? ''}</td>
                                     <td>
                                         ${item.attachment_url ? `
-                                                <a href="${item.attachment_url}" download target="_blank" class="btn btn-sm btn-primary">
-                                                    <i class="fa fa-download"></i> Download
-                                                </a>
-                                            ` : ''}
+                                                    <a href="${item.attachment_url}" download target="_blank" class="btn btn-sm btn-primary">
+                                                        <i class="fa fa-download"></i> Download
+                                                    </a>
+                                                ` : ''}
                                     </td>
                                     <td>${item.service_by ?? ''}</td>
                                 </tr>
                                 `);
                         });
+                    } else {
+                        $('#amcContractId').html('');
+                        $('#amcCustomerName').html('');
+                        $('#amcCustomerNumber').html('');
+                        $('#amcServiceNo').html('');
+                        $('#amc_id').val('');
+                        $('#service_id').val('');
+                        $('#amcMasterSeriveTable tbody').html('')
                     }
 
                 },

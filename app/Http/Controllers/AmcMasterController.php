@@ -112,8 +112,7 @@ class AmcMasterController extends Controller
                         if ($notPendingServiceCount->count() == 0) {
                             $html .= '<a href="' . route('amc-master.edit', $row->id) . '"  class="dropdown-item">Edit</a>';
                         }
-                        if($row->status == $this->getArrayIdByName($this->statusArray, 'Active') && $row->renew_status == $this->getArrayIdByName($this->statusArray, 'New')) {
-
+                        if($row->status == $this->getArrayIdByName($this->statusArray, 'Deactive') && $row->renew_status == $this->getArrayIdByName($this->statusArray, 'New')) {
                             $html .= '<a href="' . route('amc-master.renew', $row->id) . '" class="dropdown-item">Renew</a>';
                         }
                     }

@@ -14,20 +14,17 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12">
-                    <form name="amcMasterForm"
-                        action="{{ route('amc-master.renew-handel') }}"
-                        method="post">
+                    <form name="amcMasterForm" action="{{ route('amc-master.renew-handel') }}" method="post">
                         @csrf
-                        <input type="hidden" name='amc_reference_id' value="{{$amcMaster->id}}" />
-                       
+                        <input type="hidden" name='amc_reference_id' value="{{ $amcMaster->id }}" />
+
                         <div class="card mb-4">
                             <div class="card-header">
                                 <h5 class="card-title">{{ isset($amcMaster) ? 'Update AMC Master' : 'Add AMC Master' }}</h5>
                                 <div class="card-tools">
                                     <div class="input-group date">
                                         <input type="text" id="amc_display_number" name="amc_display_number"
-                                            class="form-control"
-                                            value="{{$amcDisplayNumber}}">
+                                            class="form-control" value="{{ $amcDisplayNumber }}">
                                     </div>
                                 </div>
 
@@ -45,7 +42,8 @@
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Vehicle Type</label>
-                                            <select class="form-select" name="vehicle_type" id="vehicle_type" disabled="true">
+                                            <select class="form-select" name="vehicle_type" id="vehicle_type"
+                                                disabled="true">
                                                 <option value="">Select Vehicle Type</option>
                                                 @forelse (@$vehicleTypeArray as $key => $value)
                                                     <option value="{{ $key }}"
@@ -62,7 +60,8 @@
                                         <div class="form-group">
                                             <label>Vehicle</label>
 
-                                            <select class="form-select" name="vehicle_master_id" id="vehicle_master_id" disabled="true">
+                                            <select class="form-select" name="vehicle_master_id" id="vehicle_master_id"
+                                                disabled="true">
                                                 <option value="">Select Vehicle</option>
                                                 @forelse (@$vehicle as $key => $value)
                                                     <option value="{{ $key }}"
@@ -90,16 +89,17 @@
                                             <label>Vehicle Number</label>
                                             <input type="text" class="form-control" id="vehicle_number"
                                                 placeholder="Enter Vehicle Number" name="vehicle_number"
-                                                value="{{ old('name', $amcMaster->vehicle_number ?? '') }}" readonly>
+                                                value="{{ old('name', $amcMaster->vehicle_number ?? '') }}">
                                         </div>
                                     </div>
-                                    
+
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Contact Number</label>
                                             <input type="text" class="form-control" id="contact_number"
                                                 placeholder="Enter Contact Number" name="contact_number"
-                                                value="{{ old('contact_number', $amcMaster->contact_number ?? '') }}" >
+                                                value="{{ old('contact_number', $amcMaster->contact_number ?? '') }}"
+                                                oninput="this.value = this.value.replace(/[^0-9]/g, '');" maxlength="10">
                                         </div>
                                     </div>
                                     <div class="col-md-3">
@@ -113,12 +113,12 @@
                                     <!--<div class="col-md-3">-->
                                     <!--    <div class="form-group">-->
                                     <!--        <label>Address</label>-->
-                                    <!--        <textarea class="form-control" rows="2"  id="contact_address"-->
-                                    <!--        placeholder="Enter Address" name="contact_address">{{$amcMaster->contact_address}}</textarea>-->
-                                           
+                                    <!--        <textarea class="form-control" rows="2" id="contact_address"-->
+                                    <!--        placeholder="Enter Address" name="contact_address">{{ $amcMaster->contact_address }}</textarea>-->
+
                                     <!--    </div>-->
                                     <!--</div>-->
-                                    
+
                                 </div>
                                 <div class="row mt-2">
                                     <div class="col-md-3">
@@ -161,8 +161,9 @@
                                             <input type="text" class="form-control" id="amc_basic_price"
                                                 placeholder="Amount" name="amc_basic_price"
                                                 value="{{ old('amc_basic_price', $amcMaster->amc_basic_price ?? '') }}"
-                                                oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" readonly>
-                                                
+                                                oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
+                                                readonly>
+
                                         </div>
                                     </div>
                                 </div>
@@ -197,9 +198,9 @@
     <script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
     <script>
-         $(document).ready(async function() {
+        $(document).ready(async function() {
             let amcMaster = @json($amcMaster);
-            if(amcMaster){
+            if (amcMaster) {
                 $('#vehicle_type').val(2).trigger('change');
             }
             console.log(amcMaster)
@@ -307,9 +308,9 @@
 
             if (isValid) {
                 loaderButton('addUpdateAmcMaster', true);
-                
-                $('#vehicle_master_id').attr('disabled',false);
-                $('#vehicle_type').attr('disabled',false);
+
+                $('#vehicle_master_id').attr('disabled', false);
+                $('#vehicle_type').attr('disabled', false);
                 $('form[name="amcMasterForm"]').submit();
             }
         });
@@ -319,7 +320,7 @@
             let timePeriod = parseInt($('#amc_package_type_id option:selected').data('time-period'));
             let startDateStr = $('#amc_start_date').val();
             let amount = parseInt($(this).find(':selected').data('amount'));
-            
+
             if (timePeriod && startDateStr) {
                 let [day, month, year] = startDateStr.split('-');
                 let startDate = new Date(`${year}-${month}-${day}`);

@@ -508,10 +508,7 @@
                                 
                             </div>
                             <div class="row mt-2">
-                                <div class="col-md-3">
-                                    <span style="font-weight: bold;">Customer Address</span><br>
-                                    <span>${amcData.contact_address ?? ''}</span>
-                                </div>
+                              
                                 <div class="col-md-3">
                                     <span style="font-weight: bold;">Start & End Date</span><br>
                                     <span>${amcData.display_amc_start_date} - ${amcData.display_amc_end_date}</span>

@@ -135,8 +135,6 @@ class ServiceController extends Controller
 
     public function addServiceHandel(Request $request)
     {
-
-        $filePath = null;
         $fileData = request()->filename;
         $amc_id = $request->amc_id;
         $service_id = $request->service_id;
@@ -148,6 +146,7 @@ class ServiceController extends Controller
         $updateData['service_remark'] = $service_remark;
         $updateData['status'] = $status_id;
         $updateData['modified_by'] = Auth::id();
+
         if ($request->hasFile('filename')) {
             $extension = $fileData->getClientOriginalExtension();
             $imageName = date('YmdHis') . '_' . time()  . '.' . $extension;
@@ -156,6 +155,7 @@ class ServiceController extends Controller
             if (!File::exists($directory)) {
                 File::makeDirectory($directory, 0755, true);
             }
+
             if ($fileData->move($directory, $imageName)) {
                 $updateData['attachment'] = $imageName;
             }
@@ -168,42 +168,59 @@ class ServiceController extends Controller
                 ->where('status', '1')
                 ->orderBy('service_no', 'ASC')
                 ->get();
-        
+
             if ($pendingServices->count() > 1) {
                 $firstServiceDate = Carbon::today();
-                $serviceDates = [$firstServiceDate];
+                $serviceDates = [];
                 $lastServiceDate = $firstServiceDate;
-        
-                // Generate service dates for all except last one
-                for ($i = 1; $i < $pendingServices->count() - 1; $i++) {
-                    if($i ==1){
-                        $nextServiceDate = $lastServiceDate->copy()->addDays(120);
-                    }else{
-                        $nextServiceDate = $lastServiceDate->copy()->addDays(119);
-                    }
-                    
-                    $serviceDates[] = $nextServiceDate;
 
-                    $lastServiceDate = $nextServiceDate;
+                // Generate all service dates
+                for ($i = 0; $i < $pendingServices->count(); $i++) {
+                    if ($i == 0) {
+                        $nextDate = $firstServiceDate;
+                    } elseif ($i == 1) {
+                        $nextDate = $lastServiceDate->copy()->addDays(120);
+                    } else {
+                        $nextDate = $lastServiceDate->copy()->addDays(119);
+                    }
+
+                    $serviceDates[] = $nextDate;
+                    $lastServiceDate = $nextDate;
                 }
-        
-                // Update all pending services except the last one
+
+                // Get AMC contract end date as Carbon instance
+                $amcEndDate = Carbon::parse($amcMaster->amc_end_date ?? null);
+
                 foreach ($pendingServices as $index => $service) {
-                    if ($index < count($pendingServices) - 1) {
+                    if ($index < $pendingServices->count() - 1) {
+                        // Update all except the last
                         $service->service_date = $serviceDates[$index]->toDateString();
                         $service->save();
+                    } elseif ($index == $pendingServices->count() - 1) {
+                        // Only update last if service date is within AMC end date
+                        if ($serviceDates[$index]->lte($amcEndDate)) {
+                            $service->service_date = $serviceDates[$index]->toDateString();
+                            $service->save();
+                        }
                     }
                 }
             }
         }
-       
+
+        // Save the selected service
         ServiceDetail::where('id', $service_id)->update($updateData);
 
-        $serviceDataNewServiceData = ServiceDetail::query()->Where('amc_id', $amc_id)->orderBy('service_no', 'ASC')->where('status', '1')->first();
+        $serviceDataNewServiceData = ServiceDetail::query()
+            ->Where('amc_id', $amc_id)
+            ->orderBy('service_no', 'ASC')
+            ->where('status', '1')
+            ->first();
+
         $serviceData = ServiceDetail::query()->where('id', $service_id)->first();
 
         $serviceDataLastDate = $serviceDataNewServiceData->display_service_date ?? '';
 
+        // Log
         SystemLogs::create([
             'inquiry_id' => 0,
             'type' => '6', // Service Module ID
@@ -212,30 +229,38 @@ class ServiceController extends Controller
             'action_id'  => 1,
             'created_by' => Auth::id(),
         ]);
-        $whatsAppMsg = "Hi $amcMaster->customer_name \n \n";
 
-        $whatsAppMsg .= "Your vehicle *$amcMaster->vehicle_number* has been successfully serviced under AMC Contract ID: *$amcMaster->amc_display_number* \n \n";
+        // WhatsApp Message
+        $whatsAppMsg = "Hi $amcMaster->customer_name \n\n";
+        $whatsAppMsg .= "Your vehicle *$amcMaster->vehicle_number* has been successfully serviced under AMC Contract ID: *$amcMaster->amc_display_number* \n\n";
         $whatsAppMsg .= "Service Date: *$serviceData->display_service_date* \n";
-        if(!empty($serviceDataLastDate)){
+
+        if (!empty($serviceDataLastDate)) {
             $whatsAppMsg .= "Next Service Due: *$serviceDataLastDate* \n";
         }
-        $whatsAppMsg .= "Location: Ampere Service Center, Vadodara \n \n";
-        $whatsAppMsg .= "Our team has completed all required checks and maintenance as per AMC guidelines. Your vehicle is now ready for delivery. \n \n";
+
+        $whatsAppMsg .= "Location: Ampere Service Center, Vadodara \n\n";
+        $whatsAppMsg .= "Our team has completed all required checks and maintenance as per AMC guidelines. Your vehicle is now ready for delivery. \n\n";
         $whatsAppMsg .= "For feedback or questions, feel free to reply to this message. \n";
-        $whatsAppMsg .= "Thank you for choosing Ampere! \n\n ";
+        $whatsAppMsg .= "Thank you for choosing Ampere! \n\n";
         $whatsAppMsg .= "Support: +91 90233 42463";
 
         $this->sendWhatsAppMessage($amcMaster->contact_number, $whatsAppMsg);
 
+        // Check if all services are completed
         $checkPendingServiceCount = ServiceDetail::where('amc_id', $amc_id)
-        ->where('status', '1')
-        ->count();
-        if($checkPendingServiceCount == 0){
-            $amcMaster->update(['status' => $this->getArrayIdByName($this->statusArray, 'Deactive')]);
+            ->where('status', '1')
+            ->count();
+
+        if ($checkPendingServiceCount == 0) {
+            $amcMaster->update([
+                'status' => $this->getArrayIdByName($this->statusArray, 'Deactive')
+            ]);
         }
 
         return redirect()->route('amc-master-service.index')->with('success', 'Service Update successfully!');
     }
+
 
     public function export(Request $request)
     {

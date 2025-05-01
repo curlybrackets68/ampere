@@ -100,7 +100,8 @@
                                             <label>Contact Number</label>
                                             <input type="text" class="form-control" id="contact_number"
                                                 placeholder="Enter Contact Number" name="contact_number"
-                                                value="{{ old('contact_number', $amcMaster->contact_number ?? '') }}">
+                                                value="{{ old('contact_number', $amcMaster->contact_number ?? '') }}"
+                                                oninput="this.value = this.value.replace(/[^0-9]/g, '');" maxlength="10">
                                         </div>
                                     </div>
                                     <div class="col-md-3">
@@ -124,19 +125,19 @@
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label>AMC Start Date:</label>
-                                            <div class="input-group date">
-                                                <input type="text" id="amc_start_date" name="amc_start_date"
-                                                    class="form-control">
+                                                <div class="input-group ">
+                                                    <input type="text" id="amc_start_date" name="amc_start_date"
+                                                        class="form-control" readonly>
 
-                                            </div>
+                                                </div>
                                         </div>
                                     </div>
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label>AMC End Date</label>
                                             <input type="text" class="form-control" id="amc_end_date"
-                                                placeholder="Enter Contact Number" name="amc_end_date"
-                                                value="{{ old('amc_end_date', $amcMaster->amc_end_date ?? '') }}">
+                                               name="amc_end_date"
+                                                value="{{ old('amc_end_date', $amcMaster->amc_end_date ?? '') }}" readonly>
                                         </div>
                                     </div>
                                     <div class="col-md-3">
