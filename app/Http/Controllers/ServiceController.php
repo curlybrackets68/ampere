@@ -249,8 +249,8 @@ class ServiceController extends Controller
         $whatsAppMsg .= "Thank you for choosing Ampere! \n\n";
         $whatsAppMsg .= "Support: +91 90233 42463";
 
-       // $pdfUrl = $this->generateAndStorePdf('pdf.amc-pdf', ['amc' => $amcMaster], 'amc_pdfs');
-       // $data = $this->sendWhatsAppMessageWithFile($amcMaster->contact_number, $whatsAppMsg, $pdfUrl['public_url'], 'amc_pdf');
+        $pdfUrl = $this->generateAndStorePdf('pdf.amc-pdf', ['amc' => $amcMaster], 'amc_pdfs');
+        $data = $this->sendWhatsAppMessageWithFile($amcMaster->contact_number, $whatsAppMsg, $pdfUrl['public_url'], 'amc_pdf');
        
        
          
@@ -274,7 +274,7 @@ class ServiceController extends Controller
             $whatsLast .= "Call now on\n\n";
             $whatsLast .="9023342463";
             
-          //  $this->sendWhatsAppMessage($amcMaster->contact_number, $whatsLast);
+            $this->sendWhatsAppMessage($amcMaster->contact_number, $whatsLast);
         }
 
         return redirect()->route('amc-master-service.index')->with('success', 'Service Update successfully!');
