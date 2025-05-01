@@ -67,9 +67,8 @@ class AmcMasterController extends Controller
                 ->addColumn('row_class', function ($row) {
                     $amcEndDate = Carbon::parse($row->amc_end_date);
                     $today = Carbon::today();
-                    $diffInDays = $today->diffInDays($amcEndDate);
 
-                    return $diffInDays <= 10 ? 'light-red' : '';
+                    return $amcEndDate <= $today ? 'light-red' : '';
                 })
                 ->addColumn('vehicle_model', function ($row) {
                     $vehicleName  = '';
