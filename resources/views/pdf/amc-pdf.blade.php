@@ -97,9 +97,9 @@
                 <strong>{{ $amc->contact_number }}</strong>
             </td>
         </tr>
-        <tr>
+        {{-- <tr>
             <td colspan="2">Address: <strong>{{ $amc->contact_address }}</strong></td>
-        </tr>
+        </tr> --}}
     </table>
 
     <div class="section">Service Details</div>
