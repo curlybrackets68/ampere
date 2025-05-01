@@ -115,7 +115,14 @@ class ServiceDetailsExport implements FromCollection, WithHeadings, WithCustomSt
         return [
             BeforeSheet::class => function (BeforeSheet $event) {
                 $sheet = $event->sheet->getDelegate();
-                $sheet->setCellValue('A1', "Report Date: " . $this->startDate . " TO " . $this->endDate);
+
+                $sheet->setCellValue('A1', "Report Date: " . $this->formatDateTime('d-M-Y', $this->startDate) . " TO " . $this->formatDateTime('d-M-Y', $this->endDate));
+
+                $sheet->mergeCells('A1:M1');
+
+                $sheet->getStyle('A1')->getFont()->setBold(true);
+
+                $sheet->getStyle('A1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
             },
         ];
     }
