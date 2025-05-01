@@ -128,7 +128,7 @@ class ServiceController extends Controller
             $data['data'] = array('serveiceData' => $serveiceData, 'serveiceDataList' => $serveiceDataList, 'serviceFlag' => $serviceFlag);
             return $this->successResponse($data);
         } else {
-            return  $this->failResponse();
+            return  $this->failResponse([],'Chassis Number Not Found');
         }
     }
 
@@ -229,7 +229,9 @@ class ServiceController extends Controller
             'action_id'  => 1,
             'created_by' => Auth::id(),
         ]);
-
+        $checkPendingServiceCount = ServiceDetail::where('amc_id', $amc_id)
+        ->where('status', '1')
+        ->count();
         // WhatsApp Message
         $whatsAppMsg = "Hi $amcMaster->customer_name \n\n";
         $whatsAppMsg .= "Your vehicle *$amcMaster->vehicle_number* has been successfully serviced under AMC Contract ID: *$amcMaster->amc_display_number* \n\n";
@@ -237,6 +239,7 @@ class ServiceController extends Controller
 
         if (!empty($serviceDataLastDate)) {
             $whatsAppMsg .= "Next Service Due: *$serviceDataLastDate* \n";
+            $whatsAppMsg .= "Pending Service: *$checkPendingServiceCount* \n";
         }
 
         $whatsAppMsg .= "Location: Ampere Service Center, Vadodara \n\n";
@@ -245,12 +248,11 @@ class ServiceController extends Controller
         $whatsAppMsg .= "Thank you for choosing Ampere! \n\n";
         $whatsAppMsg .= "Support: +91 90233 42463";
 
-        $this->sendWhatsAppMessage($amcMaster->contact_number, $whatsAppMsg);
+        $pdfUrl = $this->generateAndStorePdf('pdf.amc-pdf', ['amc' => $amcMaster], 'amc_pdfs');
+        $data = $this->sendWhatsAppMessageWithFile($amcMaster->contact_number, $whatsAppMsg, $pdfUrl['public_url'], 'amc_pdf');
 
         // Check if all services are completed
-        $checkPendingServiceCount = ServiceDetail::where('amc_id', $amc_id)
-            ->where('status', '1')
-            ->count();
+      
 
         if ($checkPendingServiceCount == 0) {
             $amcMaster->update([

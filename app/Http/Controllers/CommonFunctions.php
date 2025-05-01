@@ -159,7 +159,7 @@ trait CommonFunctions
             $returnArray = array_merge($returnArray, $data);
         }
 
-        return response()->json($returnArray, 400);
+        return response()->json($returnArray, 200);
     }
 
     public function sendWhatsAppMessage($mobileNumber, $message)

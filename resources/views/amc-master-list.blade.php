@@ -101,7 +101,7 @@
                                     </div>
                                     <div class="col-md-3">
                                         <div class="form-group">
-                                            <label>Vehicle Type</label>
+                                            <label>Vehicle Model</label>
                                             <select class="form-select" id="vehicle_master_id" name="vehicle_master_id">
                                                 <option value="">Select Vehicle Model</option>
                                                 @forelse (@$vehicle as $key => $value)

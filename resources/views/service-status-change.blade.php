@@ -142,6 +142,7 @@
         });
 
         function getserviceForUpdateStatus(chassis_number) {
+            $('#addUpdateAmcMaster').attr('disabled', false);
             $.ajax({
                 url: "{{ route('amc-master-service.get-service-details-by-chassis-number') }}",
                 method: 'GET',
@@ -149,6 +150,7 @@
                     chassis_number: chassis_number,
                 },
                 success: function(response) {
+                    console.log(response)
                     if (response.code == '1') {
 
 
@@ -169,6 +171,8 @@
 
                         } else {
                             showToast('error', 'Sorry no pending service');
+                            $('#addUpdateAmcMaster').attr('disabled', true);
+                            $('#amcMasterSeriveTable tbody').html('');
                         }
                         $('#amcMasterSeriveTable tbody').html('');
                         $.each(serveiceDataList, function(index, item) {
@@ -180,10 +184,10 @@
                                     <td>${item.service_remark ?? ''}</td>
                                     <td>
                                         ${item.attachment_url ? `
-                                                    <a href="${item.attachment_url}" download target="_blank" class="btn btn-sm btn-primary">
-                                                        <i class="fa fa-download"></i> Download
-                                                    </a>
-                                                ` : ''}
+                                                        <a href="${item.attachment_url}" download target="_blank" class="btn btn-sm btn-primary">
+                                                            <i class="fa fa-download"></i> Download
+                                                        </a>
+                                                    ` : ''}
                                     </td>
                                     <td>${item.service_by ?? ''}</td>
                                 </tr>
@@ -197,11 +201,22 @@
                         $('#amc_id').val('');
                         $('#service_id').val('');
                         $('#amcMasterSeriveTable tbody').html('')
+                        $('#addUpdateAmcMaster').attr('disabled', true);
+                        $('#amcMasterSeriveTable tbody').html('');
+                        showToast('error', response.message);
                     }
 
                 },
                 error: function(xhr, status, error) {
-                    console.error("Error fetching chart data:", error);
+                    $('#amcContractId').html('');
+                    $('#amcCustomerName').html('');
+                    $('#amcCustomerNumber').html('');
+                    $('#amcServiceNo').html('');
+                    $('#amc_id').val('');
+                    $('#service_id').val('');
+                    $('#amcMasterSeriveTable tbody').html('')
+                    $('#addUpdateAmcMaster').attr('disabled', true);
+                    $('#amcMasterSeriveTable tbody').html('');
                 }
             });
         }
