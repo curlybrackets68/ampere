@@ -78,7 +78,7 @@ class AMCCronJob extends Command
 
         // When AMC Due (After) 
 
-        $amcRecordsDue = AmcMaster::where('status', 10)
+        $amcRecordsDue = AmcMaster::where('status', 11)
             ->where('renew_status', 12)
             ->whereDate('amc_end_date', '<', $today)
             ->get();
