@@ -142,6 +142,7 @@
             <strong>charged separately </strong>as per actuals
         </li>
         <li>Services under this contract must be availed only at authorized service centers (as applicable)</li>
+        <li>Service will be done on appointment basis only</li>
     </ol>
 
     <div class="section">Payment Details</div>
