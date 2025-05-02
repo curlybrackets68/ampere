@@ -115,12 +115,14 @@ class LeadsController extends Controller
                 $pdfUrl = 'https://chiragautomotive.com/amper/assets/pdf/Ampere_Reo_LI.pdf';
             }
 
+            if ($request->vehicle == '2') {
+                for ($i = 1; $i <= 5; $i++) {
+                    $imageUrl = 'https://chiragautomotive.com/ampere-testing/assets/pdf/images/magnus/' . $i . '.jpg';
+                    $this->sendWhatsAppMessageWithFile($request->mobile, '', $imageUrl);
+                }
+            }
             $this->sendWhatsAppMessageWithFile($request->mobile, $message, $pdfUrl);
 
-            for ($i = 1; $i <= 5; $i++) {
-                $imageUrl = 'https://chiragautomotive.com/ampere-testing/assets/pdf/images/magnus/' . $i . '.jpg';
-                $this->sendWhatsAppMessageWithFile($request->mobile, '', $imageUrl);
-            }
             SystemLogs::create([
                 'inquiry_id' => 0,
                 'type' => '3',
