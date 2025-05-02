@@ -20,7 +20,7 @@
 
                         <div class="card mb-4">
                             <div class="card-header">
-                                <h5 class="card-title">{{ isset($amcMaster) ? 'Update AMC Master' : 'Add AMC Master' }}</h5>
+                                <h5 class="card-title">{{ isset($amcMaster) ? 'Renew AMC Master' : 'Add AMC Master' }}</h5>
                                 <div class="card-tools">
                                     <div class="input-group date">
                                         <input type="text" id="amc_display_number" name="amc_display_number"
