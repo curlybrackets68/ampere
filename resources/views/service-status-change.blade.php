@@ -35,7 +35,7 @@
                                             </span>
 
                                         </div>
-                                        <div id="errorContainer" style="color: red; display: none;"></div>
+                                        <div id="errorContainer" style="color: red; font-size: 14px;"></div>
                                     </div>
                                     <div class="col-md-3">
                                         <div class="form-group">
@@ -141,6 +141,10 @@
 
         });
 
+        $(document).on('keyup', '#chassis_number', function() {
+            $('#errorContainer').html('');
+        });
+
         function getserviceForUpdateStatus(chassis_number) {
             $('#addUpdateAmcMaster').attr('disabled', false);
             $.ajax({
@@ -150,11 +154,9 @@
                     chassis_number: chassis_number,
                 },
                 success: function(response) {
-                    console.log(response)
                     if (response.code == '1') {
                         let serviceFlag = response.data.serviceFlag;
                         let serveiceDataList = response.data.serveiceDataList;
-
 
                         if (serviceFlag) {
                             let serveiceData = response.data.serveiceData;
@@ -166,11 +168,43 @@
                             $('#amc_id').val(amc_master_details.id);
                             $('#service_id').val(serveiceData.id);
 
+                            let previousService = response.data.previousService;
+                            if (previousService) {
+                                let serviceDate = new Date(previousService.service_date);
+                                let today = new Date();
+                                let nextAllowedDate = new Date(serviceDate);
+                                nextAllowedDate.setDate(serviceDate.getDate() + 10);
+
+                                if (today < nextAllowedDate) {
+                                    let daysLeft = Math.ceil((nextAllowedDate - today) / (1000 * 60 * 60 * 24));
+
+                                    let options = {
+                                        day: '2-digit',
+                                        month: 'short',
+                                        year: 'numeric'
+                                    };
+                                    let formattedDate = nextAllowedDate.toLocaleDateString('en-GB', options)
+                                        .replace(/ /g, '-');
+
+                                    $('#addUpdateAmcMaster').prop('disabled', true);
+
+                                    $('#errorContainer').html('Next service can be added after ' + daysLeft +
+                                        ' day(s), on ' + formattedDate);
+
+                                    showToast('error', 'Next service can be added after ' + daysLeft +
+                                        ' day(s), on ' + formattedDate);
+                                } else {
+                                    $('#errorContainer').html('');
+                                    $('#addUpdateAmcMaster').prop('disabled', false);
+                                }
+                            }
+
 
                         } else {
                             showToast('error', 'Sorry no pending service');
                             $('#addUpdateAmcMaster').attr('disabled', true);
                             $('#amcMasterSeriveTable tbody').html('');
+                            $('#errorContainer').html('');
                         }
                         $('#amcMasterSeriveTable tbody').html('');
                         $.each(serveiceDataList, function(index, item) {
@@ -182,10 +216,10 @@
                                     <td>${item.service_remark ?? ''}</td>
                                     <td>
                                         ${item.attachment_url ? `
-                                                                <a href="${item.attachment_url}" download target="_blank" class="btn btn-sm btn-primary">
-                                                                    <i class="fa fa-download"></i> Download
-                                                                </a>
-                                                            ` : ''}
+                                                                                                    <a href="${item.attachment_url}" download target="_blank" class="btn btn-sm btn-primary">
+                                                                                                        <i class="fa fa-download"></i> Download
+                                                                                                    </a>
+                                                                                                ` : ''}
                                     </td>
                                     <td>${item.service_by ?? ''}</td>
                                 </tr>
@@ -202,6 +236,7 @@
                         $('#addUpdateAmcMaster').attr('disabled', true);
                         $('#amcMasterSeriveTable tbody').html('');
                         showToast('error', response.message);
+                        $('#errorContainer').html('');
                     }
 
                 },

@@ -89,7 +89,7 @@ class ServiceController extends Controller
                     $html .= '</button>';
                     $html .= '<div class="dropdown-menu dropdown-menu-end" role="menu" style="">';
                     if ($row->inquiry_flag == 1) {
-                        $html .= '<a href="#" class="dropdown-item amc-add-inquiry" data-service-id="' . $row->id . '" data-id="' . $row->amc_master_details->id . '" data-vehicle-number="' . $row->amc_master_details->vehicle_number . '" data-customer-name="' . $row->amc_master_details->customer_name . '" data-customer-number="' . $row->amc_master_details->contact_number . '">Add Inquiry</a>';
+                        $html .= '<a href="javascript:void(0);" class="dropdown-item amc-add-inquiry" data-service-id="' . $row->id . '" data-id="' . $row->amc_master_details->id . '" data-vehicle-number="' . $row->amc_master_details->vehicle_number . '" data-customer-name="' . $row->amc_master_details->customer_name . '" data-customer-number="' . $row->amc_master_details->contact_number . '">Add Inquiry</a>';
                     }
                     $html .= '</div>';
                     $html .= '</div>';
@@ -121,11 +121,12 @@ class ServiceController extends Controller
         if ($amcMaster) {
             $serveiceData = ServiceDetail::query()->where('amc_id', $amcMaster->id)->orderBy('service_date', 'ASC')->where('status', '1')->first();
             $serveiceDataList = ServiceDetail::query()->where('amc_id', $amcMaster->id)->orderBy('service_date', 'ASC')->get();
+            $previousService = ServiceDetail::where('amc_id', $amcMaster->id)->where('status', '2')->first();
             $serviceFlag = false;
             if ($serveiceData) {
                 $serviceFlag = true;
             }
-            $data['data'] = array('serveiceData' => $serveiceData, 'serveiceDataList' => $serveiceDataList, 'serviceFlag' => $serviceFlag);
+            $data['data'] = array('serveiceData' => $serveiceData, 'serveiceDataList' => $serveiceDataList, 'serviceFlag' => $serviceFlag, 'previousService' => $previousService);
             return $this->successResponse($data);
         } else {
             return  $this->failResponse([],'Chassis Number Not Found');
@@ -252,11 +253,6 @@ class ServiceController extends Controller
         $pdfUrl = $this->generateAndStorePdf('pdf.amc-pdf', ['amc' => $amcMaster], 'amc_pdfs');
         $data = $this->sendWhatsAppMessageWithFile($amcMaster->contact_number, $whatsAppMsg, $pdfUrl['public_url'], 'amc_pdf');
        
-       
-         
-        
-       
-
         // Check if all services are completed
         $checkPendingServiceCount = ServiceDetail::where('amc_id', $amc_id)
             ->where('status', '1')
@@ -268,11 +264,11 @@ class ServiceController extends Controller
             ]);
             
             $whatsLast = "Dear sir, \n\n";
-            $whatsLast .= "You have availed all the services under the AMC contract. Renew it today to keep your electric scooter up to date and in proper state.\n\n";
-            $whatsLast .= "Irregular servicing can lead to loss of warranty benefits.\n\n";
+            $whatsLast .= "You have availed all the services under the AMC contract. *Renew it today* to keep your electric scooter up to date and in proper state.\n\n";
+            $whatsLast .= "*Irregular servicing can lead to loss of warranty benefits.*\n\n";
             $whatsLast .= "To renew your contract,\n\n";
             $whatsLast .= "Call now on\n\n";
-            $whatsLast .="9023342463";
+            $whatsLast .="*9023342463*";
             
             $this->sendWhatsAppMessage($amcMaster->contact_number, $whatsLast);
         }

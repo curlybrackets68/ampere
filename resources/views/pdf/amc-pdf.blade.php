@@ -55,10 +55,10 @@
             <tr>
                 <td>
                     @if (env('SERVER_MODE') == 'live' || env('SERVER_MODE') == 'test')
-                        <img src="{{ url('assets/assets/img/pdf-header.png') }}"
+                        <img src="{{ url('assets/assets/img/pdf-header2.png') }}"
                             style="width: 100% !important; margin-top: -30px;">
                     @else
-                        <img src="{{ public_path('assets/assets/img/pdf-header.png') }}"
+                        <img src="{{ public_path('assets/assets/img/pdf-header2.png') }}"
                             style="width: 100% !important; margin-top: -30px;">
                     @endif
 

@@ -92,11 +92,11 @@ class AmcMasterController extends Controller
                         if (checkRights('USER_INQUIRY_ROLE_VIEW') || checkRights('USER_INQUIRY_ROLE_VIEW_ALL')) {
                             $htmlInfo = '<a href="' . route('inquiry') . '" class=""><i class="bi bi-info-circle-fill"></i></a>';
                         } else {
-                            $htmlInfo = '<a href="#" class="btn btn-' . $class . ' btn-sm " data-id="' . $row->id . '" data-status="' . $row->status_id . '">' . $this->getArrayNameById($this->statusArray, $row->status) . '</a>';
+                            $htmlInfo = '<a href="javascript:void(0);" class="btn btn-' . $class . ' btn-sm " data-id="' . $row->id . '" data-status="' . $row->status_id . '">' . $this->getArrayNameById($this->statusArray, $row->status) . '</a>';
                         }
                     }
 
-                    $html = '<a href="" class="btn btn-' . $class . ' btn-sm " data-id="' . $row->id . '" data-status="' . $row->status_id . '">' . $this->getArrayNameById($this->statusArray, $row->status) . '</a> <br> ' . $htmlInfo;
+                    $html = '<a href="javascript:void(0);" class="btn btn-' . $class . ' btn-sm " data-id="' . $row->id . '" data-status="' . $row->status_id . '">' . $this->getArrayNameById($this->statusArray, $row->status) . '</a> <br> ' . $htmlInfo;
                     return $html;
                 })
                 ->addColumn('action', function ($row) {
@@ -119,7 +119,7 @@ class AmcMasterController extends Controller
                     $html .= '<a href="javascript:void(0);" class="dropdown-item amc-view" data-id="' . $row->id . '">View</a>';
                     $html .= '<a href="' . route('amc.download', $row->id) . '" class="dropdown-item" target="_blank">PDF</a>';
 
-                    $html .= '<a href="#" class="dropdown-item amc-add-inquiry" data-id="' . $row->id . '" data-vehicle-number="' . $row->vehicle_number . '" data-customer-name="' . $row->customer_name . '" data-customer-number="' . $row->contact_number . '">Add Inquiry</a>';
+                    $html .= '<a href="javascript:void(0);" class="dropdown-item amc-add-inquiry" data-id="' . $row->id . '" data-vehicle-number="' . $row->vehicle_number . '" data-customer-name="' . $row->customer_name . '" data-customer-number="' . $row->contact_number . '">Add Inquiry</a>';
                     if (Carbon::parse($row->amc_end_date)->isFuture()) {
                         $html .= '<a href="javascript:void(0);" class="dropdown-item change-status" data-id="' . $row->id . '" data-status="' . $row->status . '">Status</a>';
                     }
@@ -501,7 +501,7 @@ class AmcMasterController extends Controller
             $referenceId = $amcData->amc_reference_id;
             $renewStatus = $amcData->renew_status;
             $serviceQuery = ServiceDetail::where('amc_id', $amcId)->get();
-            
+
             $fieldId = 'amc_reference_id';
             $fieldIdValue = $amcId;
             if ($renewStatus === 12) {
