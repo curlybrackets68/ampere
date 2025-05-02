@@ -400,14 +400,17 @@ class AmcMasterController extends Controller
                         $lastServiceDate = $nextServiceDate;
                     }
 
+                    $serviceNo = 1;
                     foreach ($serviceDates as $serviceDate) {
                         $serviceData = [
+                            'service_no' => $serviceNo,
                             'amc_id' => $amcMasterId,
                             'service_date' => $serviceDate->format('Y-m-d H:i:s'),
                             'created_by' => Auth::id(),
                         ];
 
                         ServiceDetail::create($serviceData);
+                        $serviceNo++;
                     }
                 }
             }
