@@ -527,7 +527,7 @@
                             <div class="row mt-2">
                                 <div class="col-md-3">
                                     <span style="font-weight: bold;">Transaction Details</span><br>
-                                    <span>${amcData.transaction_details}</span>
+                                    <span>${amcData.transaction_details ?? ''}</span>
                                 </div>
                             </div>
                         </div>

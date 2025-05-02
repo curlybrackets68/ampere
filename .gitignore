@@ -18,5 +18,5 @@ yarn-error.log
 /app/Secrets
 /public/amc_pdfs
 /public/assets/temp
-/public/assets/assets/attachment
+/public/assets/attachment
 .phpunit.result.cache
