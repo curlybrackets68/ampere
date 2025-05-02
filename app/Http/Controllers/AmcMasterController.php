@@ -112,7 +112,7 @@ class AmcMasterController extends Controller
                         if ($notPendingServiceCount->count() == 0) {
                             $html .= '<a href="' . route('amc-master.edit', $row->id) . '"  class="dropdown-item">Edit</a>';
                         }
-                        if($row->status == $this->getArrayIdByName($this->statusArray, 'Deactive') && $row->renew_status == $this->getArrayIdByName($this->statusArray, 'New')) {
+                        if ($row->status == $this->getArrayIdByName($this->statusArray, 'Deactive') && $row->renew_status == $this->getArrayIdByName($this->statusArray, 'New')) {
                             $html .= '<a href="' . route('amc-master.renew', $row->id) . '" class="dropdown-item">Renew</a>';
                         }
                     }
@@ -495,12 +495,20 @@ class AmcMasterController extends Controller
         $amcQuery = AmcMaster::find($amcId);
         if ($amcQuery) {
             $amcData = $amcQuery;
-
+            $referenceId = $amcData->amc_reference_id;
+            $renewStatus = $amcData->renew_status;
             $serviceQuery = ServiceDetail::where('amc_id', $amcId)->get();
+            
+            $fieldId = 'amc_reference_id';
+            $fieldIdValue = $amcId;
+            if ($renewStatus === 12) {
+                $fieldId = 'id';
+                $fieldIdValue = $referenceId;
+            }
 
-            $amcDetailsQuery = AmcMaster::where('amc_reference_id', $amcId)->get();
+            $amcDetailsQuery = AmcMaster::where($fieldId, $fieldIdValue)->get();
 
-            $historyData = SystemLogs::where('type', '5')->where('type_id', $amcId)->get();
+            $historyData = SystemLogs::where('type', '5')->where('type_id', $fieldIdValue)->get();
             $data = [
                 'amc' => $amcData,
                 'amcDetail' => $amcDetailsQuery->isNotEmpty() ? $amcDetailsQuery : [],
@@ -526,10 +534,11 @@ class AmcMasterController extends Controller
         }
     }
 
-    public function dueList(Request $request){
+    public function dueList(Request $request)
+    {
 
         if ($request->ajax()) {
-            $amcMasterList = AmcMaster::query()->where('status',$this->getArrayIdByName($this->statusArray, 'Deactive'))->Where('renew_status', $this->getArrayIdByName($this->statusArray, 'New'))->orderBy('amc_end_date');
+            $amcMasterList = AmcMaster::query()->where('status', $this->getArrayIdByName($this->statusArray, 'Deactive'))->Where('renew_status', $this->getArrayIdByName($this->statusArray, 'New'))->orderBy('amc_end_date');
 
             // if ($request->action_type != 'report') {
             //     //default list 
@@ -611,7 +620,7 @@ class AmcMasterController extends Controller
                         if ($notPendingServiceCount->count() == 0) {
                             $html .= '<a href="' . route('amc-master.edit', $row->id) . '"  class="dropdown-item">Edit</a>';
                         }
-                        if($row->status == $this->getArrayIdByName($this->statusArray, 'Deactive') && $row->renew_status == $this->getArrayIdByName($this->statusArray, 'New')) {
+                        if ($row->status == $this->getArrayIdByName($this->statusArray, 'Deactive') && $row->renew_status == $this->getArrayIdByName($this->statusArray, 'New')) {
                             $html .= '<a href="' . route('amc-master.renew', $row->id) . '" class="dropdown-item">Renew</a>';
                         }
                     }

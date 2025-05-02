@@ -28,7 +28,8 @@
                                     <div class="input-group date">
                                         <input type="text" id="amc_display_number" name="amc_display_number"
                                             class="form-control"
-                                            value="{{ old('name', $amcMaster->amc_display_number ?? $amcDisplayNumber) }}" readonly>
+                                            value="{{ old('name', $amcMaster->amc_display_number ?? $amcDisplayNumber) }}"
+                                            readonly>
                                     </div>
                                 </div>
 
@@ -125,19 +126,19 @@
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label>AMC Start Date:</label>
-                                                <div class="input-group ">
-                                                    <input type="text" id="amc_start_date" name="amc_start_date"
-                                                        class="form-control" readonly>
+                                            <div class="input-group ">
+                                                <input type="text" id="amc_start_date" name="amc_start_date"
+                                                    class="form-control" readonly style="pointer-events: none;" tabindex="1">
 
-                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label>AMC End Date</label>
-                                            <input type="text" class="form-control" id="amc_end_date"
-                                               name="amc_end_date"
-                                                value="{{ old('amc_end_date', $amcMaster->amc_end_date ?? '') }}" readonly>
+                                            <input type="text" class="form-control" id="amc_end_date" name="amc_end_date"
+                                                value="{{ old('amc_end_date', $amcMaster->amc_end_date ?? '') }}" readonly
+                                                style="pointer-events: none" tabindex="1">
                                         </div>
                                     </div>
                                     <div class="col-md-3">
@@ -168,7 +169,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                    <div class="row mt-2">
+                                <div class="row mt-2">
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Transaction Details</label>
@@ -375,7 +376,7 @@
                         showToast('error', response.message);
                         $('#chassis_number').after(
                             '<small class="error-message text-danger">Chassis number already exist,Please enter new.</small>'
-                            );
+                        );
                         $(this).focus();
                         $(this).val('');
                         $('#addUpdateAmcMaster').attr('disabled', true);

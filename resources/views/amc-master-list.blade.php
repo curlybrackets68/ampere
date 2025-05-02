@@ -214,22 +214,22 @@
                 </div>
                 <div class="modal-body">
                     <div class="row">
-                        <div class="col-md-3">
+                        <div class="col-md-4">
                             <label>Name</label>
                             <input type="text" class="form-control" id="inquiry_name" name="inquiry_name" />
                             <input type="hidden" class="form-control" id="inquiry_amc_id" name="inquiry_amc_id" />
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-4">
                             <label>Mobile</label>
                             <input type="text" class="form-control" id="inquiry_mobile" name="inquiry_mobile" />
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-4">
                             <label>Vehicle Number</label>
 
                             <input type="text" class="form-control" id="inquiry_vehicle_no"
                                 name="inquiry_vehicle_no" />
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-4 mt-3">
                             <label>Select Branch</label>
                             <select class="form-select" id="inquiry_branch">
                                 <option value="">Select Branch</option>
@@ -240,7 +240,7 @@
                                 @endforelse
                             </select>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-4 mt-3">
                             <label>Select Service Type</label>
                             <select class="form-select" id="inquiry_service_type">
                                 <option value="">Select Service Type</option>

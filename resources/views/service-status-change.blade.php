@@ -25,7 +25,7 @@
                             </div>
                             <div class="card-body">
                                 <div class="row">
-                                    <div class="col-md-3">
+                                    <div class="col-md-4">
                                         <div class="input-group">
                                             <input type="text" class="form-control" id="chassis_number"
                                                 placeholder="Enter Chassis Number" name="chassis_number" value="">
@@ -45,14 +45,21 @@
                                     </div>
                                     <div class="col-md-3">
                                         <div class="form-group">
-                                            <strong>Customer Name</strong><br>
-                                            <label id="amcCustomerName" class="form-control-static"></label>
+                                            <strong>Customer Details</strong><br>
+                                            <label id="amcCustomerName" class="form-control-static"></label><br>
+                                            <label id="amcCustomerNumber" class="form-control-static"></label>
                                         </div>
                                     </div>
-                                    <div class="col-md-3">
+                                    {{-- <div class="col-md-3">
                                         <div class="form-group">
                                             <strong>Customer Contact</strong><br>
-                                            <label id="amcCustomerNumber" class="form-control-static"></label>
+                                            
+                                        </div>
+                                    </div> --}}
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <strong>Service No</strong><br>
+                                            <label id="amcServiceNo" class="form-control-static"></label>
                                         </div>
                                     </div>
                                 </div>
@@ -66,13 +73,8 @@
                                             <option value="2">Completed</option>
                                         </select>
                                     </div>
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <strong>Service No</strong><br>
-                                            <label id="amcServiceNo" class="form-control-static"></label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-2">
+
+                                    <div class="col-md-4">
                                         <label>Attachment</label>
                                         <input type="file" id="myFile" name="filename" class="form-control">
                                     </div>
@@ -81,21 +83,19 @@
                                         <textarea class="form-control" rows="2" id="service_remark" placeholder="Enter Status Remark"
                                             name="service_remark"></textarea>
                                     </div>
-                                    <div class="col-md-3 mt-5">
-                                        <button type="submit" class="btn btn-primary btn-sm"
-                                            id="addUpdateAmcMaster">Submit</button>
-                                        <button type="reset" class="btn btn-light btn-sm">Cancel</button>
-                                    </div>
                                 </div>
-
-
+                            </div>
+                            <div class="card-footer">
+                                <div>
+                                    <button type="submit" class="btn btn-primary btn-sm" id="addUpdateAmcMaster"
+                                        disabled>Submit</button>
+                                    <button type="reset" class="btn btn-light btn-sm">Cancel</button>
+                                </div>
                             </div>
                         </div>
                         <div class="card mb-4">
                             <div class="card-header">
                                 <h5 class="card-title">AMC Service List</h5>
-
-
                             </div>
                             <div class="card-body">
                                 <div class="row mt-3">
@@ -152,8 +152,6 @@
                 success: function(response) {
                     console.log(response)
                     if (response.code == '1') {
-
-
                         let serviceFlag = response.data.serviceFlag;
                         let serveiceDataList = response.data.serveiceDataList;
 
@@ -184,10 +182,10 @@
                                     <td>${item.service_remark ?? ''}</td>
                                     <td>
                                         ${item.attachment_url ? `
-                                                        <a href="${item.attachment_url}" download target="_blank" class="btn btn-sm btn-primary">
-                                                            <i class="fa fa-download"></i> Download
-                                                        </a>
-                                                    ` : ''}
+                                                                <a href="${item.attachment_url}" download target="_blank" class="btn btn-sm btn-primary">
+                                                                    <i class="fa fa-download"></i> Download
+                                                                </a>
+                                                            ` : ''}
                                     </td>
                                     <td>${item.service_by ?? ''}</td>
                                 </tr>
@@ -259,5 +257,11 @@
 
             });
         }
+
+        $(document).on('click', '#addUpdateAmcMaster', function(e) {
+            e.preventDefault();
+            loaderButton('addUpdateAmcMaster', true);
+            $('form[name="amcMasterForm"]').submit();
+        });
     </script>
 @endsection
