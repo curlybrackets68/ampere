@@ -17,6 +17,6 @@ yarn-error.log
 /.vscode
 /app/Secrets
 /public/amc_pdfs
-/public/assets/assets/temp
+/public/assets/temp
 /public/assets/assets/attachment
 .phpunit.result.cache
