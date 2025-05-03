@@ -215,11 +215,7 @@ class ServiceController extends Controller
         // Save the selected service
         ServiceDetail::where('id', $service_id)->update($updateData);
 
-        $serviceDataNewServiceData = ServiceDetail::query()
-            ->Where('amc_id', $amc_id)
-            ->orderBy('service_no', 'ASC')
-            ->where('status', '1')
-            ->first();
+     
 
         $pendingServices = ServiceDetail::where('amc_id', $amc_id)
             ->where('status', '1')
@@ -234,6 +230,13 @@ class ServiceController extends Controller
                 }
             }
         }
+
+        $serviceDataNewServiceData = ServiceDetail::query()
+        ->Where('amc_id', $amc_id)
+        ->orderBy('service_no', 'ASC')
+        ->where('status', '1')
+        ->first();
+        
         $serviceData = ServiceDetail::query()->where('id', $service_id)->first();
 
         $nextserviceDate = $serviceDataNewServiceData->display_service_date ?? '';

@@ -141,10 +141,10 @@
         <li><strong>Any unutilized services will lapse </strong>after the expiry date</li>
         <li>The cost of <strong>spare parts, additional labour, and consumables </strong>is<strong> not covered
             </strong>under this contract and will be
-            <strong>charged separately </strong>as per actuals
+            <strong>charged separately </strong>as per actuals.
         </li>
-        <li>Services under this contract must be availed only at authorized service centers (as applicable)</li>
-        <li>Service will be done on appointment basis only</li>
+        <li>Services under this contract must be availed only at authorized service centers (as applicable).</li>
+        <li><span style="background-color: yellow"><strong>Service will be done on appointment basis only.</span></strong></li>
     </ol>
 
     <div class="section">Payment Details</div>

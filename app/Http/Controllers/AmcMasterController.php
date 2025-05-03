@@ -150,7 +150,7 @@ class AmcMasterController extends Controller
         $vehicle = Vehicle::pluck('name', 'id');
         $vehicleTypeArray = $this->vehicleTypeArray;
         $paymentTypeArray = $this->paymentTypeArray;
-        $amcDisplayNumber = AmcMaster::select('amc_display_number')->orderBy('amc_display_number', 'DESC')->first() ?? 0;
+        $amcDisplayNumber = AmcMaster::select('amc_display_number')->orderBy('id', 'DESC')->first() ?? 0;
         $amcDisplayNumber = $amcDisplayNumber ? $amcDisplayNumber->amc_display_number + 1 : 1;
         return view('add-update-amc-master')->with(compact('vehicle', 'vehicleTypeArray', 'paymentTypeArray', 'amcDisplayNumber'));
     }
