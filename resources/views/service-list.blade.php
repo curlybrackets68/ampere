@@ -417,6 +417,7 @@
             formData.append('branch_id', branch_id);
             formData.append('amc_id', amc_id);
             formData.append('inquiry_service_id', inquiry_service_id);
+            formData.append('inquiry_service_type',inquiry_service_type);
 
             if (isValid) {
                  loaderButton('addInquiryBtn', true);

@@ -328,6 +328,7 @@ class ServiceController extends Controller
         $data['vehicle_no'] = strtoupper($request->vehicle_no);
         $data['created_by'] = Auth::id();
         $data['branch_id'] = $request->branch_id;
+        $data['service_type_id'] = $request->service_type_id;
 
 
         $lastInquiryId = InquiryDetails::orderBy('id', 'desc')->first()->id ?? 0;
