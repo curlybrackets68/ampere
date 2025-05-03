@@ -176,31 +176,40 @@ class AmcMasterController extends Controller
                 if ($amcPackageMasterData) {
                     $contractStartDate = Carbon::parse($amcMaster->amc_start_date);
                     $serviceDates = [];
+                    $serviceKm = [];
+                    $firstServiceDays = $amcPackageMasterData->vehicle_type == '1' ? 30 : 120; // for new vehicle first service after 30 days
+                    $kmInterval = $amcPackageMasterData->vehicle_type == '1' ? 1000 : 4000; // you can change this based on requirement
 
-                    $firstServiceDays = $amcPackageMasterData->vehicle_type == '1' ? 30 : 120; // for new vehicale first serve after 30days
                     $firstServiceDate = $contractStartDate->copy()->addDays($firstServiceDays);
-
+                    $firstServiceKm = $amcMaster->amc_start_km + $kmInterval;
                     $serviceDates[] = $firstServiceDate;
+                    $serviceKm[] = $firstServiceKm; // Add initial KM
+
                     $totalServices = $amcPackageMasterData->service_count;
                     $lastServiceDate = $firstServiceDate;
+                    $lastServiceKm = $firstServiceKm;
+
                     for ($i = 1; $i < $totalServices; $i++) {
-                        $nextServiceDate = $lastServiceDate->copy()->addDays(120);
+                        $nextServiceDate = $lastServiceDate->copy()->addDays(120); // Next service after 120 days
+                        $nextServiceKm = $lastServiceKm + 4000; // Add KM interval
+
                         $serviceDates[] = $nextServiceDate;
+                        $serviceKm[] = $nextServiceKm;
+
                         $lastServiceDate = $nextServiceDate;
+                        $lastServiceKm = $nextServiceKm;
                     }
 
-                    $serviceNo = 1;
-                    foreach ($serviceDates as $serviceDate) {
-
+                    for ($i = 0; $i < count($serviceDates); $i++) {
                         $serviceData = [
-                            'service_no' => $serviceNo,
+                            'service_no' => $i + 1,
+                            'service_km' => $serviceKm[$i],
                             'amc_id' => $amcMasterId,
-                            'service_date' => $serviceDate->format('Y-m-d H:i:s'),
+                            'service_date' => $serviceDates[$i]->format('Y-m-d H:i:s'),
                             'created_by' => Auth::id(),
                         ];
 
                         ServiceDetail::create($serviceData);
-                        $serviceNo++;
                     }
                     $vehicleTypeName = $this->getArrayNameById($this->vehicleTypeArray, $amcMaster->vehicle_type);
                     $startDate = $this->formatDateTime('d-M-Y', $amcMaster->amc_start_date);
@@ -295,31 +304,40 @@ class AmcMasterController extends Controller
                 if ($amcPackageMasterData) {
                     $contractStartDate = Carbon::parse($amcMaster->amc_start_date);
                     $serviceDates = [];
+                    $serviceKm = [];
+                    $firstServiceDays = $amcPackageMasterData->vehicle_type == '1' ? 30 : 120; // for new vehicle first service after 30 days
+                    $kmInterval = $amcPackageMasterData->vehicle_type == '1' ? 1000 : 4000; // you can change this based on requirement
 
-                    $firstServiceDays = $amcPackageMasterData->vehicle_type == '1' ? 30 : 120; // for new vehicale first serve after 30days
                     $firstServiceDate = $contractStartDate->copy()->addDays($firstServiceDays);
-
+                    $firstServiceKm = $amcMaster->amc_start_km + $kmInterval;
                     $serviceDates[] = $firstServiceDate;
+                    $serviceKm[] = $firstServiceKm; // Add initial KM
+
                     $totalServices = $amcPackageMasterData->service_count;
                     $lastServiceDate = $firstServiceDate;
+                    $lastServiceKm = $firstServiceKm;
+
                     for ($i = 1; $i < $totalServices; $i++) {
-                        $nextServiceDate = $lastServiceDate->copy()->addDays(120);
+                        $nextServiceDate = $lastServiceDate->copy()->addDays(120); // Next service after 120 days
+                        $nextServiceKm = $lastServiceKm + 4000; // Add KM interval
+
                         $serviceDates[] = $nextServiceDate;
+                        $serviceKm[] = $nextServiceKm;
+
                         $lastServiceDate = $nextServiceDate;
+                        $lastServiceKm = $nextServiceKm;
                     }
 
-                    $serviceNo = 1;
-                    foreach ($serviceDates as $serviceDate) {
-
+                    for ($i = 0; $i < count($serviceDates); $i++) {
                         $serviceData = [
-                            'service_no' => $serviceNo,
+                            'service_no' => $i + 1,
+                            'service_km' => $serviceKm[$i],
                             'amc_id' => $amcMasterId,
-                            'service_date' => $serviceDate->format('Y-m-d H:i:s'),
-                            'modified_by' => Auth::id(),
+                            'service_date' => $serviceDates[$i]->format('Y-m-d H:i:s'),
+                            'created_by' => Auth::id(),
                         ];
 
                         ServiceDetail::create($serviceData);
-                        $serviceNo++;
                     }
                 }
             }
@@ -387,30 +405,40 @@ class AmcMasterController extends Controller
                 if ($amcPackageMasterData) {
                     $contractStartDate = Carbon::parse($amcMaster->amc_start_date);
                     $serviceDates = [];
+                    $serviceKm = [];
+                    $firstServiceDays = $amcPackageMasterData->vehicle_type == '1' ? 30 : 120; // for new vehicle first service after 30 days
+                    $kmInterval = $amcPackageMasterData->vehicle_type == '1' ? 1000 : 4000; // you can change this based on requirement
 
-                    $firstServiceDays = $amcPackageMasterData->vehicle_type == '1' ? 30 : 120; // for new vehicale first serve after 30days
                     $firstServiceDate = $contractStartDate->copy()->addDays($firstServiceDays);
-
+                    $firstServiceKm = $amcMaster->amc_start_km + $kmInterval;
                     $serviceDates[] = $firstServiceDate;
+                    $serviceKm[] = $firstServiceKm; // Add initial KM
+
                     $totalServices = $amcPackageMasterData->service_count;
                     $lastServiceDate = $firstServiceDate;
+                    $lastServiceKm = $firstServiceKm;
+
                     for ($i = 1; $i < $totalServices; $i++) {
-                        $nextServiceDate = $lastServiceDate->copy()->addDays(120);
+                        $nextServiceDate = $lastServiceDate->copy()->addDays(120); // Next service after 120 days
+                        $nextServiceKm = $lastServiceKm + 4000; // Add KM interval
+
                         $serviceDates[] = $nextServiceDate;
+                        $serviceKm[] = $nextServiceKm;
+
                         $lastServiceDate = $nextServiceDate;
+                        $lastServiceKm = $nextServiceKm;
                     }
 
-                    $serviceNo = 1;
-                    foreach ($serviceDates as $serviceDate) {
+                    for ($i = 0; $i < count($serviceDates); $i++) {
                         $serviceData = [
-                            'service_no' => $serviceNo,
+                            'service_no' => $i + 1,
+                            'service_km' => $serviceKm[$i],
                             'amc_id' => $amcMasterId,
-                            'service_date' => $serviceDate->format('Y-m-d H:i:s'),
+                            'service_date' => $serviceDates[$i]->format('Y-m-d H:i:s'),
                             'created_by' => Auth::id(),
                         ];
 
                         ServiceDetail::create($serviceData);
-                        $serviceNo++;
                     }
                 }
             }

@@ -39,6 +39,7 @@ class AmcMaster extends Model
         'amc_basic_price',
         'amc_start_date',
         'amc_end_date',
+        'amc_start_km',
         'payment_type',
         'transaction_details',
         'no_of_service',

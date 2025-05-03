@@ -73,11 +73,17 @@
                                             <option value="2">Completed</option>
                                         </select>
                                     </div>
-
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
+                                        <label>Service KM</label>
+                                        <input type="text" class="form-control" id="service_km"
+                                            placeholder="Enter AMC Start KM" name="service_km"
+                                            oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
+                                    </div>
+                                    <div class="col-md-3">
                                         <label>Attachment</label>
                                         <input type="file" id="myFile" name="filename" class="form-control">
                                     </div>
+                                  
                                     <div class="col-md-3">
                                         <label>Remark</label>
                                         <textarea class="form-control" rows="2" id="service_remark" placeholder="Enter Status Remark"
@@ -106,6 +112,7 @@
                                                 <tr>
                                                     <th style="text-align: left;">Sr. No</th>
                                                     <th style="text-align: left;">Service Date</th>
+                                                    <th style="text-align: left;">Service KM</th>
                                                     <th style="text-align: left;">Customer Number</th>
                                                     <th style="text-align: left;">Remark</th>
                                                     <th style="text-align: left;">Attchment</th>
@@ -167,6 +174,7 @@
                             $('#amcServiceNo').html(serveiceData.service_no);
                             $('#amc_id').val(amc_master_details.id);
                             $('#service_id').val(serveiceData.id);
+                            $('#service_km').val(serveiceData.service_km);
 
                             let previousService = response.data.previousService;
                             if (previousService) {
@@ -212,14 +220,15 @@
                                 <tr>
                                     <td>${index + 1}</td> 
                                     <td>${item.display_service_date}</td>
+                                    <td>${item.service_km}</td>
                                     <td>${item.amc_master_details.customer_name}</td>
                                     <td>${item.service_remark ?? ''}</td>
                                     <td>
                                         ${item.attachment_url ? `
-                                                                                                    <a href="${item.attachment_url}" download target="_blank" class="btn btn-sm btn-primary">
-                                                                                                        <i class="fa fa-download"></i> Download
-                                                                                                    </a>
-                                                                                                ` : ''}
+                                                                                                            <a href="${item.attachment_url}" download target="_blank" class="btn btn-sm btn-primary">
+                                                                                                                <i class="fa fa-download"></i> Download
+                                                                                                            </a>
+                                                                                                        ` : ''}
                                     </td>
                                     <td>${item.service_by ?? ''}</td>
                                 </tr>

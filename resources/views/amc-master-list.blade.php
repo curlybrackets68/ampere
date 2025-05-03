@@ -566,6 +566,7 @@
                                     <tr>
                                         <th class="alignTdCenter">#</th>
                                         <th class="alignTdCenter">Service Date</th>
+                                        <th class="alignTdCenter">Service KM</th>
                                         <th class="alignTdCenter">Remark</th>
                                         <th class="alignTdCenter">Status</th>
                                         <th class="alignTdCenter">Service By</th>
@@ -585,7 +586,8 @@
                             <tr>
                                 <td class="alignTdCenter" style="width: 10%;">${index++}</td>
                                 <td class="alignTdCenter" style="width: 15%;">${item.display_service_date}</td>
-                                <td class="alignTdCenter" style="width: 40%;">${item.service_remark ?? ''}</td>
+                                <td class="alignTdCenter" style="width: 10%;">${item.service_km}</td>
+                                <td class="alignTdCenter" style="width: 30%;">${item.service_remark ?? ''}</td>
                                 <td class="alignTdCenter" style="width: 10%;"><span class="badge ${badge}">${item.status_name}</span></td>
                                 <td class="alignTdCenter" style="width: 10%;">${item.service_by ?? ''}</td>
                                 <td class="alignTdCenter" style="width: 5%;">

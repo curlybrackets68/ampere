@@ -80,12 +80,12 @@
             <td>Vehicle Make & Model: {{ $amc->vehicle_name }}</td>
             <td class="contract-dates">
                 <span style="color: red;"><strong>Contract End Date:</strong>
-                    {{ $amc->display_amc_end_date }}</strong></span>
+                    {{ $amc->display_amc_end_date }}</span>
             </td>
         </tr>
         <tr>
             <td>Chassis Number: {{ $amc->chassis_number }}</td>
-            <td></td>
+            <td class="contract-dates"><strong>AMC Start KM: </strong>{{ $amc->amc_start_km }}</td>
         </tr>
     </table>
 
@@ -113,13 +113,15 @@
         <tr>
             <th class="serviceTh" style="width: 10%;">Sr.No</th>
             <th class="serviceTh" style="width: 20%;">Service Date</th>
-            <th class="serviceTh" style="width: 60%;">Service Remark</th>
+            <th class="serviceTh" style="width: 10%;">Service KM</th>
+            <th class="serviceTh" style="width: 50%;">Service Remark</th>
             <th class="serviceTh" style="width: 10%;">Status</th>
         </tr>
         @foreach ($amc->services as $index => $service)
             <tr>
                 <td class="serviceTd">{{ $index + 1 }}</td>
                 <td class="serviceTd">{{ $service['display_service_date'] }}</td>
+                <td class="serviceTd">{{ $service['service_km'] ?? 0 }}</td>
                 <td class="serviceTd">{{ $service['service_remark'] ?? '' }}</td>
                 <td class="serviceTd">{{ $service['status_name'] ?? '' }}</td>
             </tr>

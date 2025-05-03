@@ -129,7 +129,7 @@ class ServiceController extends Controller
             $data['data'] = array('serveiceData' => $serveiceData, 'serveiceDataList' => $serveiceDataList, 'serviceFlag' => $serviceFlag, 'previousService' => $previousService);
             return $this->successResponse($data);
         } else {
-            return  $this->failResponse([],'Chassis Number Not Found');
+            return  $this->failResponse([], 'Chassis Number Not Found');
         }
     }
 
@@ -140,12 +140,14 @@ class ServiceController extends Controller
         $amc_id = $request->amc_id;
         $service_id = $request->service_id;
         $service_remark = $request->service_remark;
+        $service_km = $request->service_km;
         $status_id = $request->status_id;
 
         $amcMaster = AmcMaster::find($amc_id);
 
         $updateData['service_remark'] = $service_remark;
         $updateData['status'] = $status_id;
+        $updateData['service_km'] = $service_km;
         $updateData['modified_by'] = Auth::id();
 
         if ($request->hasFile('filename')) {
@@ -163,6 +165,7 @@ class ServiceController extends Controller
         }
 
         $serviceData = ServiceDetail::query()->where('id', $service_id)->first();
+        $serviceKmDiffernace =  $service_km - $serviceData->service_km;
 
         if (!Carbon::parse($serviceData->service_date)->isToday()) {
             $pendingServices = ServiceDetail::where('amc_id', $amc_id)
@@ -184,7 +187,6 @@ class ServiceController extends Controller
                     } else {
                         $nextDate = $lastServiceDate->copy()->addDays(119);
                     }
-
                     $serviceDates[] = $nextDate;
                     $lastServiceDate = $nextDate;
                 }
@@ -207,7 +209,9 @@ class ServiceController extends Controller
                 }
             }
         }
-
+        if ($serviceKmDiffernace != 0) {
+            $updateData['service_km'] = $serviceData->service_km + $serviceKmDiffernace;
+        }
         // Save the selected service
         ServiceDetail::where('id', $service_id)->update($updateData);
 
@@ -217,9 +221,23 @@ class ServiceController extends Controller
             ->where('status', '1')
             ->first();
 
+        $pendingServices = ServiceDetail::where('amc_id', $amc_id)
+            ->where('status', '1')
+            ->orderBy('service_no', 'ASC')
+            ->get();
+
+        if ($pendingServices) {
+            foreach ($pendingServices as  $service) {
+                if ($serviceKmDiffernace != 0) {
+                    $service->service_km = $service->service_km + $serviceKmDiffernace;
+                    $service->save();
+                }
+            }
+        }
         $serviceData = ServiceDetail::query()->where('id', $service_id)->first();
 
-        $serviceDataLastDate = $serviceDataNewServiceData->display_service_date ?? '';
+        $nextserviceDate = $serviceDataNewServiceData->display_service_date ?? '';
+        $nextServiceKm = $serviceDataNewServiceData->service_km ?? 0;
         $checkPendingServiceCount = ServiceDetail::where('amc_id', $amc_id)
             ->where('status', '1')
             ->count();
@@ -240,10 +258,11 @@ class ServiceController extends Controller
         $whatsAppMsg .= "Service Date: *$serviceData->display_service_date* \n";
 
         if (!empty($checkPendingServiceCount)) {
-            $whatsAppMsg .= "Next Service Due: *$serviceDataLastDate* \n";
+            $whatsAppMsg .= "Next Service Due Date: *$nextserviceDate* \n";
             $whatsAppMsg .= "Pending Service: *$checkPendingServiceCount* \n";
+            $whatsAppMsg .= "Next Service after KM: *$nextServiceKm* \n";
         }
-        
+
         $whatsAppMsg .= "Location: Ampere Service Center, Vadodara \n\n";
         $whatsAppMsg .= "Our team has completed all required checks and maintenance as per AMC guidelines. Your vehicle is now ready for delivery. \n\n";
         $whatsAppMsg .= "For feedback or questions, feel free to reply to this message. \n";
@@ -252,7 +271,7 @@ class ServiceController extends Controller
 
         $pdfUrl = $this->generateAndStorePdf('pdf.amc-pdf', ['amc' => $amcMaster], 'amc_pdfs');
         $data = $this->sendWhatsAppMessageWithFile($amcMaster->contact_number, $whatsAppMsg, $pdfUrl['public_url'], 'amc_pdf');
-       
+
         // Check if all services are completed
         $checkPendingServiceCount = ServiceDetail::where('amc_id', $amc_id)
             ->where('status', '1')
@@ -262,14 +281,14 @@ class ServiceController extends Controller
             $amcMaster->update([
                 'status' => $this->getArrayIdByName($this->statusArray, 'Deactive')
             ]);
-            
+
             $whatsLast = "Dear sir, \n\n";
             $whatsLast .= "You have availed all the services under the AMC contract. *Renew it today* to keep your electric scooter up to date and in proper state.\n\n";
             $whatsLast .= "*Irregular servicing can lead to loss of warranty benefits.*\n\n";
             $whatsLast .= "To renew your contract,\n\n";
             $whatsLast .= "Call now on\n\n";
-            $whatsLast .="*9023342463*";
-            
+            $whatsLast .= "*9023342463*";
+
             $this->sendWhatsAppMessage($amcMaster->contact_number, $whatsLast);
         }
 

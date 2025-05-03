@@ -113,6 +113,16 @@
                                                 value="{{ old('customer_name', $amcMaster->customer_name ?? '') }}">
                                         </div>
                                     </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label>AMC Start Km</label>
+                                            <input type="text" class="form-control" id="amc_start_km"
+                                                placeholder="Enter AMC Start KM" name="amc_start_km"
+                                                oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
+                                                value="{{ old('amc_start_km', $amcMaster->amc_start_km ?? '') }}">
+
+                                        </div>
+                                    </div>
                                     {{-- <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Address</label>
@@ -128,7 +138,8 @@
                                             <label>AMC Start Date:</label>
                                             <div class="input-group ">
                                                 <input type="text" id="amc_start_date" name="amc_start_date"
-                                                    class="form-control" readonly style="pointer-events: none;" tabindex="1">
+                                                    class="form-control" readonly style="pointer-events: none;"
+                                                    tabindex="1">
 
                                             </div>
                                         </div>
@@ -136,7 +147,8 @@
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label>AMC End Date</label>
-                                            <input type="text" class="form-control" id="amc_end_date" name="amc_end_date"
+                                            <input type="text" class="form-control" id="amc_end_date"
+                                                name="amc_end_date"
                                                 value="{{ old('amc_end_date', $amcMaster->amc_end_date ?? '') }}" readonly
                                                 style="pointer-events: none" tabindex="1">
                                         </div>
@@ -266,6 +278,7 @@
             let customer_name = $('#customer_name').val();
             let amc_basic_price = $('#amc_basic_price').val();
             let payment_type = $('#payment_type').val();
+            let amc_start_km = $('#amc_start_km').val();
 
             let isValid = true;
 
@@ -314,6 +327,12 @@
             if (payment_type === '') {
                 $('#payment_type').after(
                     '<small class="error-message text-danger">Please select payment type.</small>');
+                isValid = false;
+            }
+            if (amc_start_km === '' || parseInt(amc_start_km) === 0) {
+                $('#amc_start_km').after(
+                    '<small class="error-message text-danger">Please enter a valid starting KM (greater than 0).</small>'
+                );
                 isValid = false;
             }
 

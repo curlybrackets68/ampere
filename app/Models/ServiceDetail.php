@@ -16,6 +16,7 @@ class ServiceDetail extends Model
         'service_no',
         'amc_id',
         'service_date',
+        'service_km',
         'service_remark',
         'attachment',
         'status',
