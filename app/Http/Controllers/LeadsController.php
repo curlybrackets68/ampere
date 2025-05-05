@@ -115,7 +115,7 @@ class LeadsController extends Controller
                 $pdfUrl = 'https://chiragautomotive.com/amper/assets/pdf/Ampere_Reo_LI.pdf';
             }
 
-            if ($request->vehicle == '2') {
+            if ($request->vehicle == '2') { // Magnus
                 for ($i = 1; $i <= 5; $i++) {
                     $imageUrl = 'https://chiragautomotive.com/amper/assets/pdf/images/magnus/' . $i . '.jpg';
                     $this->sendWhatsAppMessageWithFile($request->mobile, '', $imageUrl);
@@ -123,7 +123,7 @@ class LeadsController extends Controller
                 sleep(2);
             }
 
-            if ($request->vehicle == '1') {
+            if ($request->vehicle == '1') { // Nexus
                 for ($i = 1; $i <= 4; $i++) {
                     $imageUrl = 'https://chiragautomotive.com/amper/assets/pdf/images/nexus/' . $i . '.jpg';
                     $this->sendWhatsAppMessageWithFile($request->mobile, '', $imageUrl);
