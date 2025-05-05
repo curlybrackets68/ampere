@@ -117,10 +117,23 @@ class LeadsController extends Controller
 
             if ($request->vehicle == '2') {
                 for ($i = 1; $i <= 5; $i++) {
-                    $imageUrl = 'https://chiragautomotive.com/ampere-testing/assets/pdf/images/magnus/' . $i . '.jpg';
+                    $imageUrl = 'https://chiragautomotive.com/amper/assets/pdf/images/magnus/' . $i . '.jpg';
                     $this->sendWhatsAppMessageWithFile($request->mobile, '', $imageUrl);
                 }
+                sleep(2);
             }
+
+            if ($request->vehicle == '1') {
+                for ($i = 1; $i <= 4; $i++) {
+                    $imageUrl = 'https://chiragautomotive.com/amper/assets/pdf/images/nexus/' . $i . '.jpg';
+                    $this->sendWhatsAppMessageWithFile($request->mobile, '', $imageUrl);
+                }
+                sleep(2);
+                $videoUrl = 'https://chiragautomotive.com/amper/assets/pdf/images/nexus/nexus_video.mp4';
+                $this->sendWhatsAppMessageWithFile($request->mobile, '', $videoUrl);
+                sleep(2);
+            }
+            sleep(2);
             $this->sendWhatsAppMessageWithFile($request->mobile, $message, $pdfUrl);
 
             SystemLogs::create([
