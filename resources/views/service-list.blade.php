@@ -37,7 +37,7 @@
                                 </a>
                                 <a class="btn btn-info btn-sm mr-2" href="#" id="filterBtn">
                                     <i class="bi bi-funnel-fill align-middle me-1"></i>Filter</a>
-                                @if (checkRights('USER_AMC_ROLE_CREATE'))
+                                @if (checkRights('USER_SERVICE_ROLE_CREATE'))
                                     <a class="btn btn-info btn-sm" href="{{ route('amc-master-service.service') }}">
                                         <i class="bi bi-plus me-1 align-middle me-1"></i> Add Service</a>
                                 @endif
