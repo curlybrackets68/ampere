@@ -28,7 +28,7 @@ Route::group(['middleware' => 'guest'], function () {
     Route::post('/login', [LoginController::class, 'login'])->name('auth.login');
 });
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'CheckSession'])->group(function () {
     Route::get('dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
     Route::get('get-inquiry-chart', [DashboardController::class, 'getInquiryChart'])->name('get-inquiry-chart');
     Route::get('get-order-chart', [DashboardController::class, 'getOrderChart'])->name('get-order-chart');

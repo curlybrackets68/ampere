@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Session;
 
 class LoginController extends Controller
 {
@@ -32,6 +33,8 @@ class LoginController extends Controller
                 'name' => $user->name,
                 'user_name' => $user->user_name,
             ]);
+            $sessionId = Session::getId();
+            $user->update(['session_id' => $sessionId]);
             $this->generateSecretFile($user->id);
             SystemLogs::create([
                 'inquiry_id' => 0,
@@ -50,10 +53,13 @@ class LoginController extends Controller
     public function logout()
     {
         $secretPath = base_path('app/Secrets/');
-        $userFile = $secretPath . '/'.Auth::id().'.php';
+        $userFile = $secretPath . '/' . Auth::id() . '.php';
         if (File::exists($userFile)) {
             File::delete($userFile);
         }
+        $user = Auth::user();
+        $user->session_id = null;
+        $user->save();
         SystemLogs::create([
             'inquiry_id' => 0,
             'type' => '0',
@@ -93,5 +99,4 @@ class LoginController extends Controller
         Auth::logout();
         return redirect()->route('admin-login');
     }
-
 }
