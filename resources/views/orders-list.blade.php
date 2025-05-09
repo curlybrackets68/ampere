@@ -353,7 +353,7 @@
             } else if (statusId == '6') {
                 html += '<option value="7">Recieved</option>';
             } else if (statusId == '7') {
-                html += '<option value="9">Fitment</option>';
+                html += '<option value="9">Fitment</option><option value="8">Cancelled</option>';
             }
 
             $('#statusId').html(html);
