@@ -82,6 +82,7 @@
                                             <th style="text-align: left;">Mobile</th>
                                             <th style="text-align: left;">Vehicle No</th>
                                             <th style="text-align: left;">Status</th>
+                                            <th style="text-align: left;">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -154,6 +155,43 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     <button type="button" class="btn btn-primary" id="confirmDateSave">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="historyModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true"
+        data-bs-backdrop="static">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">History</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mt-3">
+                        <div class="col-lg-12">
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-striped" style="width:100%"
+                                    id="inquiryHistoryTable">
+                                    <thead>
+                                        <tr>
+                                            <th style="text-align: left;">Sr. No</th>
+                                            <th style="text-align: left;">Action</th>
+                                            <th style="text-align: left;">DateTime</th>
+                                            <th style="text-align: left;">Remark</th>
+                                            <th style="text-align: left;">User Name</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
@@ -282,11 +320,18 @@
                         name: 'display_status'
                     },
                     {
+                        data: 'action',
+                        name: 'action',
+                        orderable: false,
+                        searchable: false,
+                    },
+                    {
                         data: 'confirm_date',
                         name: 'confirm_date',
                         visible: false,
                         type: 'date'
                     }
+
                 ],
                 // order: [
                 //     [0, 'desc']
@@ -452,6 +497,48 @@
                     }
                 }
             });
+        });
+
+        $(document).on('click', '.open-history-modal', async function() {
+            let type_id = $(this).data('type-id');
+            $('#historyModal').modal('show');
+            let url = '{{ route('inquiry.get-history', ['type_id' => 'ID']) }}';
+            url = url.replace('ID', type_id);
+            $('#inquiryHistoryTable').DataTable({
+                serverSide: false,
+                processing: true,
+                destroy: true,
+                responsive: true,
+                scrollX: true,
+                ajax: {
+                    url: url,
+                },
+                columns: [{
+                        data: 'DT_RowIndex',
+                        name: 'id',
+                        searchable: false
+                    },
+                    {
+                        data: 'display_action',
+                        name: 'display_action'
+                    }, {
+                        data: 'display_date',
+                        name: 'created_at'
+                    }, {
+                        data: 'remark',
+                        name: 'remark'
+                    }, {
+                        data: 'created_by_name',
+                        name: 'created_by_name'
+                    }
+
+                ],
+                order: [
+                    [0, 'desc']
+                ],
+
+            });
+
         });
     </script>
 @endsection

@@ -24,7 +24,7 @@ Route::group(['middleware' => 'guest'], function () {
     Route::get('/', function () {
         return view('auth.index');
     });
-    Route::get('login', [LoginController::class, 'showLogin'])->name(name: 'auth.show-login');
+    Route::get('login', [LoginController::class, 'showLogin'])->name('auth.show-login');
     Route::post('/login', [LoginController::class, 'login'])->name('auth.login');
 });
 
@@ -38,6 +38,8 @@ Route::middleware(['auth', 'CheckSession'])->group(function () {
     Route::post('change-status', [DashboardController::class, 'changeStatus'])->name('inquiry.change-status');
     Route::post('export-inquiry', [DashboardController::class, 'export'])->name('user.inquiry.excel.export');
     Route::post('send-message', [DashboardController::class, 'sendMessage'])->name('send-message');
+    Route::get('get-inquiry-history/{type_id?}', [DashboardController::class, 'getInquiryHistory'])->name('inquiry.get-history');
+
     Route::resource('leads', LeadsController::class);
     Route::post('export-leads', [LeadsController::class, 'export'])->name('user.leads.excel.export');
 
@@ -52,7 +54,7 @@ Route::middleware(['auth', 'CheckSession'])->group(function () {
     Route::post('add-lead-source', [LeadsController::class, 'addLeadSource'])->name('add-lead-source');
     Route::get('lead-source-details', [LeadsController::class, 'leadSourceDetails'])->name('lead-source-details');
 
-   // Route::resource('orders', OrdersController::class);
+    // Route::resource('orders', OrdersController::class);
     Route::get('orders', [OrdersController::class, 'index'])->name('orders');
     Route::post('orders-change-status', [OrdersController::class, 'changeStatus'])->name('orders.change-status');
 
@@ -68,7 +70,7 @@ Route::middleware(['auth', 'CheckSession'])->group(function () {
     Route::get('due-list', [AmcMasterController::class, 'dueList'])->name('amc-master.due-list');
 
     Route::get('get-amc-chart', [DashboardController::class, 'amcChart'])->name('get-amc-chart');
-   
+
     Route::get('get-service-chart', [DashboardController::class, 'serviceChart'])->name('get-service-chart');
 
     Route::post('change-amc-status', [AmcMasterController::class, 'changeStatus'])->name('amc.change-status');
@@ -77,7 +79,7 @@ Route::middleware(['auth', 'CheckSession'])->group(function () {
 
     Route::post('amc-master/renew-handel', [AmcMasterController::class, 'renewHandel'])->name('amc-master.renew-handel');
 
-   
+
     Route::get('amc-master-service', [ServiceController::class, 'index'])->name('amc-master-service.index');
     Route::get('amc-master-service/service', [ServiceController::class, 'addService'])->name('amc-master-service.service');
     Route::get('amc-master-service/get-service-details-by-chassis-number', [ServiceController::class, 'getServiceDetailsByChassisNumber'])->name('amc-master-service.get-service-details-by-chassis-number');

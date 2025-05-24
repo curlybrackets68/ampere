@@ -68,7 +68,7 @@ class OrdersController extends Controller
                     return $html;
                 })
                 ->addColumn('action', function ($row) {
-                    return '<button type="button" class="btn btn-info btn-sm open-history-modal" data-type="order" data-type-id="' . $row->id . '">Hisotry</button>';
+                    return '<button type="button" class="btn btn-info btn-sm open-history-modal" data-type="order" data-type-id="' . $row->id . '">History</button>';
                 })
                 ->addColumn('branch_name', function ($row) {
                     return $this->getArrayNameById($this->branchArray, $row->branch_id);

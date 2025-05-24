@@ -134,17 +134,7 @@ class DashboardController
                     return $this->getArrayNameById($this->serviceTypeArray, $row->service_type_id);
                 })
                 ->addColumn('action', function ($row) {
-                    if ($row->status_id == '1' || $row->status_id == '4' || $row->status_id == '5') {
-                        return '<div class="btn-group"> <button type="button" class="btn btn-light dropdown-toggle"
-                                    style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"
-                                    data-bs-toggle="dropdown" aria-expanded="false"> Action </button>
-                                <ul class="dropdown-menu" style="font-size: 0.75rem; padding: 0.25rem 0.5rem;">
-                                    <li> <a class="dropdown-item change-status" data-status= data-id="' . $row->id . '" data-status="' . $row->status_id . '" href="javascript:void(0);">Status</a></li>
-                                </ul>
-                            </div>';
-                    } else {
-                        return '';
-                    }
+                    return '<button type="button" class="btn btn-info btn-sm open-history-modal" data-type="order" data-type-id="' . $row->id . '">History</button>';
                 })
                 ->rawColumns(['display_status', 'action', 'display_inquiry_date', 'branch_name', 'service_type'])
                 ->make(true);
@@ -407,5 +397,22 @@ class DashboardController
             'labels' => ['Total Service', 'Completed Service', 'Due Service'],
             'data'   => [$total, $completed, $due],
         ]);
+    }
+
+    public function getInquiryHistory(Request $request)
+    {
+        if ($request->ajax()) {
+
+            $inquiry = SystemLogs::query()->where('type', 1)->where('type_id', $request->type_id);
+
+            return DataTables::of($inquiry)
+                ->addIndexColumn()
+                ->addColumn('display_action', function ($row) {
+                    return $this->getArrayNameById($this->actionLogsArray, $row->action_id);
+                })->addColumn('display_date', function ($row) {
+                    return $this->formatDateTime('d M, Y h:i A', $row->created_at);
+                })
+                ->make(true);
+        }
     }
 }
