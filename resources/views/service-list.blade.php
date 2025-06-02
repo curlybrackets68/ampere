@@ -128,9 +128,9 @@
                                         <tr>
                                             <th style="text-align: left;">Sr. No</th>
                                             <th style="text-align: left;">Contract ID</th>
-                                            <th style="text-align: left;">Customer Deatils</th>
-                                            <th style="text-align: left;">Vehicle Deatils</th>
-                                            <th style="text-align: left;">Service Deatils</th>
+                                            <th style="text-align: left;">Customer Details</th>
+                                            <th style="text-align: left;">Vehicle Details</th>
+                                            <th style="text-align: left;">Service Details</th>
                                             <th style="text-align: left;">Service By</th>
                                             <th style="text-align: left;">Action</th>
                                         </tr>

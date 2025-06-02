@@ -73,7 +73,7 @@ class ServiceController extends Controller
                     return $row->service_by;
                 })
                 ->addColumn('vehicle_details', function ($row) {
-                    $vehicleName  = Vehicle::find($row->amc_master_details->vehicle_master_id)->first()->name ?? '';
+                    $vehicleName  = $row->amc_master_details->vehicle_name;
                     return $this->getArrayNameById($this->vehicleTypeArray, $row->amc_master_details->vehicle_type) . '<br>' . $vehicleName . '<br>' . $row->amc_master_details->vehicle_number;
                 })
                 ->addColumn('display_status', function ($row) {
