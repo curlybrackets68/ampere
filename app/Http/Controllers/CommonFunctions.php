@@ -274,6 +274,28 @@ trait CommonFunctions
         File::put($userFile, $userData);
     }
 
+    // public function generateAndStorePdf($view = '', $data = null, $folder = 'amc_pdfs', $fileName = null)
+    // {
+    //     $pdf = Pdf::loadView($view, $data);
+
+    //     if (!$fileName) {
+    //         $fileName = 'amc_' . now()->format('Ymd_His') . '_' . $data['amc']->id . '.pdf';
+    //     }
+
+    //     $publicFolder = 'assets/temp';
+    //     if (!file_exists($publicFolder)) {
+    //         mkdir($publicFolder, 0775, true);
+    //     }
+
+    //     $fullPath = "{$publicFolder}/{$fileName}";
+    //     file_put_contents($fullPath, $pdf->output());
+
+    //     return [
+    //         'full_path' => $fullPath,
+    //         'public_url' => url("{$publicFolder}/{$fileName}"),
+    //     ];
+    // }
+
     public function generateAndStorePdf($view = '', $data = null, $folder = 'amc_pdfs', $fileName = null)
     {
         $pdf = Pdf::loadView($view, $data);
@@ -282,17 +304,19 @@ trait CommonFunctions
             $fileName = 'amc_' . now()->format('Ymd_His') . '_' . $data['amc']->id . '.pdf';
         }
 
-        $publicFolder = 'assets/temp';
-        if (!file_exists($publicFolder)) {
-            mkdir($publicFolder, 0775, true);
+        // $publicFolder = 'assets/temp';
+        $publicHtmlAssetsPath = base_path('../public_html/amper/assets/temp');
+
+        if (!file_exists($publicHtmlAssetsPath)) {
+            mkdir($publicHtmlAssetsPath, 0775, true);
         }
-
-        $fullPath = "{$publicFolder}/{$fileName}";
+    
+        $fullPath = $publicHtmlAssetsPath . '/' . $fileName;
         file_put_contents($fullPath, $pdf->output());
-
+    
         return [
             'full_path' => $fullPath,
-            'public_url' => url("{$publicFolder}/{$fileName}"),
+            'public_url' => 'https://chiragautomotive.com/amper/assets/temp/' . $fileName,
         ];
     }
 }
