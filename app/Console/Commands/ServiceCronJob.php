@@ -45,7 +45,7 @@ class ServiceCronJob extends Command
         if ($serviceRecords->isNotEmpty()) {
             foreach ($serviceRecords as $service) {
                 $amcQuery = AmcMaster::find($service->amc_id);
-                $daysLeft = now()->diffInDays(Carbon::parse($service->amc_end_date), false);
+                $daysLeft = now()->diffInDays(Carbon::parse($service->service_date), false);
 
                 $pdfUrl = $this->generateAndStorePdf('pdf.amc-pdf', ['amc' => $amcQuery], 'amc_pdfs');
 
@@ -88,7 +88,7 @@ class ServiceCronJob extends Command
         if ($serviceRecordsOnDate->isNotEmpty()) {
             foreach ($serviceRecordsOnDate as $service) {
                 $amcQuery = AmcMaster::find($service->amc_id);
-                $daysLeft = now()->diffInDays(Carbon::parse($service->amc_end_date), false);
+                $daysLeft = now()->diffInDays(Carbon::parse($service->service_date), false);
 
                 $pdfUrl = $this->generateAndStorePdf('pdf.amc-pdf', ['amc' => $amcQuery], 'amc_pdfs');
 
