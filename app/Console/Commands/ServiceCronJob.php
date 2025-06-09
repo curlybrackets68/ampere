@@ -33,9 +33,9 @@ class ServiceCronJob extends Command
     {
         // When Service Due (Upcoming) 7 day before and every 2 day
 
-        $today = now()->startOfDay();
-        $startDate = $today;
-        $endDate = $today->copy()->addDays(7);
+        $today = Carbon::today();
+        $startDate = $today->toDateString();
+        $endDate = $today->copy()->addDays(7)->toDateString();
 
         $serviceRecords = ServiceDetail::where('status', 1)
             ->whereDate('service_date', '>=', $startDate)
@@ -82,7 +82,7 @@ class ServiceCronJob extends Command
         // When Service Due on date 
 
         $serviceRecordsOnDate = ServiceDetail::where('status', 1)
-            ->whereDate('service_date', '=', $today)
+            ->whereDate('service_date', '=', $startDate)
             ->get();
 
         if ($serviceRecordsOnDate->isNotEmpty()) {
@@ -120,7 +120,7 @@ class ServiceCronJob extends Command
         // When Service Due (After) every day 
 
         $serviceRecordsDue = ServiceDetail::where('status', 1)
-            ->whereDate('service_date', '<', $today)
+            ->whereDate('service_date', '<', $startDate)
             ->get();
 
         if ($serviceRecordsDue->isNotEmpty()) {
