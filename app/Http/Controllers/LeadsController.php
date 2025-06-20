@@ -116,6 +116,15 @@ class LeadsController extends Controller
                     } elseif ($vehicleId === 3) {
                         $vehicleName = 'Ampere Reo';
                         $pdfUrl = 'https://chiragautomotive.com/amper/assets/pdf/REO_80_KV.pdf';
+                    } elseif ($vehicleId === 4) {
+                        $vehicleName = 'TVS King EV Max';
+                        $pdfUrl = 'https://chiragautomotive.com/amper/assets/pdf/King_EV_MAX_English.pdf';
+                    } elseif ($vehicleId === 5) {
+                        $vehicleName = 'Duramax';
+                        $pdfUrl = 'https://chiragautomotive.com/amper/assets/pdf/King_Duramax_Plus_Petrol_English.pdf';
+                    }elseif ($vehicleId === 6) {
+                        $vehicleName = 'Deluxe';
+                        $pdfUrl = 'https://chiragautomotive.com/amper/assets/pdf/King_Deluxe_Petrol_English.pdf';
                     }
 
                     $message .= "Hi " . $request->name . "\n\n";
@@ -142,6 +151,30 @@ class LeadsController extends Controller
                     if ($vehicleId === 2) { // Magnus
                         for ($i = 1; $i <= 5; $i++) {
                             $imageUrl = "https://chiragautomotive.com/amper/assets/pdf/images/magnus/{$i}.jpg";
+                            $this->sendWhatsAppMessageWithFile($request->mobile, '', $imageUrl, $vehicleName);
+                            sleep(1);
+                        }
+                    }
+
+                    if ($vehicleId === 4) { // TVS King EV Max
+                        for ($i = 1; $i <= 7; $i++) {
+                            $imageUrl = "https://chiragautomotive.com/amper/assets/pdf/images/tvs_king_ev_max/{$i}.jpg";
+                            $this->sendWhatsAppMessageWithFile($request->mobile, '', $imageUrl, $vehicleName);
+                            sleep(1);
+                        }
+                    }
+
+                    if ($vehicleId === 5) { // Duramax
+                        for ($i = 1; $i <= 4; $i++) {
+                            $imageUrl = "https://chiragautomotive.com/amper/assets/pdf/images/duramax/{$i}.jpg";
+                            $this->sendWhatsAppMessageWithFile($request->mobile, '', $imageUrl, $vehicleName);
+                            sleep(1);
+                        }
+                    }
+
+                    if ($vehicleId === 6) { // Deluxe
+                        for ($i = 1; $i <= 4; $i++) {
+                            $imageUrl = "https://chiragautomotive.com/amper/assets/pdf/images/deluxe/{$i}.jpg";
                             $this->sendWhatsAppMessageWithFile($request->mobile, '', $imageUrl, $vehicleName);
                             sleep(1);
                         }
