@@ -34,5 +34,29 @@ class Lead extends Model
         'modified_by',
     ];
 
+    protected $casts = [
+        'vehicle' => 'array',
+    ];
 
+    protected $appends = ['vehicle_details'];
+
+    public function getVehicleDetailsAttribute()
+    {
+        if (!empty($this->vehicle)) {
+            $vehicleIds = is_array($this->vehicle) ? $this->vehicle : json_decode($this->vehicle, true);
+
+            $vehicleNames = [];
+
+            foreach ($vehicleIds as $id) {
+                $vehicle = Vehicle::find($id);
+                if ($vehicle) {
+                    $vehicleNames[] = $vehicle->name;
+                }
+            }
+
+            return implode(', ', $vehicleNames);
+        }
+
+        return '';
+    }
 }

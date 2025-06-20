@@ -29,8 +29,7 @@ class LeadsExport implements FromCollection, WithHeadings
 
     public function collection()
     {
-        $query = Lead::query()->select('leads.*', 'vehicle.name AS vehicleName', 'users.user_name AS salesmanName', 'lead_sources.name AS leadSourceName')
-            ->leftJoin('vehicle', 'vehicle.id', '=', 'leads.vehicle')
+        $query = Lead::query()->select('leads.*', 'users.user_name AS salesmanName', 'lead_sources.name AS leadSourceName')
             ->leftJoin('lead_sources', 'lead_sources.id', '=', 'leads.lead_source')
             ->leftJoin('users', 'users.id', '=', 'leads.salesman');
 
@@ -63,7 +62,7 @@ class LeadsExport implements FromCollection, WithHeadings
                 $serialNo++,
                 $this->formatDateTime('d-m-Y', $row->created_at),
                 $row->name,
-                $row->vehicleName,
+                $row->vehicle_details,
                 $row->mobile,
                 $row->leadSourceName,
                 $row->salesmanName

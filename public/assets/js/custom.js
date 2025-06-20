@@ -70,3 +70,6 @@ async function apiCallPost(url, data, headers = {}) {
         return false;
     }
 }
+
+
+$('.select2').select2();

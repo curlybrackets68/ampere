@@ -194,8 +194,8 @@
                         name: 'name'
                     },
                     {
-                        data: 'vehicleName',
-                        name: 'vehicle.name'
+                        data: 'vehicle_details',
+                        name: 'vehicle_details'
                     },
                     {
                         data: 'mobile',

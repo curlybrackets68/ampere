@@ -26,8 +26,7 @@ class LeadsController extends Controller
         $leadSource = LeadSource::pluck('name', 'id');
 
         if ($request->ajax()) {
-            $inquiry = Lead::query()->select('leads.*', 'vehicle.name AS vehicleName', 'users.user_name AS salesmanName', 'lead_sources.name AS leadSourceName')
-                ->leftJoin('vehicle', 'vehicle.id', '=', 'leads.vehicle')
+            $inquiry = Lead::query()->select('leads.*', 'users.user_name AS salesmanName', 'lead_sources.name AS leadSourceName')
                 ->leftJoin('lead_sources', 'lead_sources.id', '=', 'leads.lead_source')
                 ->leftJoin('users', 'users.id', '=', 'leads.salesman');
 
@@ -97,50 +96,64 @@ class LeadsController extends Controller
             $salesmanMobile = $nameQuery->mobile;
         }
 
-        $lead = Lead::create($request->all());
+        $data = $request->all();
+        $data['vehicle'] = array_map('intval', $request->input('vehicle', []));
+        $lead = Lead::create($data);
         if ($lead) {
-            $message = "Hi " . $request->name . "\n \n";
-            $message .= "Thank you for showing your interest in Ampere Electric Vehicles.\n \n";
-            $message .= "My name is " . $salesmanName . " and I will be your companion along this electrifying journey \n \n";
-            $message .= "Warm Regards\n";
-            $message .= $salesmanName . "\n";
-            $message .= $salesmanMobile;
+            $vehicleIds = array_map('intval', $request->vehicle ?? []);
+            if (!empty($vehicleIds)) {
+                foreach ($vehicleIds as $vehicleId) {
+                    $vehicleName = '';
+                    $pdfUrl = '';
+                    $message = '';
 
-            $pdfUrl = '';
-            if ($request->vehicle == '1') { // Nexus
-                $pdfUrl = 'https://chiragautomotive.com/amper/assets/pdf/Ampere_Nexus.pdf';
-            } else if ($request->vehicle == '2') { // Magnus
-                $pdfUrl = 'https://chiragautomotive.com/amper/assets/pdf/Ampere_Magnus_Neo.pdf';
-            } else if ($request->vehicle == '3') { // Reo
-                $pdfUrl = 'https://chiragautomotive.com/amper/assets/pdf/REO_80_KV.pdf';
-            }
+                    if ($vehicleId === 1) {
+                        $vehicleName = 'Ampere Nexus';
+                        $pdfUrl = 'https://chiragautomotive.com/amper/assets/pdf/Ampere_Nexus.pdf';
+                    } elseif ($vehicleId === 2) {
+                        $vehicleName = 'Ampere Magnus Neo';
+                        $pdfUrl = 'https://chiragautomotive.com/amper/assets/pdf/Ampere_Magnus_Neo.pdf';
+                    } elseif ($vehicleId === 3) {
+                        $vehicleName = 'Ampere Reo';
+                        $pdfUrl = 'https://chiragautomotive.com/amper/assets/pdf/REO_80_KV.pdf';
+                    }
 
-            if ($request->vehicle == '2') { // Magnus
-                for ($i = 1; $i <= 5; $i++) {
-                    $imageUrl = 'https://chiragautomotive.com/amper/assets/pdf/images/magnus/' . $i . '.jpg';
-                    $this->sendWhatsAppMessageWithFile($request->mobile, '', $imageUrl);
+                    $message .= "Hi " . $request->name . "\n\n";
+                    $message .= "Thank you for showing your interest in *{$vehicleName}*.\n\n";
+                    $message .= "My name is " . $salesmanName . " and I will be your companion along this electrifying journey.\n\n";
+                    $message .= "Warm Regards\n";
+                    $message .= $salesmanName . "\n";
+                    $message .= $salesmanMobile;
+
+                    $this->sendWhatsAppMessageWithFile($request->mobile, $message, $pdfUrl, $vehicleName);
+                    sleep(2);
+
+                    if ($vehicleId === 1) { // Nexus
+                        for ($i = 1; $i <= 4; $i++) {
+                            $imageUrl = "https://chiragautomotive.com/amper/assets/pdf/images/nexus/{$i}.jpg";
+                            $this->sendWhatsAppMessageWithFile($request->mobile, '', $imageUrl, $vehicleName);
+                            sleep(1);
+                        }
+                        $videoUrl = 'https://chiragautomotive.com/amper/assets/pdf/images/nexus/nexus_video.mp4';
+                        $this->sendWhatsAppMessageWithFile($request->mobile, '', $videoUrl, $vehicleName);
+                        sleep(2);
+                    }
+
+                    if ($vehicleId === 2) { // Magnus
+                        for ($i = 1; $i <= 5; $i++) {
+                            $imageUrl = "https://chiragautomotive.com/amper/assets/pdf/images/magnus/{$i}.jpg";
+                            $this->sendWhatsAppMessageWithFile($request->mobile, '', $imageUrl, $vehicleName);
+                            sleep(1);
+                        }
+                    }
                 }
-                sleep(2);
             }
-
-            if ($request->vehicle == '1') { // Nexus
-                for ($i = 1; $i <= 4; $i++) {
-                    $imageUrl = 'https://chiragautomotive.com/amper/assets/pdf/images/nexus/' . $i . '.jpg';
-                    $this->sendWhatsAppMessageWithFile($request->mobile, '', $imageUrl);
-                }
-                sleep(2);
-                $videoUrl = 'https://chiragautomotive.com/amper/assets/pdf/images/nexus/nexus_video.mp4';
-                $this->sendWhatsAppMessageWithFile($request->mobile, '', $videoUrl);
-                sleep(2);
-            }
-            sleep(2);
-            $this->sendWhatsAppMessageWithFile($request->mobile, $message, $pdfUrl);
 
             SystemLogs::create([
                 'inquiry_id' => 0,
-                'type' => '3',
-                'type_id' => $lead->id,
-                'remark'     => 'Add Lead ',
+                'type'       => '3',
+                'type_id'    => $lead->id,
+                'remark'     => 'Add Lead',
                 'action_id'  => 1,
                 'created_by' => auth()->id(),
             ]);
@@ -176,7 +189,9 @@ class LeadsController extends Controller
     public function update(Request $request, string $id)
     {
         $lead = Lead::find($id);
-        $lead->update($request->all());
+        $data = $request->all();
+        $data['vehicle'] = array_map('intval', $request->input('vehicle', []));
+        $lead->update($data);
         SystemLogs::create([
             'inquiry_id' => 0,
             'type' => '3',
