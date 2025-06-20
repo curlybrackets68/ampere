@@ -52,7 +52,7 @@ class OrdersController extends Controller
                         $class = 'info';
                     }
                     $checkEditRights = '';
-                    if(checkRights('USER_DASHBOARD_ROLE_EDIT')){
+                    if(checkRights('USER_ORDER_ROLE_EDIT')){
                         $checkEditRights = ' change-status ';
                     }
                     // $html = '<span class="badge text-bg-' . $class . '">' . $this->getArrayNameById($this->statusArray, $row->status_id) . '</span>';
