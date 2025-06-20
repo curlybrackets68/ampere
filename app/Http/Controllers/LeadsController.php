@@ -112,7 +112,7 @@ class LeadsController extends Controller
                         $pdfUrl = 'https://chiragautomotive.com/amper/assets/pdf/Ampere_Nexus.pdf';
                     } elseif ($vehicleId === 2) {
                         $vehicleName = 'Ampere Magnus Neo';
-                        $pdfUrl = 'https://chiragautomotive.com/amper/assets/pdf/Ampere_Magnus_Neo.pdf';
+                        $pdfUrl = 'https://chiragautomotive.com/amper/assets/pdf/Magnus_Neo_A4.pdf';
                     } elseif ($vehicleId === 3) {
                         $vehicleName = 'Ampere Reo';
                         $pdfUrl = 'https://chiragautomotive.com/amper/assets/pdf/REO_80_KV.pdf';
