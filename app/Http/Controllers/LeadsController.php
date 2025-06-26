@@ -60,8 +60,7 @@ class LeadsController extends Controller
                 ->addColumn('action', function ($row) {
                     $html = '';
                     if (checkRights('USER_LEAD_ROLE_EDIT')) {
-                        $html .= '<a href="' . route('leads.edit', $row->id) . '" class="btn btn-sm btn-primary me-2">Edit</a>';
-                        $html .= '<a href="' . route('amc.download', $row->id) . '" class="btn btn-sm btn-primary" target="_blank">PDF</a>';
+                        $html .= '<a href="' . route('leads.edit', $row->id) . '" class="btn btn-sm btn-primary">Edit</a>';
                     }
                     return $html;
                 })

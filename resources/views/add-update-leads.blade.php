@@ -39,9 +39,10 @@
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     @php
-                                                        $selectedVehicles = json_decode(@$lead->vehicle, true) ?? [];
+                                                        $selectedVehicles = @$lead->vehicle ?? [];
                                                     @endphp
-                                                    <select class="form-select select2" name="vehicle[]" id="vehicle" multiple>
+                                                    <select class="form-select select2" name="vehicle[]" id="vehicle"
+                                                        multiple>
                                                         @forelse (@$vehicle as $key => $value)
                                                             <option value="{{ $key }}"
                                                                 {{ in_array($key, $selectedVehicles) ? 'selected' : '' }}>
@@ -227,8 +228,9 @@
                 $('#name').after('<small class="error-message text-danger">Name is required.</small>');
                 isValid = false;
             }
-            if (vehicle === '') {
-                $('#vehicle').after('<small class="error-message text-danger">Please select a vehicle.</small>');
+            if (!vehicle || vehicle.length === 0) {
+                $('#vehicle').next('.select2').after(
+                    '<small class="error-message text-danger">Please select a vehicle.</small>');
                 isValid = false;
             }
             if (mobile === '') {
@@ -245,7 +247,7 @@
                 isValid = false;
             }
             if (lead_source === '') {
-                $('#lead_source').after(
+                $('#lead_source').next('.select2').after(
                     '<small class="error-message text-danger">Lead source is required.</small>');
                 isValid = false;
             }
