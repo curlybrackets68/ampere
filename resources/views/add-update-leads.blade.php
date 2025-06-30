@@ -77,7 +77,7 @@
                                             <label>Lead Source</label>
                                             <div class="row">
                                                 <div class="col-md-12">
-                                                    <select class="form-select select2" name="lead_source" id="lead_source">
+                                                    <select class="form-select" name="lead_source" id="lead_source">
                                                         <option value="">Select Lead Source</option>
                                                         @forelse (@$leadSource as $key => $value)
                                                             <option value="{{ $key }}"
@@ -247,7 +247,7 @@
                 isValid = false;
             }
             if (lead_source === '') {
-                $('#lead_source').next('.select2').after(
+                $('#lead_source').after(
                     '<small class="error-message text-danger">Lead source is required.</small>');
                 isValid = false;
             }

@@ -95,90 +95,49 @@ class LeadsController extends Controller
             $salesmanMobile = $nameQuery->mobile;
         }
 
+        $vehicleIds = array_map('intval', $request->input('vehicle', []));
         $data = $request->all();
-        $data['vehicle'] = array_map('intval', $request->input('vehicle', []));
+        $data['vehicle'] = $vehicleIds;
+
         $lead = Lead::create($data);
-        if ($lead) {
-            $vehicleIds = array_map('intval', $request->vehicle ?? []);
-            if (!empty($vehicleIds)) {
-                foreach ($vehicleIds as $vehicleId) {
-                    $vehicleName = '';
-                    $pdfUrl = '';
-                    $message = '';
 
-                    if ($vehicleId === 1) {
-                        $vehicleName = 'Ampere Nexus';
-                        $pdfUrl = 'https://chiragautomotive.com/amper/assets/pdf/Ampere_Nexus.pdf';
-                    } elseif ($vehicleId === 2) {
-                        $vehicleName = 'Ampere Magnus Neo';
-                        $pdfUrl = 'https://chiragautomotive.com/amper/assets/pdf/Magnus_Neo_A4.pdf';
-                    } elseif ($vehicleId === 3) {
-                        $vehicleName = 'Ampere Reo';
-                        $pdfUrl = 'https://chiragautomotive.com/amper/assets/pdf/REO_80_KV.pdf';
-                    } elseif ($vehicleId === 4) {
-                        $vehicleName = 'TVS King EV Max';
-                        $pdfUrl = 'https://chiragautomotive.com/amper/assets/pdf/King_EV_MAX_English.pdf';
-                    } elseif ($vehicleId === 5) {
-                        $vehicleName = 'Duramax';
-                        $pdfUrl = 'https://chiragautomotive.com/amper/assets/pdf/King_Duramax_Plus_Petrol_English.pdf';
-                    }elseif ($vehicleId === 6) {
-                        $vehicleName = 'Deluxe';
-                        $pdfUrl = 'https://chiragautomotive.com/amper/assets/pdf/King_Deluxe_Petrol_English.pdf';
-                    }
+        if ($lead && !empty($vehicleIds)) {
+            if (count($vehicleIds) == 1) {
+                $vehicleInfo = $this->getVehicleInfo($vehicleIds[0]);
+                $vehicleName = $vehicleInfo['name'];
 
-                    $message .= "Hi " . $request->name . "\n\n";
-                    $message .= "Thank you for showing your interest in *{$vehicleName}*.\n\n";
-                    $message .= "My name is " . $salesmanName . " and I will be your companion along this electrifying journey.\n\n";
-                    $message .= "Warm Regards\n";
-                    $message .= $salesmanName . "\n";
-                    $message .= $salesmanMobile;
+                $message = "Hi " . $request->name . "\n\n";
+                $message .= "Thank you for showing your interest in *{$vehicleName}*.\n\n";
+                $message .= "My name is " . $salesmanName . " and I will be your companion along this electrifying journey.\n\n";
+                $message .= "Warm Regards\n";
+                $message .= $salesmanName . "\n";
+                $message .= $salesmanMobile;
+            } else {
+                $message = "Hi " . $request->name . "\n\n";
+                $message .= "Thank you for showing your interest in our electric vehicles.\n\n";
+                $message .= "My name is " . $salesmanName . " and I will be your companion along this electrifying journey.\n\n";
+                $message .= "Warm Regards\n";
+                $message .= $salesmanName . "\n";
+                $message .= $salesmanMobile;
+            }
 
-                    $this->sendWhatsAppMessageWithFile($request->mobile, $message, $pdfUrl, $vehicleName);
+            $firstVehicleInfo = $this->getVehicleInfo($vehicleIds[0]);
+            $firstPdfUrl = $firstVehicleInfo['pdf'];
+            $firstVehicleName = $firstVehicleInfo['name'];
+            $this->sendWhatsAppMessageWithFile($request->mobile, $message, $firstPdfUrl, $firstVehicleName);
+            sleep(2);
+
+            foreach ($vehicleIds as $index => $vehicleId) {
+                $vehicleInfo = $this->getVehicleInfo($vehicleId);
+                $vehicleName = $vehicleInfo['name'];
+                $pdfUrl = $vehicleInfo['pdf'];
+
+                if ($index != 0) {
+                    $this->sendWhatsAppMessageWithFile($request->mobile, '', $pdfUrl, $vehicleName);
                     sleep(2);
-
-                    if ($vehicleId === 1) { // Nexus
-                        for ($i = 1; $i <= 4; $i++) {
-                            $imageUrl = "https://chiragautomotive.com/amper/assets/pdf/images/nexus/{$i}.jpg";
-                            $this->sendWhatsAppMessageWithFile($request->mobile, '', $imageUrl, $vehicleName);
-                            sleep(1);
-                        }
-                        $videoUrl = 'https://chiragautomotive.com/amper/assets/pdf/images/nexus/nexus_video.mp4';
-                        $this->sendWhatsAppMessageWithFile($request->mobile, '', $videoUrl, $vehicleName);
-                        sleep(2);
-                    }
-
-                    if ($vehicleId === 2) { // Magnus
-                        for ($i = 1; $i <= 5; $i++) {
-                            $imageUrl = "https://chiragautomotive.com/amper/assets/pdf/images/magnus/{$i}.jpg";
-                            $this->sendWhatsAppMessageWithFile($request->mobile, '', $imageUrl, $vehicleName);
-                            sleep(1);
-                        }
-                    }
-
-                    if ($vehicleId === 4) { // TVS King EV Max
-                        for ($i = 1; $i <= 7; $i++) {
-                            $imageUrl = "https://chiragautomotive.com/amper/assets/pdf/images/tvs_king_ev_max/{$i}.jpg";
-                            $this->sendWhatsAppMessageWithFile($request->mobile, '', $imageUrl, $vehicleName);
-                            sleep(1);
-                        }
-                    }
-
-                    if ($vehicleId === 5) { // Duramax
-                        for ($i = 1; $i <= 4; $i++) {
-                            $imageUrl = "https://chiragautomotive.com/amper/assets/pdf/images/duramax/{$i}.jpg";
-                            $this->sendWhatsAppMessageWithFile($request->mobile, '', $imageUrl, $vehicleName);
-                            sleep(1);
-                        }
-                    }
-
-                    if ($vehicleId === 6) { // Deluxe
-                        for ($i = 1; $i <= 4; $i++) {
-                            $imageUrl = "https://chiragautomotive.com/amper/assets/pdf/images/deluxe/{$i}.jpg";
-                            $this->sendWhatsAppMessageWithFile($request->mobile, '', $imageUrl, $vehicleName);
-                            sleep(1);
-                        }
-                    }
                 }
+
+                $this->sendVehicleMedia($vehicleId, $request->mobile, $vehicleName);
             }
 
             SystemLogs::create([
@@ -190,7 +149,65 @@ class LeadsController extends Controller
                 'created_by' => auth()->id(),
             ]);
         }
+
         return redirect()->route('leads.index')->with('success', 'Lead added successfully!');
+    }
+
+    /**
+     * Get vehicle name and PDF URL by ID
+     */
+    private function getVehicleInfo($vehicleId)
+    {
+        $vehicles = [
+            1 => ['name' => 'Ampere Nexus', 'pdf' => 'https://chiragautomotive.com/amper/assets/pdf/Ampere_Nexus.pdf'],
+            2 => ['name' => 'Ampere Magnus Neo', 'pdf' => 'https://chiragautomotive.com/amper/assets/pdf/Magnus_Neo_A4.pdf'],
+            3 => ['name' => 'Ampere Reo', 'pdf' => 'https://chiragautomotive.com/amper/assets/pdf/REO_80_KV.pdf'],
+            4 => ['name' => 'TVS King EV Max', 'pdf' => 'https://chiragautomotive.com/amper/assets/pdf/King_EV_MAX_English.pdf'],
+            5 => ['name' => 'Duramax', 'pdf' => 'https://chiragautomotive.com/amper/assets/pdf/King_Duramax_Plus_Petrol_English.pdf'],
+            6 => ['name' => 'Deluxe', 'pdf' => 'https://chiragautomotive.com/amper/assets/pdf/King_Deluxe_Petrol_English.pdf'],
+        ];
+        return $vehicles[$vehicleId] ?? ['name' => '', 'pdf' => ''];
+    }
+
+    /**
+     * Send vehicle images and videos by vehicle ID
+     */
+    private function sendVehicleMedia($vehicleId, $mobile, $vehicleName)
+    {
+        if ($vehicleId === 1) { // Nexus
+            for ($i = 1; $i <= 4; $i++) {
+                $imageUrl = "https://chiragautomotive.com/amper/assets/pdf/images/nexus/{$i}.jpg";
+                $this->sendWhatsAppMessageWithFile($mobile, '', $imageUrl, $vehicleName);
+                sleep(1);
+            }
+            $videoUrl = 'https://chiragautomotive.com/amper/assets/pdf/images/nexus/nexus_video.mp4';
+            $this->sendWhatsAppMessageWithFile($mobile, '', $videoUrl, $vehicleName);
+            sleep(2);
+        } elseif ($vehicleId === 2) { // Magnus
+            for ($i = 1; $i <= 5; $i++) {
+                $imageUrl = "https://chiragautomotive.com/amper/assets/pdf/images/magnus/{$i}.jpg";
+                $this->sendWhatsAppMessageWithFile($mobile, '', $imageUrl, $vehicleName);
+                sleep(1);
+            }
+        } elseif ($vehicleId === 4) { // TVS King EV Max
+            for ($i = 1; $i <= 7; $i++) {
+                $imageUrl = "https://chiragautomotive.com/amper/assets/pdf/images/tvs_king_ev_max/{$i}.jpg";
+                $this->sendWhatsAppMessageWithFile($mobile, '', $imageUrl, $vehicleName);
+                sleep(1);
+            }
+        } elseif ($vehicleId === 5) { // Duramax
+            for ($i = 1; $i <= 4; $i++) {
+                $imageUrl = "https://chiragautomotive.com/amper/assets/pdf/images/duramax/{$i}.jpg";
+                $this->sendWhatsAppMessageWithFile($mobile, '', $imageUrl, $vehicleName);
+                sleep(1);
+            }
+        } elseif ($vehicleId === 6) { // Deluxe
+            for ($i = 1; $i <= 4; $i++) {
+                $imageUrl = "https://chiragautomotive.com/amper/assets/pdf/images/deluxe/{$i}.jpg";
+                $this->sendWhatsAppMessageWithFile($mobile, '', $imageUrl, $vehicleName);
+                sleep(1);
+            }
+        }
     }
 
     /**
