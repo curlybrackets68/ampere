@@ -37,15 +37,17 @@ class DailyDatabaseBackup extends Command
             return;
         }
 
-        Mail::raw("Daily database backup attached.", function ($message) use ($backupPath, $fileName) {
-            $message->to(['pinank1510@gmail.com','mihirpatel19.mp@gamil.com'])   // 👈 multiple TO
-                ->cc(['curlybrackets68@gmail.com'])       // 👈 multiple CC
-                ->subject('Daily DB Backup of Ampere '. Carbon::now()->format('d-m-Y'))
+        Mail::raw("Daily DB Backup of Ampere of Date:-  " . Carbon::now()->format('d-m-Y')."  Attached ", function ($message) use ($backupPath, $fileName) {
+            $message->to(['rs.pinanksoni@gmail.com', 'mihirpatel19.mp@gmail.com'])
+                ->cc(['curlybrackets68@gmail.com'])
+                ->subject('Daily DB Backup of Ampere ' . Carbon::now()->format('d-m-Y'))
                 ->attach($backupPath, [
                     'as' => $fileName,
                     'mime' => 'application/sql',
                 ]);
         });
+
+        File::delete($backupPath);
 
         $this->info("Backup successful & emailed!");
     }
