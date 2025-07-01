@@ -15,6 +15,7 @@ class Kernel extends ConsoleKernel
         // $schedule->command('inspire')->hourly();
         $schedule->command('send:amc-cronjob')->dailyAt('07:00'); // example: run daily at 7 AM
         $schedule->command('send:service-cronjob')->dailyAt('07:00'); // example: run daily at 7 AM
+        $schedule->command('backup:daily-db')->dailyAt('01:00');
     }
 
     /**
