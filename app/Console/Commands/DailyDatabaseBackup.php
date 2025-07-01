@@ -28,9 +28,9 @@ class DailyDatabaseBackup extends Command
             File::makeDirectory(storage_path('app/backups'), 0755, true);
         }
 
-        // $mysqldumpPath = 'C:\\xampp\\mysql\\bin\\mysqldump.exe'; // Change this on server if needed
-        $mysqldumpPath = '/usr/bin/mysqldump'; // path for LIVE
-        $command = "\"{$mysqldumpPath}\" --user={$user} --password=\"{$pass}\" --host={$host} {$db} > \"{$backupPath}\"";
+        // $mySqlDumpPath = 'C:\\xampp\\mysql\\bin\\mysqldump.exe'; // Change this on server if needed
+        $mySqlDumpPath = '/usr/bin/mysqldump'; // path for LIVE
+        $command = "\"{$mySqlDumpPath}\" --user={$user} --password=\"{$pass}\" --host={$host} {$db} > \"{$backupPath}\"";
 
         exec($command, $output, $result);
 
