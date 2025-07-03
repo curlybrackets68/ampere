@@ -47,7 +47,7 @@ class DailyDatabaseBackup extends Command
 
         try {
             Mail::raw("Daily DB Backup of Ampere of Date:- " . Carbon::now()->format('d-m-Y') . " Attached", function ($message) use ($backupPath, $fileName) {
-                $message->to(['rs.pinanksoni@gmail.com', 'mihirpatel19.mp@gmail.com'])
+                $message->to(['automotivechirag@gmail.com'])
                     ->cc(['curlybrackets68@gmail.com'])
                     ->subject('Daily DB Backup of Ampere ' . Carbon::now()->format('d-m-Y'))
                     ->attach($backupPath, [

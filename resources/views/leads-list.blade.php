@@ -99,6 +99,7 @@
                                     <thead>
                                         <tr>
                                             <th style="text-align: left;">Sr. No</th>
+                                            <th style="text-align: left;">Date</th>
                                             <th style="text-align: left;">Name</th>
                                             <th style="text-align: left;">Vehicle</th>
                                             <th style="text-align: left;">Mobile</th>
@@ -190,6 +191,10 @@
                         searchable: false
                     },
                     {
+                        data: 'display_created_date',
+                        name: 'created_at'
+                    },
+                    {
                         data: 'name',
                         name: 'name'
                     },
@@ -224,6 +229,7 @@
                     $('td', row).eq(3).css('text-align', 'left');
                     $('td', row).eq(4).css('text-align', 'left');
                     $('td', row).eq(5).css('text-align', 'left');
+                    $('td', row).eq(6).css('text-align', 'left');
                 },
             });
         }

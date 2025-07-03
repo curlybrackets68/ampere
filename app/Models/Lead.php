@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
@@ -38,7 +39,7 @@ class Lead extends Model
         'vehicle' => 'array',
     ];
 
-    protected $appends = ['vehicle_details'];
+    protected $appends = ['vehicle_details', 'display_created_date'];
 
     public function getVehicleDetailsAttribute()
     {
@@ -58,5 +59,10 @@ class Lead extends Model
         }
 
         return '';
+    }
+
+    function getDisplayCreatedDateAttribute()
+    {
+        return Carbon::parse($this->created_at)->format('d-M-Y');
     }
 }
