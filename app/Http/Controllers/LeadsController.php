@@ -163,8 +163,8 @@ class LeadsController extends Controller
             2 => ['name' => 'Ampere Magnus Neo', 'pdf' => 'https://chiragautomotive.com/amper/assets/pdf/Magnus_Neo_A4.pdf'],
             3 => ['name' => 'Ampere Reo', 'pdf' => 'https://chiragautomotive.com/amper/assets/pdf/REO_80_KV.pdf'],
             4 => ['name' => 'TVS King EV Max', 'pdf' => 'https://chiragautomotive.com/amper/assets/pdf/King_EV_MAX_English.pdf'],
-            5 => ['name' => 'Duramax', 'pdf' => 'https://chiragautomotive.com/amper/assets/pdf/King_Duramax_Plus_Petrol_English.pdf'],
-            6 => ['name' => 'Deluxe', 'pdf' => 'https://chiragautomotive.com/amper/assets/pdf/King_Deluxe_Petrol_English.pdf'],
+            5 => ['name' => 'TVS King Duramax Plus', 'pdf' => 'https://chiragautomotive.com/amper/assets/pdf/King_Duramax_Plus_Petrol_English.pdf'],
+            6 => ['name' => 'TVS King Deluxe', 'pdf' => 'https://chiragautomotive.com/amper/assets/pdf/King_Deluxe_Petrol_English.pdf'],
         ];
         return $vehicles[$vehicleId] ?? ['name' => '', 'pdf' => ''];
     }
