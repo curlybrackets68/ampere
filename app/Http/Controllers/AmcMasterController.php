@@ -30,7 +30,7 @@ class AmcMasterController extends Controller
             $amcMasterList = AmcMaster::query()->orderBy('amc_end_date');
 
             if ($request->action_type != 'report') {
-                //default list 
+                //default list
                 $amcMasterList = $amcMasterList->where('renew_status', $this->getArrayIdByName($this->statusArray, 'New'));
             }
             if (checkRights('USER_AMC_ROLE_VIEW') && !checkRights('USER_AMC_ROLE_VIEW_ALL')) {
@@ -211,6 +211,7 @@ class AmcMasterController extends Controller
 
                         ServiceDetail::create($serviceData);
                     }
+                    
                     $vehicleTypeName = $this->getArrayNameById($this->vehicleTypeArray, $amcMaster->vehicle_type);
                     $startDate = $this->formatDateTime('d-M-Y', $amcMaster->amc_start_date);
                     $endDate = $this->formatDateTime('d-M-Y', $amcMaster->amc_end_date);
@@ -572,7 +573,7 @@ class AmcMasterController extends Controller
             $amcMasterList = AmcMaster::query()->where('status', $this->getArrayIdByName($this->statusArray, 'Deactive'))->Where('renew_status', $this->getArrayIdByName($this->statusArray, 'New'))->orderBy('amc_end_date');
 
             // if ($request->action_type != 'report') {
-            //     //default list 
+            //     //default list
             //     $amcMasterList = $amcMasterList->where('renew_status', $this->getArrayIdByName($this->statusArray, 'New'));
             // }
             if (checkRights('USER_AMC_ROLE_VIEW') && !checkRights('USER_AMC_ROLE_VIEW_ALL')) {
