@@ -124,7 +124,7 @@ class LeadsController extends Controller
             $firstVehicleInfo = $this->getVehicleInfo($vehicleIds[0]);
             $firstPdfUrl = $firstVehicleInfo['pdf'];
             $firstVehicleName = $firstVehicleInfo['name'];
-            $this->sendWhatsAppMessageWithFile($request->mobile, '', $firstPdfUrl, $firstVehicleName);
+            $this->sendWhatsAppMessageWithFileForLead($request->mobile, '', $firstPdfUrl, $firstVehicleName);
             sleep(2);
             foreach ($vehicleIds as $index => $vehicleId) {
                 $vehicleInfo = $this->getVehicleInfo($vehicleId);
@@ -132,14 +132,14 @@ class LeadsController extends Controller
                 $pdfUrl = $vehicleInfo['pdf'];
 
                 if ($index != 0) {
-                    $this->sendWhatsAppMessageWithFile($request->mobile, '', $pdfUrl, $vehicleName);
+                    $this->sendWhatsAppMessageWithFileForLead($request->mobile, '', $pdfUrl, $vehicleName);
                     sleep(2);
                 }
 
                 $this->sendVehicleMedia($vehicleId, $request->mobile, $vehicleName);
             }
 
-            $this->sendWhatsAppMessage($request->mobile, $message, '', $firstVehicleName);
+            $this->sendWhatsAppMessageForLead($request->mobile, $message);
             SystemLogs::create([
                 'inquiry_id' => 0,
                 'type'       => '3',

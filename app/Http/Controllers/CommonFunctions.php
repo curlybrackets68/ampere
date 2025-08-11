@@ -184,6 +184,28 @@ trait CommonFunctions
         }
     }
 
+    public function sendWhatsAppMessageForLead($mobileNumber, $message)
+    {
+        $url = "https://wa.smsidea.com/api/v1/sendMessage";
+        $whatsAppAPIKey = '6a6ccf290d9a4a7795810e05a752adeb';
+
+        $data = [
+            'key' => $whatsAppAPIKey,
+            'to' => '91' . $mobileNumber,
+            'message' => $message,
+            'isUrgent' => true,
+        ];
+        $response = Http::withOptions(['verify' => false])->post($url, $data);
+        if ($response->successful()) {
+            $responseDecode = $response->json();
+            if ($responseDecode['ErrorCode'] === '000') {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
+
     public function sendWhatsAppMessageWithFile($mobileNumber, $message, $file, $fileName = '')
     {
         if (empty($fileName)) {
@@ -193,6 +215,35 @@ trait CommonFunctions
         }
         $url = "https://wa.smsidea.com/api/v1/sendDocument";
         $whatsAppAPIKey = '6edc72b9f0884247ba0a630beb94c028';
+        $data = [
+            'key' => $whatsAppAPIKey,
+            'to' => '91' . $mobileNumber,
+            'caption' => $message,
+            'isUrgent' => true,
+            "url" => $file,
+            "filename" => $fileName
+        ];
+        $response = Http::withOptions(['verify' => false])->post($url, $data);
+        if ($response->successful()) {
+            $responseDecode = $response->json();
+            
+            if ($responseDecode['ErrorCode'] === '000') {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
+
+    public function sendWhatsAppMessageWithFileForLead($mobileNumber, $message, $file, $fileName = '')
+    {
+        if (empty($fileName)) {
+            $fileName = 'brochure.pdf';
+        } else {
+            $fileName = $fileName.'.pdf';
+        }
+        $url = "https://wa.smsidea.com/api/v1/sendDocument";
+        $whatsAppAPIKey = '6a6ccf290d9a4a7795810e05a752adeb';
         $data = [
             'key' => $whatsAppAPIKey,
             'to' => '91' . $mobileNumber,
