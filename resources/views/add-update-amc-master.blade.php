@@ -149,7 +149,7 @@
                                             <label>AMC End Date</label>
                                             <input type="text" class="form-control" id="amc_end_date"
                                                 name="amc_end_date"
-                                                value="{{ old('amc_end_date', $amcMaster->amc_end_date ?? '') }}" readonly
+                                             readonly
                                                 style="pointer-events: none" tabindex="1">
                                         </div>
                                     </div>
@@ -214,22 +214,43 @@
         $(document).ready(async function() {
             let amcMaster = @json(@$amcMaster);
             if (amcMaster) {
+                console.log(amcMaster)
                 $('#vehicle_type').trigger('change');
+                flatpickr("#amc_start_date", {
+                    dateFormat: "Y-m-d", // parse backend date
+                    altInput: true, // show pretty format
+                    altFormat: "d-m-Y", // display format
+                    defaultDate: amcMaster.amc_start_date
+                });
+
+                flatpickr("#amc_end_date", {
+                    dateFormat: "Y-m-d",
+                    altInput: true,
+                    altFormat: "d-m-Y",
+                    defaultDate: amcMaster.amc_end_date
+                })
+            } else {
+                $(function() {
+                    flatpickr("#amc_start_date", {
+                        dateFormat: "d-m-Y", // dd-mm-yyyy format
+                        defaultDate: new Date() // set today's date
+                    });
+                });
+                $(function() {
+                    flatpickr("#amc_end_date", {
+                        dateFormat: "d-m-Y", // dd-mm-yyyy format
+                        defaultDate: new Date() // set today's date
+                    });
+                });
             }
 
         });
-        $(function() {
-            flatpickr("#amc_start_date", {
-                dateFormat: "d-m-Y", // dd-mm-yyyy format
-                defaultDate: new Date() // set today's date
-            });
-        });
-        $(function() {
-            flatpickr("#amc_end_date", {
-                dateFormat: "d-m-Y", // dd-mm-yyyy format
-                defaultDate: new Date() // set today's date
-            });
-        });
+
+        function cleanDate(dateStr) {
+            if (!dateStr) return null;
+            return dateStr.split(" ")[0]; // take only YYYY-MM-DD
+        }
+
         $(document).on('change', '#vehicle_type', function() {
             let type_id = $(this).val();
             const dropdown = $('#amc_package_type_id');
