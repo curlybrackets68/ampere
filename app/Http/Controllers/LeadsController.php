@@ -95,6 +95,9 @@ class LeadsController extends Controller
             $salesmanMobile = $nameQuery->mobile;
         }
 
+        $languageType = $request->language_type;
+        $locationType = $request->location_type;
+
         $vehicleIds = array_map('intval', $request->input('vehicle', []));
         $data = $request->all();
         $data['vehicle'] = $vehicleIds;
@@ -106,19 +109,51 @@ class LeadsController extends Controller
                 $vehicleInfo = $this->getVehicleInfo($vehicleIds[0]);
                 $vehicleName = $vehicleInfo['name'];
 
-                $message = "Hi " . $request->name . "\n\n";
-                $message .= "Thank you for showing your interest in *{$vehicleName}*.\n\n";
-                $message .= "My name is " . $salesmanName . " and I will be your companion along this electrifying journey.\n\n";
-                $message .= "Warm Regards\n";
-                $message .= $salesmanName . "\n";
-                $message .= $salesmanMobile;
+                // switch ($languageType) {
+                //     case '1':
+                //         $message = "Hi {$request->name}\n\n";
+                //         $message .= "Thank you for showing your interest in *{$vehicleName}*.\n\n";
+                //         $message .= "My name is {$salesmanName} and I will be your companion along this electrifying journey.\n\n";
+                //         $message .= "Warm Regards\n";
+                //         $message .= "{$salesmanName}\n";
+                //         $message .= $salesmanMobile;
+                //         break;
+
+                //     case '2':
+                //         $message = "નમસ્કાર {$request->name}\n\n";
+                //         $message .= "તમારો *{$vehicleName}* માં રસ દર્શાવવા બદલ હૃદયપૂર્વક આભાર.\n\n";
+                //         $message .= "મારું નામ {$salesmanName} છે અને આ ઉત્સાહભરેલી મુસાફરીમાં હું આપનો સહયોગી રહીશ.\n\n";
+                //         $message .= "સ્નેહપૂર્વક,\n";
+                //         $message .= "{$salesmanName}\n";
+                //         $message .= $salesmanMobile;
+                //         break;
+                // }
+                $message = $this->getLeadMessage(
+                    $languageType,
+                    $request->name,
+                    $vehicleName,
+                    $salesmanName,
+                    $salesmanMobile,
+                    false,
+                    $locationType
+                );
             } else {
-                $message = "Hi " . $request->name . "\n\n";
-                $message .= "Thank you for showing your interest in our electric vehicles.\n\n";
-                $message .= "My name is " . $salesmanName . " and I will be your companion along this electrifying journey.\n\n";
-                $message .= "Warm Regards\n";
-                $message .= $salesmanName . "\n";
-                $message .= $salesmanMobile;
+                // $message = "Hi " . $request->name . "\n\n";
+                // $message .= "Thank you for showing your interest in our electric vehicles.\n\n";
+                // $message .= "My name is " . $salesmanName . " and I will be your companion along this electrifying journey.\n\n";
+                // $message .= "Warm Regards\n";
+                // $message .= $salesmanName . "\n";
+                // $message .= $salesmanMobile;
+
+                $message = $this->getLeadMessage(
+                    $languageType,
+                    $request->name,
+                    null,
+                    $salesmanName,
+                    $salesmanMobile,
+                    true,
+                    $locationType
+                );
             }
 
             $firstVehicleInfo = $this->getVehicleInfo($vehicleIds[0]);
@@ -140,6 +175,9 @@ class LeadsController extends Controller
             }
 
             $this->sendWhatsAppMessageForLead($request->mobile, $message);
+
+            // $locationMessage = $this->getLocationMessage($languageType, $locationType);
+            // $this->sendWhatsAppMessageForLead($request->mobile, $locationMessage);
             SystemLogs::create([
                 'inquiry_id' => 0,
                 'type'       => '3',
@@ -165,6 +203,7 @@ class LeadsController extends Controller
             4 => ['name' => 'TVS King EV Max', 'pdf' => 'https://chiragautomotive.com/amper/assets/pdf/King_EV_MAX_English.pdf'],
             5 => ['name' => 'TVS King Duramax Plus', 'pdf' => 'https://chiragautomotive.com/amper/assets/pdf/King_Duramax_Plus_Petrol_English.pdf'],
             6 => ['name' => 'TVS King Deluxe', 'pdf' => 'https://chiragautomotive.com/amper/assets/pdf/King_Deluxe_Petrol_English.pdf'],
+            7 => ['name' => 'TVS King Kargo HD EV', 'pdf' => 'https://chiragautomotive.com/amper/assets/pdf/King_Kargo_EV_HD_English.pdf'],
         ];
         return $vehicles[$vehicleId] ?? ['name' => '', 'pdf' => ''];
     }
@@ -195,15 +234,21 @@ class LeadsController extends Controller
                 $this->sendWhatsAppMessageWithFile($mobile, '', $imageUrl, $vehicleName);
                 sleep(1);
             }
-        } elseif ($vehicleId === 5) { // Duramax
+        } elseif ($vehicleId === 5) { // TVS King Duramax Plus
             for ($i = 1; $i <= 4; $i++) {
                 $imageUrl = "https://chiragautomotive.com/amper/assets/pdf/images/duramax/{$i}.jpg";
                 $this->sendWhatsAppMessageWithFile($mobile, '', $imageUrl, $vehicleName);
                 sleep(1);
             }
-        } elseif ($vehicleId === 6) { // Deluxe
+        } elseif ($vehicleId === 6) { // TVS King Deluxe
             for ($i = 1; $i <= 4; $i++) {
                 $imageUrl = "https://chiragautomotive.com/amper/assets/pdf/images/deluxe/{$i}.jpg";
+                $this->sendWhatsAppMessageWithFile($mobile, '', $imageUrl, $vehicleName);
+                sleep(1);
+            }
+        } elseif ($vehicleId === 7) { // TVS King Kargo HD EV
+            for ($i = 1; $i <= 7; $i++) {
+                $imageUrl = "https://chiragautomotive.com/amper/assets/pdf/images/tvs_king_kargo_hd_ev/{$i}.jpg";
                 $this->sendWhatsAppMessageWithFile($mobile, '', $imageUrl, $vehicleName);
                 sleep(1);
             }

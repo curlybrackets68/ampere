@@ -24,6 +24,18 @@
                         <div class="card mb-4">
                             <div class="card-header">
                                 <h5 class="card-title">{{ isset($lead) ? 'Update Lead' : 'Add Lead' }}</h5>
+                                <div class="d-flex justify-content-end">
+                                    <div class="col-md-3">
+                                        <select class="form-select" name="language_type" id="language_type">
+                                            <option value="1"
+                                                {{ old('language_type', $lead->language_type ?? '') == 1 ? 'selected' : '' }}>
+                                                English</option>
+                                            <option value="2"
+                                                {{ old('language_type', $lead->language_type ?? '') == 2 ? 'selected' : '' }}>
+                                                Gujarati</option>
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
                             <div class="card-body">
                                 <div class="row">
@@ -42,7 +54,7 @@
                                                         $selectedVehicles = @$lead->vehicle ?? [];
                                                     @endphp
                                                     <select class="form-select select2" name="vehicle[]" id="vehicle"
-                                                        multiple>
+                                                        multiple style="width: 100% !important;">
                                                         @forelse (@$vehicle as $key => $value)
                                                             <option value="{{ $key }}"
                                                                 {{ in_array($key, $selectedVehicles) ? 'selected' : '' }}>
@@ -121,6 +133,17 @@
                                         <div class="form-group">
                                             <label>Notes</label>
                                             <textarea class="form-control" name="notes" id="notes" rows="3">{{ old('notes', $lead->notes ?? '') }}</textarea>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Location</label>
+                                            <select class="form-select" name="location_type" id="location_type">
+                                                <option value="1"
+                                                    {{ old('location_type', $lead->location_type ?? '') == 1 ? 'selected' : '' }}>
+                                                    Sama Savli Road</option>
+                                                <option value="2"
+                                                    {{ old('location_type', $lead->location_type ?? '') == 2 ? 'selected' : '' }}>
+                                                    Kalali-Vadsar Road</option>
+                                            </select>
                                         </div>
                                     </div>
                                 </div>

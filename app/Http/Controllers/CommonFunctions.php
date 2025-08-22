@@ -211,7 +211,7 @@ trait CommonFunctions
         if (empty($fileName)) {
             $fileName = 'brochure.pdf';
         } else {
-            $fileName = $fileName.'.pdf';
+            $fileName = $fileName . '.pdf';
         }
         $url = "https://wa.smsidea.com/api/v1/sendDocument";
         $whatsAppAPIKey = '6edc72b9f0884247ba0a630beb94c028';
@@ -226,7 +226,7 @@ trait CommonFunctions
         $response = Http::withOptions(['verify' => false])->post($url, $data);
         if ($response->successful()) {
             $responseDecode = $response->json();
-            
+
             if ($responseDecode['ErrorCode'] === '000') {
                 return true;
             } else {
@@ -240,7 +240,7 @@ trait CommonFunctions
         if (empty($fileName)) {
             $fileName = 'brochure.pdf';
         } else {
-            $fileName = $fileName.'.pdf';
+            $fileName = $fileName . '.pdf';
         }
         $url = "https://wa.smsidea.com/api/v1/sendDocument";
         $whatsAppAPIKey = '6a6ccf290d9a4a7795810e05a752adeb';
@@ -255,7 +255,7 @@ trait CommonFunctions
         $response = Http::withOptions(['verify' => false])->post($url, $data);
         if ($response->successful()) {
             $responseDecode = $response->json();
-            
+
             if ($responseDecode['ErrorCode'] === '000') {
                 return true;
             } else {
@@ -361,13 +361,142 @@ trait CommonFunctions
         if (!file_exists($publicHtmlAssetsPath)) {
             mkdir($publicHtmlAssetsPath, 0775, true);
         }
-    
+
         $fullPath = $publicHtmlAssetsPath . '/' . $fileName;
         file_put_contents($fullPath, $pdf->output());
-    
+
         return [
             'full_path' => $fullPath,
             'public_url' => 'https://chiragautomotive.com/amper/assets/temp/' . $fileName,
         ];
+    }
+
+    public function getLeadMessage($languageType, $name, $vehicleName, $salesmanName, $salesmanMobile, $isGeneral = false, $locationType = null)
+    {
+        $message = '';
+
+        switch ($languageType) {
+            case '1': // English
+                if ($isGeneral) {
+                    $message = "Hi {$name}\n\n";
+                    $message .= "Thank you for showing your interest in our electric vehicles.\n\n";
+                } else {
+                    $message = "Hi {$name}\n\n";
+                    $message .= "Thank you for showing your interest in *{$vehicleName}*.\n\n";
+                }
+
+                $message .= "My name is {$salesmanName} and I will be your companion along this electrifying journey.\n\n";
+
+                if ($locationType == 1) {
+                    $message .= "📍 Location (Sama Savli Road)\n\n";
+                    $message .= "GF 23/24 Earth Eon\n";
+                    $message .= "Opp Sama Lake\n";
+                    $message .= "Opp Urmi School\n";
+                    $message .= "Sama Savli Road\n";
+                    $message .= "Vadodara - 390008\n\n";
+                    $message .= "Google Map: https://share.google/V12FOd5tDP79YrMlS\n\n";
+                } elseif ($locationType == 2) {
+                    $message .= "📍 Location (Kalali-Vadsar Road)\n\n";
+                    $message .= "Abhishek Landmark\n";
+                    $message .= "Opp Jagnath Mahadev Mandir\n";
+                    $message .= "Near Khiskoli Circle\n";
+                    $message .= "Kalali-Vadsar Road\n";
+                    $message .= "Vadodara - 390012\n\n";
+                    $message .= "Google Map: https://g.co/kgs/LAesMhy\n\n";
+                }
+
+                $message .= "Warm Regards\n";
+                $message .= "{$salesmanName}\n";
+                $message .= $salesmanMobile;
+                break;
+
+            case '2': // Gujarati
+                if ($isGeneral) {
+                    $message = "નમસ્કાર {$name}\n\n";
+                    $message .= "અમારા ઇલેક્ટ્રિક વાહનોમાં રસ દર્શાવવા બદલ હૃદયપૂર્વક આભાર.\n\n";
+                } else {
+                    $message = "નમસ્કાર {$name}\n\n";
+                    $message .= "તમારો *{$vehicleName}* માં રસ દર્શાવવા બદલ હૃદયપૂર્વક આભાર.\n\n";
+                }
+
+                $message .= "મારું નામ {$salesmanName} છે અને આ ઉત્સાહભરેલી મુસાફરીમાં હું આપનો સહયોગી રહીશ.\n\n";
+
+                if ($locationType == 1) {
+                    $message .= "📍 સ્થાન (સમા-સાવલી રોડ)\n\n";
+                    $message .= "જી.એફ. 23/24 અર્થ ઇઓન\n";
+                    $message .= "સમા તળાવ સામે\n";
+                    $message .= "ઉર્મિ સ્કૂલ સામે\n";
+                    $message .= "સમા-સાવલી રોડ\n";
+                    $message .= "વડોદરા - 390008\n\n";
+                    $message .= "Google Map: https://share.google/V12FOd5tDP79YrMlS\n\n";
+                } elseif ($locationType == 2) {
+                    $message .= "📍 સ્થાન (કાલાલી-વડસાર રોડ)\n\n";
+                    $message .= "અભિષેક લૅન્ડમાર્ક\n";
+                    $message .= "જગનાથ મહાદેવ મંદિર સામે\n";
+                    $message .= "ખિસકોલી સર્કલ નજીક\n";
+                    $message .= "કાલાલી-વડસાર રોડ\n";
+                    $message .= "વડોદરા - 390012\n\n";
+                    $message .= "Google Map: https://g.co/kgs/LAesMhy\n\n";
+                }
+
+                $message .= "સ્નેહપૂર્વક,\n";
+                $message .= "{$salesmanName}\n";
+                $message .= $salesmanMobile;
+                break;
+
+            default:
+                return null;
+        }
+
+        return $message;
+    }
+
+
+    public function getLocationMessage($languageType, $locationType)
+    {
+        $message = '';
+
+        switch ($languageType) {
+            case '1': // English
+                if ($locationType == 1) {
+                    $message = "📍 Location (Sama Savli Road)\n\n";
+                    $message .= "GF 23/24 Earth Eon\n";
+                    $message .= "Opp Sama Lake\n";
+                    $message .= "Opp Urmi School\n";
+                    $message .= "Sama Savli Road\n";
+                    $message .= "Vadodara - 390008";
+                } elseif ($locationType == 2) {
+                    $message = "📍 Location (Kalali-Vadsar Road)\n\n";
+                    $message .= "Abhishek Landmark\n";
+                    $message .= "Opp Jagnath Mahadev Mandir\n";
+                    $message .= "Near Khiskoli Circle\n";
+                    $message .= "Kalali-Vadsar Road\n";
+                    $message .= "Vadodara - 390012";
+                }
+                break;
+
+            case '2': // Gujarati
+                if ($locationType == 1) {
+                    $message = "📍 સ્થાન (સમા-સાવલી રોડ)\n\n";
+                    $message .= "જી.એફ. 23/24 અર્થ ઇઓન\n";
+                    $message .= "સમા તળાવ સામે\n";
+                    $message .= "ઉર્મિ સ્કૂલ સામે\n";
+                    $message .= "સમા-સાવલી રોડ\n";
+                    $message .= "વડોદરા - 390008";
+                } elseif ($locationType == 2) {
+                    $message = "📍 સ્થાન (કાલાલી-વડસાર રોડ)\n\n";
+                    $message .= "અભિષેક લૅન્ડમાર્ક\n";
+                    $message .= "જગનાથ મહાદેવ મંદિર સામે\n";
+                    $message .= "ખિસકોલી સર્કલ નજીક\n";
+                    $message .= "કાલાલી-વડસાર રોડ\n";
+                    $message .= "વડોદરા - 390012";
+                }
+                break;
+
+            default:
+                return null;
+        }
+
+        return $message;
     }
 }

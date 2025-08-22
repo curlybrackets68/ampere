@@ -31,6 +31,8 @@ class Lead extends Model
         'lead_source',
         'salesman',
         'notes',
+        'language_type',
+        'location_type',
         'created_by',
         'modified_by',
     ];
