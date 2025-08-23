@@ -216,40 +216,40 @@ class LeadsController extends Controller
         if ($vehicleId === 1) { // Nexus
             for ($i = 1; $i <= 4; $i++) {
                 $imageUrl = "https://chiragautomotive.com/amper/assets/pdf/images/nexus/{$i}.jpg";
-                $this->sendWhatsAppMessageWithFile($mobile, '', $imageUrl, $vehicleName);
+                $this->sendWhatsAppMessageWithFileForLead($mobile, '', $imageUrl, $vehicleName);
                 sleep(1);
             }
             $videoUrl = 'https://chiragautomotive.com/amper/assets/pdf/images/nexus/nexus_video.mp4';
-            $this->sendWhatsAppMessageWithFile($mobile, '', $videoUrl, $vehicleName);
+            $this->sendWhatsAppMessageWithFileForLead($mobile, '', $videoUrl, $vehicleName);
             sleep(2);
         } elseif ($vehicleId === 2) { // Magnus
             for ($i = 1; $i <= 5; $i++) {
                 $imageUrl = "https://chiragautomotive.com/amper/assets/pdf/images/magnus/{$i}.jpg";
-                $this->sendWhatsAppMessageWithFile($mobile, '', $imageUrl, $vehicleName);
+                $this->sendWhatsAppMessageWithFileForLead($mobile, '', $imageUrl, $vehicleName);
                 sleep(1);
             }
         } elseif ($vehicleId === 4) { // TVS King EV Max
             for ($i = 1; $i <= 7; $i++) {
                 $imageUrl = "https://chiragautomotive.com/amper/assets/pdf/images/tvs_king_ev_max/{$i}.jpg";
-                $this->sendWhatsAppMessageWithFile($mobile, '', $imageUrl, $vehicleName);
+                $this->sendWhatsAppMessageWithFileForLead($mobile, '', $imageUrl, $vehicleName);
                 sleep(1);
             }
         } elseif ($vehicleId === 5) { // TVS King Duramax Plus
             for ($i = 1; $i <= 4; $i++) {
                 $imageUrl = "https://chiragautomotive.com/amper/assets/pdf/images/duramax/{$i}.jpg";
-                $this->sendWhatsAppMessageWithFile($mobile, '', $imageUrl, $vehicleName);
+                $this->sendWhatsAppMessageWithFileForLead($mobile, '', $imageUrl, $vehicleName);
                 sleep(1);
             }
         } elseif ($vehicleId === 6) { // TVS King Deluxe
             for ($i = 1; $i <= 4; $i++) {
                 $imageUrl = "https://chiragautomotive.com/amper/assets/pdf/images/deluxe/{$i}.jpg";
-                $this->sendWhatsAppMessageWithFile($mobile, '', $imageUrl, $vehicleName);
+                $this->sendWhatsAppMessageWithFileForLead($mobile, '', $imageUrl, $vehicleName);
                 sleep(1);
             }
         } elseif ($vehicleId === 7) { // TVS King Kargo HD EV
             for ($i = 1; $i <= 7; $i++) {
                 $imageUrl = "https://chiragautomotive.com/amper/assets/pdf/images/tvs_king_kargo_hd_ev/{$i}.jpg";
-                $this->sendWhatsAppMessageWithFile($mobile, '', $imageUrl, $vehicleName);
+                $this->sendWhatsAppMessageWithFileForLead($mobile, '', $imageUrl, $vehicleName);
                 sleep(1);
             }
         }

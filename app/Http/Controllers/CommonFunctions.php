@@ -432,9 +432,9 @@ trait CommonFunctions
                 } elseif ($locationType == 2) {
                     $message .= "📍 સ્થાન (કાલાલી-વડસાર રોડ)\n\n";
                     $message .= "અભિષેક લૅન્ડમાર્ક\n";
-                    $message .= "જગનાથ મહાદેવ મંદિર સામે\n";
+                    $message .= "જાગનાથ મહાદેવ મંદિર સામે\n";
                     $message .= "ખિસકોલી સર્કલ નજીક\n";
-                    $message .= "કાલાલી-વડસાર રોડ\n";
+                    $message .= "કલાલી-વડસાર રોડ\n";
                     $message .= "વડોદરા - 390012\n\n";
                     $message .= "Google Map: https://g.co/kgs/LAesMhy\n\n";
                 }
