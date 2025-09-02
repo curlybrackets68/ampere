@@ -39,6 +39,7 @@ class Lead extends Model
 
     protected $casts = [
         'vehicle' => 'array',
+        'location_type' => 'array',
     ];
 
     protected $appends = ['vehicle_details', 'display_created_date'];

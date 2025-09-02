@@ -371,7 +371,7 @@ trait CommonFunctions
         ];
     }
 
-    public function getLeadMessage($languageType, $name, $vehicleName, $salesmanName, $salesmanMobile, $isGeneral = false, $locationType = null)
+    public function getLeadMessage($languageType, $name, $vehicleName, $salesmanName, $salesmanMobile, $isGeneral = false, $locationTypes = [])
     {
         $message = '';
 
@@ -387,22 +387,26 @@ trait CommonFunctions
 
                 $message .= "My name is {$salesmanName} and I will be your companion along this electrifying journey.\n\n";
 
-                if ($locationType == 1) {
-                    $message .= "📍 Location (Sama Savli Road)\n\n";
-                    $message .= "GF 23/24 Earth Eon\n";
-                    $message .= "Opp Sama Lake\n";
-                    $message .= "Opp Urmi School\n";
-                    $message .= "Sama Savli Road\n";
-                    $message .= "Vadodara - 390008\n\n";
-                    $message .= "Google Map: https://share.google/V12FOd5tDP79YrMlS\n\n";
-                } elseif ($locationType == 2) {
-                    $message .= "📍 Location (Kalali-Vadsar Road)\n\n";
-                    $message .= "Abhishek Landmark\n";
-                    $message .= "Opp Jagnath Mahadev Mandir\n";
-                    $message .= "Near Khiskoli Circle\n";
-                    $message .= "Kalali-Vadsar Road\n";
-                    $message .= "Vadodara - 390012\n\n";
-                    $message .= "Google Map: https://g.co/kgs/LAesMhy\n\n";
+                if (!empty($locationTypes)) {
+                    foreach ($locationTypes as $loc) {
+                        if ($loc == 1) {
+                            $message .= "📍 Location (Sama Savli Road)\n\n";
+                            $message .= "GF 23/24 Earth Eon\n";
+                            $message .= "Opp Sama Lake\n";
+                            $message .= "Opp Urmi School\n";
+                            $message .= "Sama Savli Road\n";
+                            $message .= "Vadodara - 390008\n\n";
+                            $message .= "Google Map: https://share.google/V12FOd5tDP79YrMlS\n\n";
+                        } elseif ($loc == 2) {
+                            $message .= "📍 Location (Kalali-Vadsar Road)\n\n";
+                            $message .= "Abhishek Landmark\n";
+                            $message .= "Opp Jagnath Mahadev Mandir\n";
+                            $message .= "Near Khiskoli Circle\n";
+                            $message .= "Kalali-Vadsar Road\n";
+                            $message .= "Vadodara - 390012\n\n";
+                            $message .= "Google Map: https://g.co/kgs/LAesMhy\n\n";
+                        }
+                    }
                 }
 
                 $message .= "Warm Regards\n";
@@ -421,22 +425,26 @@ trait CommonFunctions
 
                 $message .= "મારું નામ {$salesmanName} છે અને આ ઉત્સાહભરેલી મુસાફરીમાં હું આપનો સહયોગી રહીશ.\n\n";
 
-                if ($locationType == 1) {
-                    $message .= "📍 સ્થાન (સમા-સાવલી રોડ)\n\n";
-                    $message .= "જી.એફ. 23/24 અર્થ ઇઓન\n";
-                    $message .= "સમા તળાવ સામે\n";
-                    $message .= "ઉર્મિ સ્કૂલ સામે\n";
-                    $message .= "સમા-સાવલી રોડ\n";
-                    $message .= "વડોદરા - 390008\n\n";
-                    $message .= "Google Map: https://share.google/V12FOd5tDP79YrMlS\n\n";
-                } elseif ($locationType == 2) {
-                    $message .= "📍 સ્થાન (કાલાલી-વડસાર રોડ)\n\n";
-                    $message .= "અભિષેક લૅન્ડમાર્ક\n";
-                    $message .= "જાગનાથ મહાદેવ મંદિર સામે\n";
-                    $message .= "ખિસકોલી સર્કલ નજીક\n";
-                    $message .= "કલાલી-વડસાર રોડ\n";
-                    $message .= "વડોદરા - 390012\n\n";
-                    $message .= "Google Map: https://g.co/kgs/LAesMhy\n\n";
+                if (!empty($locationTypes)) {
+                    foreach ($locationTypes as $loc) {
+                        if ($loc == 1) {
+                            $message .= "📍 સ્થાન (સમા-સાવલી રોડ)\n\n";
+                            $message .= "જી.એફ. 23/24 અર્થ ઇઓન\n";
+                            $message .= "સમા તળાવ સામે\n";
+                            $message .= "ઉર્મિ સ્કૂલ સામે\n";
+                            $message .= "સમા-સાવલી રોડ\n";
+                            $message .= "વડોદરા - 390008\n\n";
+                            $message .= "Google Map: https://share.google/V12FOd5tDP79YrMlS\n\n";
+                        } elseif ($loc == 2) {
+                            $message .= "📍 સ્થાન (કલાલી-વડસાર રોડ)\n\n";
+                            $message .= "અભિષેક લૅન્ડમાર્ક\n";
+                            $message .= "જાગનાથ મહાદેવ મંદિર સામે\n";
+                            $message .= "ખિસકોલી સર્કલ નજીક\n";
+                            $message .= "કલાલી-વડસાર રોડ\n";
+                            $message .= "વડોદરા - 390012\n\n";
+                            $message .= "Google Map: https://g.co/kgs/LAesMhy\n\n";
+                        }
+                    }
                 }
 
                 $message .= "સ્નેહપૂર્વક,\n";

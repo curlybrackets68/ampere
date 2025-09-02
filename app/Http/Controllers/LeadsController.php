@@ -96,11 +96,13 @@ class LeadsController extends Controller
         }
 
         $languageType = $request->language_type;
-        $locationType = $request->location_type;
+        // $locationType = $request->location_type;
 
         $vehicleIds = array_map('intval', $request->input('vehicle', []));
+        $locationTypes = array_map('intval', $request->input('location_type', []));
         $data = $request->all();
         $data['vehicle'] = $vehicleIds;
+        $data['location_type'] = $locationTypes;
 
         $lead = Lead::create($data);
 
@@ -135,7 +137,7 @@ class LeadsController extends Controller
                     $salesmanName,
                     $salesmanMobile,
                     false,
-                    $locationType
+                    $locationTypes
                 );
             } else {
                 // $message = "Hi " . $request->name . "\n\n";
@@ -152,27 +154,27 @@ class LeadsController extends Controller
                     $salesmanName,
                     $salesmanMobile,
                     true,
-                    $locationType
+                    $locationTypes
                 );
             }
 
-            $firstVehicleInfo = $this->getVehicleInfo($vehicleIds[0]);
-            $firstPdfUrl = $firstVehicleInfo['pdf'];
-            $firstVehicleName = $firstVehicleInfo['name'];
-            $this->sendWhatsAppMessageWithFileForLead($request->mobile, '', $firstPdfUrl, $firstVehicleName);
-            sleep(2);
-            foreach ($vehicleIds as $index => $vehicleId) {
-                $vehicleInfo = $this->getVehicleInfo($vehicleId);
-                $vehicleName = $vehicleInfo['name'];
-                $pdfUrl = $vehicleInfo['pdf'];
+            // $firstVehicleInfo = $this->getVehicleInfo($vehicleIds[0]);
+            // $firstPdfUrl = $firstVehicleInfo['pdf'];
+            // $firstVehicleName = $firstVehicleInfo['name'];
+            // $this->sendWhatsAppMessageWithFileForLead($request->mobile, '', $firstPdfUrl, $firstVehicleName);
+            // sleep(2);
+            // foreach ($vehicleIds as $index => $vehicleId) {
+            //     $vehicleInfo = $this->getVehicleInfo($vehicleId);
+            //     $vehicleName = $vehicleInfo['name'];
+            //     $pdfUrl = $vehicleInfo['pdf'];
 
-                if ($index != 0) {
-                    $this->sendWhatsAppMessageWithFileForLead($request->mobile, '', $pdfUrl, $vehicleName);
-                    sleep(2);
-                }
+            //     if ($index != 0) {
+            //         $this->sendWhatsAppMessageWithFileForLead($request->mobile, '', $pdfUrl, $vehicleName);
+            //         sleep(2);
+            //     }
 
-                $this->sendVehicleMedia($vehicleId, $request->mobile, $vehicleName);
-            }
+            //     $this->sendVehicleMedia($vehicleId, $request->mobile, $vehicleName);
+            // }
 
             $this->sendWhatsAppMessageForLead($request->mobile, $message);
 
@@ -285,6 +287,7 @@ class LeadsController extends Controller
         $lead = Lead::find($id);
         $data = $request->all();
         $data['vehicle'] = array_map('intval', $request->input('vehicle', []));
+        $data['location_type'] = array_map('intval', $request->input('location_type', []));
         $lead->update($data);
         SystemLogs::create([
             'inquiry_id' => 0,

@@ -118,33 +118,51 @@
                                                 </div> --}}
                                             </div>
                                         </div>
-                                        <div class="form-group">
+
+                                        <div class="row mt-3">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label>Language</label>
+                                                    <select class="form-select" name="language_type" id="language_type">
+                                                        <option value="1"
+                                                            {{ old('language_type', $lead->language_type ?? '') == 1 ? 'selected' : '' }}>
+                                                            English
+                                                        </option>
+                                                        <option value="2"
+                                                            {{ old('language_type', $lead->language_type ?? '') == 2 ? 'selected' : '' }}>
+                                                            Gujarati
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label>Location</label>
+                                                    @php
+                                                        $selectedLocations = is_string(@$lead->location_type ?? '')
+                                                            ? json_decode(@$lead->location_type, true) ?? []
+                                                            : @$lead->location_type ?? [];
+                                                    @endphp
+
+                                                    <select class="form-select select2" name="location_type[]"
+                                                        id="location_type" multiple style="width: 100% !important;">
+                                                        <option value="1"
+                                                            {{ in_array(1, old('location_type', $selectedLocations)) ? 'selected' : '' }}>
+                                                            Sama Savli Road
+                                                        </option>
+                                                        <option value="2"
+                                                            {{ in_array(2, old('location_type', $selectedLocations)) ? 'selected' : '' }}>
+                                                            Kalali-Vadsar Road
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group mt-3">
                                             <label>Notes</label>
                                             <textarea class="form-control" name="notes" id="notes" rows="3">{{ old('notes', $lead->notes ?? '') }}</textarea>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <label>Language</label>
-                                                <select class="form-select" name="language_type" id="language_type">
-                                                    <option value="1"
-                                                        {{ old('language_type', $lead->language_type ?? '') == 1 ? 'selected' : '' }}>
-                                                        English</option>
-                                                    <option value="2"
-                                                        {{ old('language_type', $lead->language_type ?? '') == 2 ? 'selected' : '' }}>
-                                                        Gujarati</option>
-                                                </select>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label>Location</label>
-                                                <select class="form-select" name="location_type" id="location_type">
-                                                    <option value="1"
-                                                        {{ old('location_type', $lead->location_type ?? '') == 1 ? 'selected' : '' }}>
-                                                        Sama Savli Road</option>
-                                                    <option value="2"
-                                                        {{ old('location_type', $lead->location_type ?? '') == 2 ? 'selected' : '' }}>
-                                                        Kalali-Vadsar Road</option>
-                                                </select>
-                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -244,6 +262,7 @@
             let area = $('#area').val();
             let lead_source = $('#lead_source').val();
             let salesman = $('#salesman').val();
+            let locationType = $('#location_type').val();
             let notes = $('#notes').val();
 
             let isValid = true;
@@ -275,10 +294,11 @@
                     '<small class="error-message text-danger">Lead source is required.</small>');
                 isValid = false;
             }
-            // if (salesman === '') {
-            //     $('#salesman').after('<small class="error-message text-danger">Salesman is required.</small>');
-            //     isValid = false;
-            // }
+            if (!locationType || locationType.length === 0) {
+                $('#location_type').next('.select2')
+                    .after('<small class="error-message text-danger">Please select a location.</small>');
+                isValid = false;
+            }
             if (notes === '') {
                 $('#notes').after('<small class="error-message text-danger">Notes cannot be empty.</small>');
                 isValid = false;
