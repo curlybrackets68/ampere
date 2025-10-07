@@ -76,7 +76,7 @@ trait CommonFunctions
         '2' => 'Paid',
     ];
 
-    // reminder Days Array 
+    // reminder Days Array
     protected $reminderDays = [
         '5' => [
             11,
@@ -92,6 +92,7 @@ trait CommonFunctions
             231,
         ],
         '4' => [
+            // TVS King EV Max
             13,
             28,
             58,
@@ -109,7 +110,9 @@ trait CommonFunctions
             518,
             558,
         ],
-        '6' => [
+        '6' =>
+        [
+            // TVS King Deluxe
             8,
             23,
             38,

@@ -185,6 +185,10 @@ class AmcMasterController extends Controller
                         // TVS King EV Max
                         $firstServiceDays = $amcPackageMasterData->vehicle_type == '1' ? 40 : 40; // for new vehicle first service after 30 days
                         $kmInterval = $amcPackageMasterData->vehicle_type == '1' ? 1000 : 1000; // you can change this based on requirement
+                    } else if ($amcMaster->vehicle_master_id == 6) {
+                        // TVS King Deluxe
+                        $firstServiceDays = $amcPackageMasterData->vehicle_type == '1' ? 25 : 25; // for new vehicle first service after 30 days
+                        $kmInterval = $amcPackageMasterData->vehicle_type == '1' ? 1000 : 1000; // you can change this based on requirement
                     }
                     $firstServiceDate = $contractStartDate->copy()->addDays($firstServiceDays);
                     $firstServiceKm = $amcMaster->amc_start_km + $kmInterval;
@@ -200,15 +204,22 @@ class AmcMasterController extends Controller
                         $daysAdd = 120;
                         $additionKm = 4000;
                         if ($amcMaster->vehicle_master_id == 4) {
+                            // TVS King EV Max
                             $additionKm = 10000;
-                            if ($i == 1) {
-                                $daysAdd = 40;
-                            } else if ($i == 2) {
+                            if ($i <= 2) {
                                 $daysAdd = 40;
                             } else if ($i <= 3 && $i >= 5) {
                                 $daysAdd = 90;
                             } else if ($i <= 6 && $i >= 16) {
                                 $daysAdd = 120;
+                            }
+                        } else  if ($amcMaster->vehicle_master_id == 6) {
+                            // TVS King Deluxe
+                            $additionKm = 10000;
+                            if ($i == 1) {
+                                $daysAdd = 25;
+                            } else {
+                                $daysAdd = 45;
                             }
                         }
 
@@ -227,10 +238,17 @@ class AmcMasterController extends Controller
                         $serviceType = 2;
                         $reminderDays = 0;
                         if ($amcMaster->vehicle_master_id == 4) {
+                            // TVS King EV Max
                             if ($i <= 2) {
                                 $serviceType = 1;
                             }
                             $reminderDays = $this->reminderDays['4'][$i];
+                        } elseif ($amcMaster->vehicle_master_id == 6) {
+                            // TVS King Deluxe
+                            if ($i <= 2) {
+                                $serviceType = 1;
+                            }
+                            $reminderDays = $this->reminderDays['6'][$i];
                         }
                         $serviceData = [
                             'service_no' => $i + 1,
@@ -244,7 +262,7 @@ class AmcMasterController extends Controller
 
                         ServiceDetail::create($serviceData);
                     }
-                    
+
                     $vehicleTypeName = $this->getArrayNameById($this->vehicleTypeArray, $amcMaster->vehicle_type);
                     $startDate = $this->formatDateTime('d-M-Y', $amcMaster->amc_start_date);
                     $endDate = $this->formatDateTime('d-M-Y', $amcMaster->amc_end_date);
@@ -347,6 +365,10 @@ class AmcMasterController extends Controller
                         // TVS King EV Max
                         $firstServiceDays = $amcPackageMasterData->vehicle_type == '1' ? 40 : 40; // for new vehicle first service after 30 days
                         $kmInterval = $amcPackageMasterData->vehicle_type == '1' ? 1000 : 1000; // you can change this based on requirement
+                    } else if ($amcMaster->vehicle_master_id == 6) {
+                        // TVS King Deluxe
+                        $firstServiceDays = $amcPackageMasterData->vehicle_type == '1' ? 25 : 25; // for new vehicle first service after 30 days
+                        $kmInterval = $amcPackageMasterData->vehicle_type == '1' ? 1000 : 1000; // you can change this based on requirement
                     }
                     $firstServiceDate = $contractStartDate->copy()->addDays($firstServiceDays);
                     $firstServiceKm = $amcMaster->amc_start_km + $kmInterval;
@@ -362,14 +384,20 @@ class AmcMasterController extends Controller
                         $additionKm = 4000;
                         if ($amcMaster->vehicle_master_id == 4) {
                             $additionKm = 10000;
-                            if ($i == 1) {
-                                $daysAdd = 40;
-                            } else if ($i == 2) {
+                            if ($i <= 2) {
                                 $daysAdd = 40;
                             } else if ($i <= 3 && $i >= 5) {
                                 $daysAdd = 90;
                             } else if ($i <= 6 && $i >= 16) {
                                 $daysAdd = 120;
+                            }
+                        } else  if ($amcMaster->vehicle_master_id == 6) {
+                            // TVS King Deluxe
+                            $additionKm = 10000;
+                            if ($i == 1) {
+                                $daysAdd = 25;
+                            } else {
+                                $daysAdd = 45;
                             }
                         }
                         $nextServiceDate = $lastServiceDate->copy()->addDays($daysAdd); // Next service after 120 days
@@ -386,10 +414,17 @@ class AmcMasterController extends Controller
                         $serviceType = 2;
                         $reminderDays = 0;
                         if ($amcMaster->vehicle_master_id == 4) {
+                            // TVS King EV Max
                             if ($i <= 2) {
                                 $serviceType = 1;
                             }
                             $reminderDays = $this->reminderDays['4'][$i];
+                        } elseif ($amcMaster->vehicle_master_id == 6) {
+                            // TVS King Deluxe
+                            if ($i <= 2) {
+                                $serviceType = 1;
+                            }
+                            $reminderDays = $this->reminderDays['6'][$i];
                         }
                         $serviceData = [
                             'service_no' => $i + 1,
@@ -477,6 +512,10 @@ class AmcMasterController extends Controller
                         // TVS King EV Max
                         $firstServiceDays = $amcPackageMasterData->vehicle_type == '1' ? 40 : 40; // for new vehicle first service after 30 days
                         $kmInterval = $amcPackageMasterData->vehicle_type == '1' ? 1000 : 1000; // you can change this based on requirement
+                    } else if ($amcMaster->vehicle_master_id == 6) {
+                        // TVS King Deluxe
+                        $firstServiceDays = $amcPackageMasterData->vehicle_type == '1' ? 25 : 25; // for new vehicle first service after 30 days
+                        $kmInterval = $amcPackageMasterData->vehicle_type == '1' ? 1000 : 1000; // you can change this based on requirement
                     }
 
                     $firstServiceDate = $contractStartDate->copy()->addDays($firstServiceDays);
@@ -493,14 +532,20 @@ class AmcMasterController extends Controller
                         $additionKm = 4000;
                         if ($amcMaster->vehicle_master_id == 4) {
                             $additionKm = 10000;
-                            if ($i == 1) {
-                                $daysAdd = 40;
-                            } else if ($i == 2) {
+                            if ($i <= 2) {
                                 $daysAdd = 45;
                             } else if ($i <= 3 && $i >= 5) {
                                 $daysAdd = 90;
                             } else if ($i <= 6 && $i >= 16) {
                                 $daysAdd = 120;
+                            }
+                        } else  if ($amcMaster->vehicle_master_id == 6) {
+                            // TVS King Deluxe
+                            $additionKm = 10000;
+                            if ($i == 1) {
+                                $daysAdd = 25;
+                            } else {
+                                $daysAdd = 45;
                             }
                         }
                         $nextServiceDate = $lastServiceDate->copy()->addDays($daysAdd); // Next service after 120 days
@@ -517,10 +562,17 @@ class AmcMasterController extends Controller
                         $serviceType = 2;
                         $reminderDays = 0;
                         if ($amcMaster->vehicle_master_id == 4) {
+                            // TVS King EV Max
                             if ($i <= 2) {
                                 $serviceType = 1;
                             }
                             $reminderDays = $this->reminderDays['4'][$i];
+                        } elseif ($amcMaster->vehicle_master_id == 6) {
+                            // TVS King Deluxe
+                            if ($i <= 2) {
+                                $serviceType = 1;
+                            }
+                            $reminderDays = $this->reminderDays['6'][$i];
                         }
                         $serviceData = [
                             'service_no' => $i + 1,
