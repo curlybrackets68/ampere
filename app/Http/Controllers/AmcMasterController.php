@@ -189,6 +189,10 @@ class AmcMasterController extends Controller
                         // TVS King Deluxe
                         $firstServiceDays = $amcPackageMasterData->vehicle_type == '1' ? 25 : 25; // for new vehicle first service after 30 days
                         $kmInterval = $amcPackageMasterData->vehicle_type == '1' ? 1000 : 1000; // you can change this based on requirement
+                    } else if ($amcMaster->vehicle_master_id == 5) {
+                        // TVS King Duramax Plus
+                        $firstServiceDays = $amcPackageMasterData->vehicle_type == '1' ? 35 : 35; // for new vehicle first service after 30 days
+                        $kmInterval = $amcPackageMasterData->vehicle_type == '1' ? 1000 : 1000; // you can change this based on requirement
                     }
                     $firstServiceDate = $contractStartDate->copy()->addDays($firstServiceDays);
                     $firstServiceKm = $amcMaster->amc_start_km + $kmInterval;
@@ -221,6 +225,16 @@ class AmcMasterController extends Controller
                             } else {
                                 $daysAdd = 45;
                             }
+                        } else  if ($amcMaster->vehicle_master_id == 5) {
+                            // TVS King Duramax Plus
+                            $additionKm = 10000;
+                            if ($i == 1) {
+                                $daysAdd = 35;
+                            } else if ($i == 7) {
+                                $daysAdd = 70;
+                            } else {
+                                $daysAdd = 65;
+                            }
                         }
 
                         $nextServiceDate = $lastServiceDate->copy()->addDays($daysAdd); // Next service after 120 days
@@ -249,6 +263,12 @@ class AmcMasterController extends Controller
                                 $serviceType = 1;
                             }
                             $reminderDays = $this->reminderDays['6'][$i];
+                        } elseif ($amcMaster->vehicle_master_id == 5) {
+                            // TVS King Duramax Plus
+                            if ($i <= 2) {
+                                $serviceType = 1;
+                            }
+                            $reminderDays = $this->reminderDays['5'][$i];
                         }
                         $serviceData = [
                             'service_no' => $i + 1,
@@ -369,6 +389,10 @@ class AmcMasterController extends Controller
                         // TVS King Deluxe
                         $firstServiceDays = $amcPackageMasterData->vehicle_type == '1' ? 25 : 25; // for new vehicle first service after 30 days
                         $kmInterval = $amcPackageMasterData->vehicle_type == '1' ? 1000 : 1000; // you can change this based on requirement
+                    } else if ($amcMaster->vehicle_master_id == 5) {
+                        // TVS King Duramax Plus
+                        $firstServiceDays = $amcPackageMasterData->vehicle_type == '1' ? 35 : 35; // for new vehicle first service after 30 days
+                        $kmInterval = $amcPackageMasterData->vehicle_type == '1' ? 1000 : 1000; // you can change this based on requirement
                     }
                     $firstServiceDate = $contractStartDate->copy()->addDays($firstServiceDays);
                     $firstServiceKm = $amcMaster->amc_start_km + $kmInterval;
@@ -399,6 +423,16 @@ class AmcMasterController extends Controller
                             } else {
                                 $daysAdd = 45;
                             }
+                        } else  if ($amcMaster->vehicle_master_id == 5) {
+                            // TVS King Duramax Plus
+                            $additionKm = 10000;
+                            if ($i == 1) {
+                                $daysAdd = 35;
+                            } else if ($i == 7) {
+                                $daysAdd = 70;
+                            } else {
+                                $daysAdd = 65;
+                            }
                         }
                         $nextServiceDate = $lastServiceDate->copy()->addDays($daysAdd); // Next service after 120 days
                         $nextServiceKm = $lastServiceKm + $additionKm; // Add KM interval
@@ -425,6 +459,12 @@ class AmcMasterController extends Controller
                                 $serviceType = 1;
                             }
                             $reminderDays = $this->reminderDays['6'][$i];
+                        } elseif ($amcMaster->vehicle_master_id == 5) {
+                            // TVS King Duramax Plus
+                            if ($i <= 2) {
+                                $serviceType = 1;
+                            }
+                            $reminderDays = $this->reminderDays['5'][$i];
                         }
                         $serviceData = [
                             'service_no' => $i + 1,
@@ -516,6 +556,10 @@ class AmcMasterController extends Controller
                         // TVS King Deluxe
                         $firstServiceDays = $amcPackageMasterData->vehicle_type == '1' ? 25 : 25; // for new vehicle first service after 30 days
                         $kmInterval = $amcPackageMasterData->vehicle_type == '1' ? 1000 : 1000; // you can change this based on requirement
+                    } else if ($amcMaster->vehicle_master_id == 5) {
+                        // TVS King Duramax Plus
+                        $firstServiceDays = $amcPackageMasterData->vehicle_type == '1' ? 35 : 35; // for new vehicle first service after 30 days
+                        $kmInterval = $amcPackageMasterData->vehicle_type == '1' ? 1000 : 1000; // you can change this based on requirement
                     }
 
                     $firstServiceDate = $contractStartDate->copy()->addDays($firstServiceDays);
@@ -547,6 +591,16 @@ class AmcMasterController extends Controller
                             } else {
                                 $daysAdd = 45;
                             }
+                        } else  if ($amcMaster->vehicle_master_id == 5) {
+                            // TVS King Duramax Plus
+                            $additionKm = 10000;
+                            if ($i == 1) {
+                                $daysAdd = 35;
+                            } else if ($i == 7) {
+                                $daysAdd = 70;
+                            } else {
+                                $daysAdd = 65;
+                            }
                         }
                         $nextServiceDate = $lastServiceDate->copy()->addDays($daysAdd); // Next service after 120 days
                         $nextServiceKm = $lastServiceKm + $additionKm; // Add KM interval
@@ -573,6 +627,12 @@ class AmcMasterController extends Controller
                                 $serviceType = 1;
                             }
                             $reminderDays = $this->reminderDays['6'][$i];
+                        } elseif ($amcMaster->vehicle_master_id == 5) {
+                            // TVS King Duramax Plus
+                            if ($i <= 2) {
+                                $serviceType = 1;
+                            }
+                            $reminderDays = $this->reminderDays['5'][$i];
                         }
                         $serviceData = [
                             'service_no' => $i + 1,

@@ -79,6 +79,7 @@ trait CommonFunctions
     // reminder Days Array
     protected $reminderDays = [
         '5' => [
+            // TVS King Duramax Plus
             11,
             33,
             55,
