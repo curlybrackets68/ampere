@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ServiceDetail extends Model
 {
-    use HasFactory,SoftDeletes,CommonFunctions;
+    use HasFactory, SoftDeletes, CommonFunctions;
 
     protected $fillable = [
         'service_no',
@@ -21,10 +21,12 @@ class ServiceDetail extends Model
         'attachment',
         'status',
         'inquiry_flag',
-        'inquiry_id'
+        'inquiry_id',
+        'service_type',
+        'reminder_days',
     ];
 
-    protected $appends = ['display_service_date', 'status_name','amc_master_details','attachment_url','service_by'];
+    protected $appends = ['display_service_date', 'status_name', 'amc_master_details', 'attachment_url', 'service_by', 'service_type_text'];
 
     function getDisplayServiceDateAttribute()
     {
@@ -42,19 +44,24 @@ class ServiceDetail extends Model
         if (!empty($this->attachment) && file_exists($path)) {
             return asset('assets/attachment/amc-master/' . $this->amc_id . '/service/' . $this->attachment);
         }
-    
+
         return '';
     }
     function getServiceByAttribute()
     {
-        return User::find($this->modified_by)->user_name??'';
+        return User::find($this->modified_by)->user_name ?? '';
     }
 
 
     //amc_master_details
-    public function getAmcMasterDetailsAttribute(){
+    public function getAmcMasterDetailsAttribute()
+    {
         return AmcMaster::find($this->amc_id);
     }
 
-
+    //service_type_text
+    function getServiceTypeTextAttribute()
+    {
+        return $this->amcServiceType[$this->service_type];
+    }
 }

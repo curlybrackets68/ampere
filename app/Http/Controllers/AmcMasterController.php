@@ -177,21 +177,44 @@ class AmcMasterController extends Controller
                     $contractStartDate = Carbon::parse($amcMaster->amc_start_date);
                     $serviceDates = [];
                     $serviceKm = [];
+
                     $firstServiceDays = $amcPackageMasterData->vehicle_type == '1' ? 30 : 120; // for new vehicle first service after 30 days
                     $kmInterval = $amcPackageMasterData->vehicle_type == '1' ? 1000 : 4000; // you can change this based on requirement
 
+                    if ($amcMaster->vehicle_master_id == 4) {
+                        // TVS King EV Max
+                        $firstServiceDays = $amcPackageMasterData->vehicle_type == '1' ? 40 : 40; // for new vehicle first service after 30 days
+                        $kmInterval = $amcPackageMasterData->vehicle_type == '1' ? 1000 : 1000; // you can change this based on requirement
+                    }
                     $firstServiceDate = $contractStartDate->copy()->addDays($firstServiceDays);
                     $firstServiceKm = $amcMaster->amc_start_km + $kmInterval;
                     $serviceDates[] = $firstServiceDate;
                     $serviceKm[] = $firstServiceKm; // Add initial KM
+
 
                     $totalServices = $amcPackageMasterData->service_count;
                     $lastServiceDate = $firstServiceDate;
                     $lastServiceKm = $firstServiceKm;
 
                     for ($i = 1; $i < $totalServices; $i++) {
-                        $nextServiceDate = $lastServiceDate->copy()->addDays(120); // Next service after 120 days
-                        $nextServiceKm = $lastServiceKm + 4000; // Add KM interval
+                        $daysAdd = 120;
+                        $additionKm = 4000;
+                        if ($amcMaster->vehicle_master_id == 4) {
+                            $additionKm = 10000;
+                            if ($i == 1) {
+                                $daysAdd = 40;
+                            } else if ($i == 2) {
+                                $daysAdd = 40;
+                            } else if ($i <= 3 && $i >= 5) {
+                                $daysAdd = 90;
+                            } else if ($i <= 6 && $i >= 16) {
+                                $daysAdd = 120;
+                            }
+                        }
+
+                        $nextServiceDate = $lastServiceDate->copy()->addDays($daysAdd); // Next service after 120 days
+
+                        $nextServiceKm = $lastServiceKm + $additionKm; // Add KM interval
 
                         $serviceDates[] = $nextServiceDate;
                         $serviceKm[] = $nextServiceKm;
@@ -201,9 +224,19 @@ class AmcMasterController extends Controller
                     }
 
                     for ($i = 0; $i < count($serviceDates); $i++) {
+                        $serviceType = 2;
+                        $reminderDays = 0;
+                        if ($amcMaster->vehicle_master_id == 4) {
+                            if ($i <= 2) {
+                                $serviceType = 1;
+                            }
+                            $reminderDays = $this->reminderDays['4'][$i];
+                        }
                         $serviceData = [
                             'service_no' => $i + 1,
                             'service_km' => $serviceKm[$i],
+                            'service_type' => $serviceType,
+                            'reminder_days' => $reminderDays,
                             'amc_id' => $amcMasterId,
                             'service_date' => $serviceDates[$i]->format('Y-m-d H:i:s'),
                             'created_by' => Auth::id(),
@@ -309,6 +342,12 @@ class AmcMasterController extends Controller
                     $firstServiceDays = $amcPackageMasterData->vehicle_type == '1' ? 30 : 120; // for new vehicle first service after 30 days
                     $kmInterval = $amcPackageMasterData->vehicle_type == '1' ? 1000 : 4000; // you can change this based on requirement
 
+
+                    if ($amcMaster->vehicle_master_id == 4) {
+                        // TVS King EV Max
+                        $firstServiceDays = $amcPackageMasterData->vehicle_type == '1' ? 40 : 40; // for new vehicle first service after 30 days
+                        $kmInterval = $amcPackageMasterData->vehicle_type == '1' ? 1000 : 1000; // you can change this based on requirement
+                    }
                     $firstServiceDate = $contractStartDate->copy()->addDays($firstServiceDays);
                     $firstServiceKm = $amcMaster->amc_start_km + $kmInterval;
                     $serviceDates[] = $firstServiceDate;
@@ -319,8 +358,22 @@ class AmcMasterController extends Controller
                     $lastServiceKm = $firstServiceKm;
 
                     for ($i = 1; $i < $totalServices; $i++) {
-                        $nextServiceDate = $lastServiceDate->copy()->addDays(120); // Next service after 120 days
-                        $nextServiceKm = $lastServiceKm + 4000; // Add KM interval
+                        $daysAdd = 120;
+                        $additionKm = 4000;
+                        if ($amcMaster->vehicle_master_id == 4) {
+                            $additionKm = 10000;
+                            if ($i == 1) {
+                                $daysAdd = 40;
+                            } else if ($i == 2) {
+                                $daysAdd = 40;
+                            } else if ($i <= 3 && $i >= 5) {
+                                $daysAdd = 90;
+                            } else if ($i <= 6 && $i >= 16) {
+                                $daysAdd = 120;
+                            }
+                        }
+                        $nextServiceDate = $lastServiceDate->copy()->addDays($daysAdd); // Next service after 120 days
+                        $nextServiceKm = $lastServiceKm + $additionKm; // Add KM interval
 
                         $serviceDates[] = $nextServiceDate;
                         $serviceKm[] = $nextServiceKm;
@@ -330,9 +383,19 @@ class AmcMasterController extends Controller
                     }
 
                     for ($i = 0; $i < count($serviceDates); $i++) {
+                        $serviceType = 2;
+                        $reminderDays = 0;
+                        if ($amcMaster->vehicle_master_id == 4) {
+                            if ($i <= 2) {
+                                $serviceType = 1;
+                            }
+                            $reminderDays = $this->reminderDays['4'][$i];
+                        }
                         $serviceData = [
                             'service_no' => $i + 1,
                             'service_km' => $serviceKm[$i],
+                            'service_type' => $serviceType,
+                            'reminder_days' => $reminderDays,
                             'amc_id' => $amcMasterId,
                             'service_date' => $serviceDates[$i]->format('Y-m-d H:i:s'),
                             'created_by' => Auth::id(),
@@ -410,6 +473,12 @@ class AmcMasterController extends Controller
                     $firstServiceDays = $amcPackageMasterData->vehicle_type == '1' ? 30 : 120; // for new vehicle first service after 30 days
                     $kmInterval = $amcPackageMasterData->vehicle_type == '1' ? 1000 : 4000; // you can change this based on requirement
 
+                    if ($amcMaster->vehicle_master_id == 4) {
+                        // TVS King EV Max
+                        $firstServiceDays = $amcPackageMasterData->vehicle_type == '1' ? 40 : 40; // for new vehicle first service after 30 days
+                        $kmInterval = $amcPackageMasterData->vehicle_type == '1' ? 1000 : 1000; // you can change this based on requirement
+                    }
+
                     $firstServiceDate = $contractStartDate->copy()->addDays($firstServiceDays);
                     $firstServiceKm = $amcMaster->amc_start_km + $kmInterval;
                     $serviceDates[] = $firstServiceDate;
@@ -420,8 +489,22 @@ class AmcMasterController extends Controller
                     $lastServiceKm = $firstServiceKm;
 
                     for ($i = 1; $i < $totalServices; $i++) {
-                        $nextServiceDate = $lastServiceDate->copy()->addDays(120); // Next service after 120 days
-                        $nextServiceKm = $lastServiceKm + 4000; // Add KM interval
+                        $daysAdd = 120;
+                        $additionKm = 4000;
+                        if ($amcMaster->vehicle_master_id == 4) {
+                            $additionKm = 10000;
+                            if ($i == 1) {
+                                $daysAdd = 40;
+                            } else if ($i == 2) {
+                                $daysAdd = 45;
+                            } else if ($i <= 3 && $i >= 5) {
+                                $daysAdd = 90;
+                            } else if ($i <= 6 && $i >= 16) {
+                                $daysAdd = 120;
+                            }
+                        }
+                        $nextServiceDate = $lastServiceDate->copy()->addDays($daysAdd); // Next service after 120 days
+                        $nextServiceKm = $lastServiceKm + $additionKm; // Add KM interval
 
                         $serviceDates[] = $nextServiceDate;
                         $serviceKm[] = $nextServiceKm;
@@ -431,9 +514,19 @@ class AmcMasterController extends Controller
                     }
 
                     for ($i = 0; $i < count($serviceDates); $i++) {
+                        $serviceType = 2;
+                        $reminderDays = 0;
+                        if ($amcMaster->vehicle_master_id == 4) {
+                            if ($i <= 2) {
+                                $serviceType = 1;
+                            }
+                            $reminderDays = $this->reminderDays['4'][$i];
+                        }
                         $serviceData = [
                             'service_no' => $i + 1,
                             'service_km' => $serviceKm[$i],
+                            'service_type' => $serviceType,
+                            'reminder_days' => $reminderDays,
                             'amc_id' => $amcMasterId,
                             'service_date' => $serviceDates[$i]->format('Y-m-d H:i:s'),
                             'created_by' => Auth::id(),
