@@ -54,12 +54,22 @@
         <table>
             <tr>
                 <td>
-                    @if (env('SERVER_MODE') == 'live' || env('SERVER_MODE') == 'test')
-                        <img src="{{ url('assets/assets/img/pdf-header2.png') }}"
-                            style="width: 100% !important; margin-top: -30px;">
+                    @if ($amc->vehicle_master_id == '4' || $amc->vehicle_master_id == '5' || $amc->vehicle_master_id == '6')
+                        @if (env('SERVER_MODE') == 'live' || env('SERVER_MODE') == 'test')
+                            <img src="{{ url('assets/assets/img/new.png') }}"
+                                style="width: 100% !important; margin-top: -30px;">
+                        @else
+                            <img src="{{ public_path('assets/assets/img/new.png') }}"
+                                style="width: 100% !important; margin-top: -30px;">
+                        @endif
                     @else
-                        <img src="{{ public_path('assets/assets/img/pdf-header2.png') }}"
-                            style="width: 100% !important; margin-top: -30px;">
+                        @if (env('SERVER_MODE') == 'live' || env('SERVER_MODE') == 'test')
+                            <img src="{{ url('assets/assets/img/pdf-header2.png') }}"
+                                style="width: 100% !important; margin-top: -30px;">
+                        @else
+                            <img src="{{ public_path('assets/assets/img/pdf-header2.png') }}"
+                                style="width: 100% !important; margin-top: -30px;">
+                        @endif
                     @endif
 
                 </td>
@@ -106,13 +116,14 @@
 
     <table style="text-align: center;">
         <tr>
-            <th colspan="4" style="text-align: right;">
+            <th colspan="6" style="text-align: center;">
                 <div style="display: inline-block;">Package: <strong>{{ $amc->amc_package_type_name }}</strong></div>
             </th>
         </tr>
         <tr>
             <th class="serviceTh" style="width: 10%;">Sr.No</th>
             <th class="serviceTh" style="width: 20%;">Service Date</th>
+            <th class="serviceTh" style="width: 20%;">Service Type</th>
             <th class="serviceTh" style="width: 10%;">Service KM</th>
             <th class="serviceTh" style="width: 50%;">Service Remark</th>
             <th class="serviceTh" style="width: 10%;">Status</th>
@@ -121,6 +132,7 @@
             <tr>
                 <td class="serviceTd">{{ $index + 1 }}</td>
                 <td class="serviceTd">{{ $service['display_service_date'] }}</td>
+                <td class="serviceTd">{{ $service['service_type_text'] ?? '' }}</td>
                 <td class="serviceTd">{{ $service['service_km'] ?? 0 }}</td>
                 <td class="serviceTd">{{ $service['service_remark'] ?? '' }}</td>
                 <td class="serviceTd">{{ $service['status_name'] ?? '' }}</td>
@@ -130,21 +142,49 @@
 
     <div class="section" style="margin-top: 5px;">Terms & Conditions</div>
     <ol class="terms">
-        <li>This contract includes<strong> {{ $amc->no_of_service }} paid services </strong>which can be availed
-            <strong>any time within the contract duration. </strong>
-        </li>
-        <li><strong>The contract will expire</strong> on the <strong>End Date mentioned above, </strong>irrespective
-            of the number of services availed.
-        </li>
-        <li>If all {{ $amc->no_of_service }} services are availed before the contract end date, <strong>the contract
-                shall terminate automatically</strong> upon the completion of last service.</li>
-        <li><strong>Any unutilized services will lapse </strong>after the expiry date</li>
-        <li>The cost of <strong>spare parts, additional labour, and consumables </strong>is<strong> not covered
-            </strong>under this contract and will be
-            <strong>charged separately </strong>as per actuals.
-        </li>
-        <li>Services under this contract must be availed only at authorized service centers (as applicable).</li>
-        <li><span style="background-color: yellow"><strong>Service will be done on appointment basis only.</span></strong></li>
+        @if ($amc->vehicle_master_id == '4' || $amc->vehicle_master_id == '5' || $amc->vehicle_master_id == '6')
+            <li>This contract includes <strong>3 Free services <strong>which can be availed any time within the contract
+                        duration.
+            </li>
+            <li>The contract will expire on the End Date mentioned above, irrespective of the number of services
+                availed.
+
+            </li>
+            <li> If all 3 services are availed before the contract end date, the contract shall terminate automatically
+                upon the completion of
+                last service.
+            </li>
+            <li>Any unutilized services will lapse after the expiry date
+            </li>
+            <li>The cost of spare parts, additional labour, and consumables is not covered under this contract and will
+                be charged
+                separately as per actual.
+
+            </li>
+            <li> Services under this contract must be availed only at authorized service centers (as applicable).
+            </li>
+            <li><span style="background-color: yellow"><strong> Service will be done on
+                        appointment basis only.</span></strong></li>
+        @else
+            <li>This contract includes<strong> {{ $amc->no_of_service }} paid services </strong>which can be availed
+                <strong>any time within the contract duration. </strong>
+            </li>
+            <li><strong>The contract will expire</strong> on the <strong>End Date mentioned above, </strong>irrespective
+                of the number of services availed.
+            </li>
+            <li>If all {{ $amc->no_of_service }} services are availed before the contract end date, <strong>the
+                    contract
+                    shall terminate automatically</strong> upon the completion of last service.</li>
+            <li><strong>Any unutilized services will lapse </strong>after the expiry date</li>
+            <li>The cost of <strong>spare parts, additional labour, and consumables </strong>is<strong> not covered
+                </strong>under this contract and will be
+                <strong>charged separately </strong>as per actuals.
+            </li>
+            <li>Services under this contract must be availed only at authorized service centers (as applicable).</li>
+            <li><span style="background-color: yellow"><strong>Service will be done on appointment basis
+                        only.</span></strong></li>
+        @endif
+
     </ol>
 
     <div class="section">Payment Details</div>
