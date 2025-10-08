@@ -100,6 +100,20 @@ class AMCCronJob extends Command
                 $messageDue .= "\n";
                 $messageDue .= "Thank you for trusting Ampere!\n";
 
+                $gujaratiMessageDue = "પ્રિય {$amcDue->customer_name},\n";
+                $gujaratiMessageDue .= "માત્ર એક મિત્રતાપૂર્વકની યાદ — તમારા વાહન *{$amcDue->vehicle_number}* માટેનો AMC કરાર *{$amcDue->amc_display_number}* ટૂંક સમયમાં સમાપ્ત થઈ રહ્યો છે \n";
+                $gujaratiMessageDue .= "*{$amcDue->display_amc_end_date}* પર.\n";
+                $gujaratiMessageDue .= "\n";
+                $gujaratiMessageDue .= "સેવામાં વિક્ષેપ ટાળવા અને તમારા વાહનને ઉત્તમ સ્થિતિમાં રાખવા માટે આજેજ રિન્યુ કરો.\n";
+                $gujaratiMessageDue .= "\n";
+                $gujaratiMessageDue .= "લાભો:\n";
+                $gujaratiMessageDue .= "- મફત રૂટિન મેઈન્ટેનન્સ  \n";
+                $gujaratiMessageDue .= "- પ્રાથમિક સેવા સ્લોટ્સ  \n";
+                $gujaratiMessageDue .= "\n";
+                $gujaratiMessageDue .= "રિન્યુ કરવા માટે, આ મેસેજનો જવાબ આપો અથવા અમને +91 90233 42463 પર કોલ કરો.\n";
+                $gujaratiMessageDue .= "\n";
+                $gujaratiMessageDue .= "TVS પર વિશ્વાસ રાખવા બદલ આપનો આભાર!\n";
+
                 // $sent = $this->sendWhatsAppMessageWithFile($amcDue->contact_number, $messageDue, $pdfUrl['full_path']);
 
                 $sent = $this->sendWhatsAppMessageWithFile($amcDue->contact_number, $messageDue, $pdfUrl['public_url'], 'amc_pdf');
