@@ -116,10 +116,15 @@ class AMCCronJob extends Command
 
                 // $sent = $this->sendWhatsAppMessageWithFile($amcDue->contact_number, $messageDue, $pdfUrl['full_path']);
 
-                $sent = $this->sendWhatsAppMessageWithFile($amcDue->contact_number, $messageDue, $pdfUrl['public_url'], 'amc_pdf');
-                if ($sent && File::exists($pdfUrl['public_url'])) {
-                    File::delete($pdfUrl['public_url']);
+                if (in_array($amcDue->vehicle_master_id, [4, 5, 6])) {
+                    $this->sendWhatsAppMessage($amcDue->contact_number, $gujaratiMessageDue);
+                } else {
+                    $sent = $this->sendWhatsAppMessageWithFile($amcDue->contact_number, $messageDue, $pdfUrl['public_url'], 'amc_pdf');
+                    if ($sent && File::exists($pdfUrl['public_url'])) {
+                        File::delete($pdfUrl['public_url']);
+                    }
                 }
+
                 $this->info($messageDue);
                 \Log::info($messageDue);
             }
