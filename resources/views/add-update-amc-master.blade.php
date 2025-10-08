@@ -148,9 +148,7 @@
                                         <div class="form-group">
                                             <label>AMC End Date</label>
                                             <input type="text" class="form-control" id="amc_end_date"
-                                                name="amc_end_date"
-                                             readonly
-                                                style="pointer-events: none" tabindex="1">
+                                                name="amc_end_date" readonly style="pointer-events: none" tabindex="1">
                                         </div>
                                     </div>
                                     <div class="col-md-3">
@@ -251,8 +249,9 @@
             return dateStr.split(" ")[0]; // take only YYYY-MM-DD
         }
 
-        $(document).on('change', '#vehicle_type', function() {
-            let type_id = $(this).val();
+        $(document).on('change', '#vehicle_master_id', function() {
+            let type_id = $('#vehicle_type').val();
+            let vehicle_master_id = $("#vehicle_master_id").val();
             const dropdown = $('#amc_package_type_id');
             dropdown.empty();
             $.ajax({
@@ -271,11 +270,46 @@
                             if (amcMaster && amcMaster.amc_package_type_id == item.id) {
                                 selected = 'selected';
                             }
-                            const text =
-                                `${item.service_count} Services`;
-                            dropdown.append(
-                                `<option value="${item.id}" data-time-period="${item.time_period}" ${selected} data-amount="${item.price}">${text}</option>`
-                            );
+
+                            if (vehicle_master_id == '4') {
+                                // TVS King EV Max  16 service
+                                if (item.service_count == 16) {
+                                    var text =
+                                        `${item.service_count} Services`;
+                                    dropdown.append(
+                                        `<option value="${item.id}" data-time-period="${item.time_period}" ${selected} data-amount="${item.price}">${text}</option>`
+                                    );
+                                }
+
+                            } else if (vehicle_master_id == '5') {
+                                // TVS King Duramax Plus
+                                if (item.service_count == 11) {
+                                    var text =
+                                        `${item.service_count} Services`;
+                                    dropdown.append(
+                                        `<option value="${item.id}" data-time-period="${item.time_period}" ${selected} data-amount="${item.price}">${text}</option>`
+                                    );
+                                }
+
+                            } else if (vehicle_master_id == '7') {
+                                // TVS King Deluxe
+                                if (item.service_count == 15) {
+                                    var text =
+                                        `${item.service_count} Services`;
+                                    dropdown.append(
+                                        `<option value="${item.id}" data-time-period="${item.time_period}" ${selected} data-amount="${item.price}">${text}</option>`
+                                    );
+                                }
+
+                            } else {
+                                var text =
+                                    `${item.service_count} Services`;
+                                dropdown.append(
+                                    `<option value="${item.id}" data-time-period="${item.time_period}" ${selected} data-amount="${item.price}">${text}</option>`
+                                );
+                            }
+
+
                         });
                         $('#amc_package_type_id').trigger('change');
                     }
