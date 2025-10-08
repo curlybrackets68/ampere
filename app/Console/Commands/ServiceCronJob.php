@@ -201,7 +201,7 @@ class ServiceCronJob extends Command
                     $gujaratiMessage .= "કૃપા કરીને вашей એ pointed number પર “*Hi*” મોકલી તમારી નિમણૂક બુક કરો\n";
                     $gujaratiMessage .= "*9023342463* \n";
                     $gujaratiMessage .= "TVS પસંદ કરવા બદલ આપનો આભાર! \n";
-                    $gujaratiMessage .= "મદદ માટે, અમને +91 90233 42463 પર કોલ કરો.\n";
+                    $gujaratiMessage .= "મદદ માટે, અમને +૯૧ ૯૦૨૩૩ ૪૨૪૬૩ પર કોલ કરો.\n";
 
                     $this->sendWhatsAppMessage($amc->contact_number, $gujaratiMessage);
 
@@ -222,7 +222,7 @@ class ServiceCronJob extends Command
                     $gujaratiMessageOnDue .= "કૃપા કરીને અમારી સાથે સંપર્ક કરો જેથી તમારી સેવા અથવા વિનંતી માટે નિમણૂક બુક કરી શકાય. \n";
                     $gujaratiMessageOnDue .= " \n";
                     $gujaratiMessageOnDue .= "TVS પસંદ કરવા બદલ આપનો આભાર. \n";
-                    $gujaratiMessageOnDue .= "મદદ માટે, +91 90233 42463 પર કોલ કરો. \n";
+                    $gujaratiMessageOnDue .= "મદદ માટે, +૯૧ ૯૦૨૩૩ ૪૨૪૬૩ પર કોલ કરો. \n";
 
                     $this->sendWhatsAppMessage($amc->contact_number, $gujaratiMessageOnDue);
 
@@ -239,7 +239,7 @@ class ServiceCronJob extends Command
                     $gujaratiMessageDue .= "કૃપા કરીને તરત અમારી સાથે સંપર્ક કરો અને તમારી સેવા માટે નિમણૂક બુક કરો.\n\n";
                     $gujaratiMessageDue .= "નોંધ: સેવા માં મોડાશી તમારી AMC કવરેજ પર અસર કરી શકે છે.\n\n";
                     $gujaratiMessageDue .= "TVS પસંદ કરવા બદલ આપનો આભાર.\n";
-                    $gujaratiMessageDue .= "મદદ માટે, +91 90233 42463 પર કોલ કરો.\n";
+                    $gujaratiMessageDue .= "મદદ માટે, +૯૧ ૯૦૨૩૩ ૪૨૪૬૩ પર કોલ કરો.\n";
 
                     $this->sendWhatsAppMessage($amc->contact_number, $gujaratiMessageDue);
 

@@ -110,7 +110,7 @@ class AMCCronJob extends Command
                 $gujaratiMessageDue .= "- મફત રૂટિન મેઈન્ટેનન્સ  \n";
                 $gujaratiMessageDue .= "- પ્રાથમિક સેવા સ્લોટ્સ  \n";
                 $gujaratiMessageDue .= "\n";
-                $gujaratiMessageDue .= "રિન્યુ કરવા માટે, આ મેસેજનો જવાબ આપો અથવા અમને +91 90233 42463 પર કોલ કરો.\n";
+                $gujaratiMessageDue .= "રિન્યુ કરવા માટે, આ મેસેજનો જવાબ આપો અથવા અમને +૯૧ ૯૦૨૩૩ ૪૨૪૬૩ પર કોલ કરો.\n";
                 $gujaratiMessageDue .= "\n";
                 $gujaratiMessageDue .= "TVS પર વિશ્વાસ રાખવા બદલ આપનો આભાર!\n";
 
