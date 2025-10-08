@@ -71,6 +71,69 @@ trait CommonFunctions
         '3' => 'Cheque',
     ];
 
+    protected $amcServiceType = [
+        '1' => 'Free',
+        '2' => 'Paid',
+    ];
+
+    // reminder Days Array
+    protected $reminderDays = [
+        '5' => [
+            // TVS King Duramax Plus
+            11,
+            33,
+            55,
+            76,
+            98,
+            120,
+            143,
+            165,
+            186,
+            210,
+            231,
+        ],
+        '4' => [
+            // TVS King EV Max
+            13,
+            28,
+            58,
+            88,
+            118,
+            158,
+            198,
+            238,
+            278,
+            318,
+            358,
+            398,
+            438,
+            478,
+            518,
+            558,
+        ],
+        '6' =>
+        [
+            // TVS King Deluxe
+            8,
+            23,
+            38,
+            53,
+            68,
+            83,
+            98,
+            113,
+            128,
+            143,
+            158,
+            173,
+            190,
+            203,
+            218,
+        ],
+    ];
+
+
+
     // End fix constants for project
 
     public function convertNullOrEmptyStringToZero($str)

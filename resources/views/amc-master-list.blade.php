@@ -507,10 +507,10 @@
                                     <span style="font-weight: bold;">Customer Mobile</span><br>
                                     <span>${amcData.contact_number}</span>
                                 </div>
-                                
+
                             </div>
                             <div class="row mt-2">
-                              
+
                                 <div class="col-md-3">
                                     <span style="font-weight: bold;">Start & End Date</span><br>
                                     <span>${amcData.display_amc_start_date} - ${amcData.display_amc_end_date}</span>
@@ -551,13 +551,13 @@
                     <li class="nav-item" role="presentation">
                         <button class="nav-link " id="system-log-detail-tab" data-bs-toggle="tab" data-bs-target="#system-log-detail" type="button" role="tab" aria-controls="system-log-detail" aria-selected="false">System Log</button>
                     </li>
-                    
+
                 </ul>
             `;
 
                     tabContentHtml = `
                 <div class="tab-content" id="amcServiceTabContent">
-                    
+
 
                     <div class="tab-pane fade show active p-3" id="service-detail" role="tabpanel" aria-labelledby="service-detail-tab">
                         <div class="table-responsive">
@@ -566,6 +566,7 @@
                                     <tr>
                                         <th class="alignTdCenter">#</th>
                                         <th class="alignTdCenter">Service Date</th>
+                                        <th class="alignTdCenter">Service Type</th>
                                         <th class="alignTdCenter">Service KM</th>
                                         <th class="alignTdCenter">Remark</th>
                                         <th class="alignTdCenter">Status</th>
@@ -586,6 +587,7 @@
                             <tr>
                                 <td class="alignTdCenter" style="width: 10%;">${index++}</td>
                                 <td class="alignTdCenter" style="width: 15%;">${item.display_service_date}</td>
+                                <td class="alignTdCenter" style="width: 15%;">${item.service_type_text}</td>
                                 <td class="alignTdCenter" style="width: 10%;">${item.service_km}</td>
                                 <td class="alignTdCenter" style="width: 30%;">${item.service_remark ?? ''}</td>
                                 <td class="alignTdCenter" style="width: 10%;"><span class="badge ${badge}">${item.status_name}</span></td>
