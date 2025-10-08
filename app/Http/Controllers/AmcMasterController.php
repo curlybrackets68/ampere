@@ -219,7 +219,7 @@ class AmcMasterController extends Controller
                             }
                         } else  if ($amcMaster->vehicle_master_id == 6) {
                             // TVS King Deluxe
-                            $additionKm = 10000;
+                          //  $additionKm = 5000;
                             if ($i == 1) {
                                 $daysAdd = 25;
                             } else {
@@ -417,7 +417,7 @@ class AmcMasterController extends Controller
                             }
                         } else  if ($amcMaster->vehicle_master_id == 6) {
                             // TVS King Deluxe
-                            $additionKm = 10000;
+                          //  $additionKm = 5000;
                             if ($i == 1) {
                                 $daysAdd = 25;
                             } else {
@@ -585,7 +585,7 @@ class AmcMasterController extends Controller
                             }
                         } else  if ($amcMaster->vehicle_master_id == 6) {
                             // TVS King Deluxe
-                            $additionKm = 10000;
+                            //$additionKm = 5000;
                             if ($i == 1) {
                                 $daysAdd = 25;
                             } else {
