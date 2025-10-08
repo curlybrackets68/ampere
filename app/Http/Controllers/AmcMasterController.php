@@ -219,7 +219,7 @@ class AmcMasterController extends Controller
                             }
                         } else  if ($amcMaster->vehicle_master_id == 6) {
                             // TVS King Deluxe
-                          //  $additionKm = 5000;
+                            //  $additionKm = 5000;
                             if ($i == 1) {
                                 $daysAdd = 25;
                             } else {
@@ -286,7 +286,8 @@ class AmcMasterController extends Controller
                     $vehicleTypeName = $this->getArrayNameById($this->vehicleTypeArray, $amcMaster->vehicle_type);
                     $startDate = $this->formatDateTime('d-M-Y', $amcMaster->amc_start_date);
                     $endDate = $this->formatDateTime('d-M-Y', $amcMaster->amc_end_date);
-                    $vehicleName  = Vehicle::find($amcMaster->vehicle_master_id)->first()->name ?? '';
+                    // $vehicleName  = Vehicle::find($amcMaster->vehicle_master_id)->first()->name ?? '';
+                    $vehicleName  = Vehicle::where('id', $amcMaster->vehicle_master_id)->first()->name ?? '';
                     $packageString = $amcPackageMasterData->service_count . ' Sevices - ' . $amcPackageMasterData->price . ' duration ' . $amcPackageMasterData->time_period . 'months';
                     $whatsAppMsg = "Hi $amcMaster->customer_name \n \n";
 
@@ -417,7 +418,7 @@ class AmcMasterController extends Controller
                             }
                         } else  if ($amcMaster->vehicle_master_id == 6) {
                             // TVS King Deluxe
-                          //  $additionKm = 5000;
+                            //  $additionKm = 5000;
                             if ($i == 1) {
                                 $daysAdd = 25;
                             } else {
