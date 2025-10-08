@@ -291,7 +291,7 @@
                                     );
                                 }
 
-                            } else if (vehicle_master_id == '7') {
+                            } else if (vehicle_master_id == '6') {
                                 // TVS King Deluxe
                                 if (item.service_count == 15) {
                                     var text =
@@ -302,11 +302,13 @@
                                 }
 
                             } else {
-                                var text =
-                                    `${item.service_count} Services`;
-                                dropdown.append(
-                                    `<option value="${item.id}" data-time-period="${item.time_period}" ${selected} data-amount="${item.price}">${text}</option>`
-                                );
+                                if (item.service_count <= 9) {
+                                    var text =
+                                        `${item.service_count} Services`;
+                                    dropdown.append(
+                                        `<option value="${item.id}" data-time-period="${item.time_period}" ${selected} data-amount="${item.price}">${text}</option>`
+                                    );
+                                }
                             }
 
 

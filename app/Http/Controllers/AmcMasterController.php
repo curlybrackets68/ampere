@@ -130,7 +130,7 @@ class AmcMasterController extends Controller
                 ->rawColumns(['action', 'customer_details', 'contact_date', 'vehicle_data', 'display_status', 'vehicle_model', 'row_class'])
                 ->make(true);
         }
-        $vehicle = Vehicle::where('id','!=',7)->pluck('name', 'id');
+        $vehicle = Vehicle::where('id', '!=', 7)->pluck('name', 'id');
         $vehicleTypeArray = $this->vehicleTypeArray;
         $serviceTypeArray = $this->serviceTypeArray;
         $branch = $this->branchArray;
@@ -147,7 +147,7 @@ class AmcMasterController extends Controller
     public function create()
     {
 
-        $vehicle = Vehicle::where('id','!=',7)->pluck('name', 'id');
+        $vehicle = Vehicle::where('id', '!=', 7)->pluck('name', 'id');
         $vehicleTypeArray = $this->vehicleTypeArray;
         $paymentTypeArray = $this->paymentTypeArray;
         $amcDisplayNumber = AmcMaster::select('amc_display_number')->orderBy('id', 'DESC')->first() ?? 0;
@@ -291,17 +291,19 @@ class AmcMasterController extends Controller
                     $packageString = $amcPackageMasterData->service_count . ' Sevices - ' . $amcPackageMasterData->price . ' duration ' . $amcPackageMasterData->time_period . 'months';
 
                     if ($amcMaster->vehicle_master_id == '4' || $amcMaster->vehicle_master_id == '5' || $amcMaster->vehicle_master_id == '6') {
-                        $whatsAppMsg = "હાય $amcMaster->customer_name \n \n";
-                        $whatsAppMsg .= "તમારું AMC કરાર તમારા વાહન *$amcMaster->vehicle_number* માટે સફળતાપૂર્વક જનરેટ થયું છે. \n \n";
+                        $whatsAppMsg = "નમસ્તે $amcMaster->customer_name \n \n";
+
+                        $whatsAppMsg .= "તમારા વાહન *$amcMaster->vehicle_number* માટેનો AMC કરાર સફળતાપૂર્વક બનાવવામાં આવ્યો છે. \n \n";
                         $whatsAppMsg .= "કરાર આઈડી: *$amcMaster->amc_display_number* \n";
                         $whatsAppMsg .= "વાહન કેટેગરી: *$vehicleTypeName* \n";
-                        $whatsAppMsg .= "કરાર શરૂ થવાની તારીખ: *$startDate* \n";
-                        $whatsAppMsg .= "માન્ય સુધી: *$endDate* \n";
+                        $whatsAppMsg .= "કરાર શરૂ તારીખ: *$startDate* \n";
+                        $whatsAppMsg .= "કરાર સમાપ્ત તારીખ: *$endDate* \n";
                         $whatsAppMsg .= "વાહન મોડેલ: *$vehicleName* \n";
                         $whatsAppMsg .= "સેવા વિગતો: *$packageString* \n \n";
-                        $whatsAppMsg .= "હવે તમે તમારા AMC પ્લાન હેઠળ મુશ્કેલી-મુક્ત સર્વિસ અને પ્રાથમિક સપોર્ટનો આનંદ માણી શકો છો. \n \n";
-                        $whatsAppMsg .= "TVS પસંદ કરવા બદલ આભાર! \n";
-                        $whatsAppMsg .= "કોઈ પણ પ્રશ્ન માટે અમારો સંપર્ક કરો: +91 9974944222.";
+                        $whatsAppMsg .= "હવે તમે તમારા AMC પ્લાન હેઠળ નિઃચિંતા સેવા અને પ્રાથમિકતા સપોર્ટનો આનંદ લઈ શકો છો. \n \n";
+                        $whatsAppMsg .= "TVS પસંદ કરવા બદલ આપનો આભાર! \n";
+                        $whatsAppMsg .= "કોઈ પણ પૂછપરછ માટે, કૃપા કરીને અમારો સંપર્ક કરો:\n ";
+                        $whatsAppMsg .= "+91 99749442223.";
                     } else {
                         $whatsAppMsg = "Hi $amcMaster->customer_name \n \n";
 
@@ -349,7 +351,7 @@ class AmcMasterController extends Controller
      */
     public function edit(string $id)
     {
-        $vehicle = Vehicle::where('id','!=',7)->pluck('name', 'id');
+        $vehicle = Vehicle::where('id', '!=', 7)->pluck('name', 'id');
         $action = 'update';
         $vehicleTypeArray = $this->vehicleTypeArray;
         $paymentTypeArray = $this->paymentTypeArray;
@@ -534,7 +536,7 @@ class AmcMasterController extends Controller
     public function renew(Request $request, string $id)
     {
 
-        $vehicle = Vehicle::where('id','!=',7)->pluck('name', 'id');
+        $vehicle = Vehicle::where('id', '!=', 7)->pluck('name', 'id');
         $action = 'Renew AMC';
         $vehicleTypeArray = $this->vehicleTypeArray;
         $paymentTypeArray = $this->paymentTypeArray;
@@ -892,7 +894,7 @@ class AmcMasterController extends Controller
                 ->rawColumns(['action', 'customer_details', 'contact_date', 'vehicle_data', 'display_status', 'vehicle_model', 'row_class'])
                 ->make(true);
         }
-        $vehicle = Vehicle::where('id','!=',7)->pluck('name', 'id');
+        $vehicle = Vehicle::where('id', '!=', 7)->pluck('name', 'id');
         $vehicleTypeArray = $this->vehicleTypeArray;
         $serviceTypeArray = $this->serviceTypeArray;
         $branch = $this->branchArray;
