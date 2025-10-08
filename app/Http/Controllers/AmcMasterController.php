@@ -130,7 +130,7 @@ class AmcMasterController extends Controller
                 ->rawColumns(['action', 'customer_details', 'contact_date', 'vehicle_data', 'display_status', 'vehicle_model', 'row_class'])
                 ->make(true);
         }
-        $vehicle = Vehicle::pluck('name', 'id');
+        $vehicle = Vehicle::where('id','!=',7)->pluck('name', 'id');
         $vehicleTypeArray = $this->vehicleTypeArray;
         $serviceTypeArray = $this->serviceTypeArray;
         $branch = $this->branchArray;
@@ -147,7 +147,7 @@ class AmcMasterController extends Controller
     public function create()
     {
 
-        $vehicle = Vehicle::pluck('name', 'id');
+        $vehicle = Vehicle::where('id','!=',7)->pluck('name', 'id');
         $vehicleTypeArray = $this->vehicleTypeArray;
         $paymentTypeArray = $this->paymentTypeArray;
         $amcDisplayNumber = AmcMaster::select('amc_display_number')->orderBy('id', 'DESC')->first() ?? 0;
@@ -300,8 +300,8 @@ class AmcMasterController extends Controller
                         $whatsAppMsg .= "વાહન મોડેલ: *$vehicleName* \n";
                         $whatsAppMsg .= "સેવા વિગતો: *$packageString* \n \n";
                         $whatsAppMsg .= "હવે તમે તમારા AMC પ્લાન હેઠળ મુશ્કેલી-મુક્ત સર્વિસ અને પ્રાથમિક સપોર્ટનો આનંદ માણી શકો છો. \n \n";
-                        $whatsAppMsg .= "Ampere પસંદ કરવા બદલ આભાર! \n";
-                        $whatsAppMsg .= "કોઈ પણ પ્રશ્ન માટે અમારો સંપર્ક કરો: +91 90233 42463.";
+                        $whatsAppMsg .= "TVS પસંદ કરવા બદલ આભાર! \n";
+                        $whatsAppMsg .= "કોઈ પણ પ્રશ્ન માટે અમારો સંપર્ક કરો: +91 9974944222.";
                     } else {
                         $whatsAppMsg = "Hi $amcMaster->customer_name \n \n";
 
@@ -316,9 +316,6 @@ class AmcMasterController extends Controller
                         $whatsAppMsg .= "Thank you for choosing Ampere! \n";
                         $whatsAppMsg .= "For queries, contact us at +91 90233 42463.";
                     }
-
-
-
 
                     $pdfUrl = $this->generateAndStorePdf('pdf.amc-pdf', ['amc' => $amcMaster], 'amc_pdfs');
 
@@ -352,7 +349,7 @@ class AmcMasterController extends Controller
      */
     public function edit(string $id)
     {
-        $vehicle = Vehicle::pluck('name', 'id');
+        $vehicle = Vehicle::where('id','!=',7)->pluck('name', 'id');
         $action = 'update';
         $vehicleTypeArray = $this->vehicleTypeArray;
         $paymentTypeArray = $this->paymentTypeArray;
@@ -537,7 +534,7 @@ class AmcMasterController extends Controller
     public function renew(Request $request, string $id)
     {
 
-        $vehicle = Vehicle::pluck('name', 'id');
+        $vehicle = Vehicle::where('id','!=',7)->pluck('name', 'id');
         $action = 'Renew AMC';
         $vehicleTypeArray = $this->vehicleTypeArray;
         $paymentTypeArray = $this->paymentTypeArray;
@@ -895,7 +892,7 @@ class AmcMasterController extends Controller
                 ->rawColumns(['action', 'customer_details', 'contact_date', 'vehicle_data', 'display_status', 'vehicle_model', 'row_class'])
                 ->make(true);
         }
-        $vehicle = Vehicle::pluck('name', 'id');
+        $vehicle = Vehicle::where('id','!=',7)->pluck('name', 'id');
         $vehicleTypeArray = $this->vehicleTypeArray;
         $serviceTypeArray = $this->serviceTypeArray;
         $branch = $this->branchArray;

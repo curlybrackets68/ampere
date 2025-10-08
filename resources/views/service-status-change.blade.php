@@ -53,7 +53,7 @@
                                     {{-- <div class="col-md-3">
                                         <div class="form-group">
                                             <strong>Customer Contact</strong><br>
-                                            
+
                                         </div>
                                     </div> --}}
                                     <div class="col-md-2">
@@ -83,7 +83,7 @@
                                         <label>Attachment</label>
                                         <input type="file" id="myFile" name="filename" class="form-control">
                                     </div>
-                                  
+
                                     <div class="col-md-3">
                                         <label>Remark</label>
                                         <textarea class="form-control" rows="2" id="service_remark" placeholder="Enter Status Remark"
@@ -112,10 +112,11 @@
                                                 <tr>
                                                     <th style="text-align: left;">Sr. No</th>
                                                     <th style="text-align: left;">Service Date</th>
+                                                    <th style="text-align: left;">Service Type</th>
                                                     <th style="text-align: left;">Service KM</th>
                                                     <th style="text-align: left;">Customer Number</th>
                                                     <th style="text-align: left;">Remark</th>
-                                                    <th style="text-align: left;">Attchment</th>
+                                                    <th style="text-align: left;">Attachment</th>
                                                     <th style="text-align: left;">Service By</th>
                                                 </tr>
                                             </thead>
@@ -218,8 +219,9 @@
                         $.each(serveiceDataList, function(index, item) {
                             $('#amcMasterSeriveTable tbody').append(`
                                 <tr>
-                                    <td>${index + 1}</td> 
+                                    <td>${index + 1}</td>
                                     <td>${item.display_service_date}</td>
+                                    <td>${item.service_type_text}</td>
                                     <td>${item.service_km}</td>
                                     <td>${item.amc_master_details.customer_name}</td>
                                     <td>${item.service_remark ?? ''}</td>
