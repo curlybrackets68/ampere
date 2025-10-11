@@ -72,9 +72,11 @@ class ServiceController extends Controller
                 ->addColumn('service_by', function ($row) {
                     return $row->service_by;
                 })
-                ->addColumn('vehicle_details', function ($row) {
-                    $vehicleName  = $row->amc_master_details->vehicle_name;
-                    return $this->getArrayNameById($this->vehicleTypeArray, $row->amc_master_details->vehicle_type) . '<br>' . $vehicleName . '<br>' . $row->amc_master_details->vehicle_number;
+               ->addColumn('vehicle_details', function ($row) {
+                    $amc = optional($row->amc_master_details);
+
+                    $vehicleType = $this->getArrayNameById($this->vehicleTypeArray, $amc->vehicle_type ?? 1);
+                    return $vehicleType . '<br>' . ($amc->vehicle_name ?? '') . '<br>' . ($amc->vehicle_number ?? '');
                 })
                 ->addColumn('display_status', function ($row) {
                     $class = 'warning';
@@ -215,7 +217,7 @@ class ServiceController extends Controller
         // Save the selected service
         ServiceDetail::where('id', $service_id)->update($updateData);
 
-     
+
 
         $pendingServices = ServiceDetail::where('amc_id', $amc_id)
             ->where('status', '1')
@@ -236,7 +238,7 @@ class ServiceController extends Controller
         ->orderBy('service_no', 'ASC')
         ->where('status', '1')
         ->first();
-        
+
         $serviceData = ServiceDetail::query()->where('id', $service_id)->first();
 
         $nextserviceDate = $serviceDataNewServiceData->display_service_date ?? '';
