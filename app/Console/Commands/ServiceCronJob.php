@@ -92,19 +92,19 @@ class ServiceCronJob extends Command
 
         if ($serviceRecordsOnDate->isNotEmpty()) {
             foreach ($serviceRecordsOnDate as $service) {
-                $amcQuery = AmcMaster::where('id', $service->amc_id)
+                $amcQueryDue = AmcMaster::where('id', $service->amc_id)
                     ->whereNotIn('vehicle_master_id', [4, 5, 6])
                     ->first();
 
-                if ($amcQuery) {
+                if ($amcQueryDue) {
                     $daysLeft = now()->diffInDays(Carbon::parse($service->service_date), false);
 
-                    $pdfUrl = $this->generateAndStorePdf('pdf.amc-pdf', ['amc' => $amcQuery], 'amc_pdfs');
+                    $pdfUrl = $this->generateAndStorePdf('pdf.amc-pdf', ['amc' => $amcQueryDue], 'amc_pdfs');
 
-                    $messageOnDue = "Dear $amcQuery->customer_name, \n\n";
-                    $messageOnDue .= "We noticed that your AMC service for vehicle *$amcQuery->vehicle_number* was due on $service->display_service_date but hasn't been completed yet. \n";
+                    $messageOnDue = "Dear $amcQueryDue->customer_name, \n\n";
+                    $messageOnDue .= "We noticed that your AMC service for vehicle *$amcQueryDue->vehicle_number* was due on $service->display_service_date but hasn't been completed yet. \n";
                     $messageOnDue .= " \n";
-                    $messageOnDue .= "Your AMC Contract *$amcQuery->amc_display_number* is still active, and we want to ensure your vehicle receives timely maintenance for optimal performance. \n";
+                    $messageOnDue .= "Your AMC Contract *$amcQueryDue->amc_display_number* is still active, and we want to ensure your vehicle receives timely maintenance for optimal performance. \n";
                     $messageOnDue .= " \n";
                     $messageOnDue .= "Please note that irregular servicing can cause lapse of warranty benefits and AMC benefits \n";
                     $messageOnDue .= " \n";
@@ -114,7 +114,7 @@ class ServiceCronJob extends Command
                     $messageOnDue .= "For assistance, call +91 90233 42463. \n";
 
                     // $sent = $this->sendWhatsAppMessageWithFile($amcQuery->contact_number, $messageOnDue, $pdfUrl['public_url']);
-                    $sent = $this->sendWhatsAppMessageWithFile($amcQuery->contact_number, $messageOnDue, $pdfUrl['public_url'], 'amc_pdf');
+                    $sent = $this->sendWhatsAppMessageWithFile($amcQueryDue->contact_number, $messageOnDue, $pdfUrl['public_url'], 'amc_pdf');
                     if ($sent && File::exists($pdfUrl['public_url'])) {
                         File::delete($pdfUrl['public_url']);
                     }
@@ -135,14 +135,14 @@ class ServiceCronJob extends Command
 
         if ($serviceRecordsDue->isNotEmpty()) {
             foreach ($serviceRecordsDue as $service) {
-                $amcQuery = AmcMaster::where('id', $service->amc_id)
+                $amcQueryServiceDue = AmcMaster::where('id', $service->amc_id)
                     ->whereNotIn('vehicle_master_id', [4, 5, 6])
                     ->first();
-                if ($amcQuery) {
-                    $pdfUrl = $this->generateAndStorePdf('pdf.amc-pdf', ['amc' => $amcQuery], 'amc_pdfs');
+                if ($amcQueryServiceDue) {
+                    $pdfUrl = $this->generateAndStorePdf('pdf.amc-pdf', ['amc' => $amcQueryServiceDue], 'amc_pdfs');
 
-                    $messageDue = "Dear $amcQuery->customer_name, \n\n";
-                    $messageDue .= "This is a final reminder regarding your pending AMC service for vehicle *$amcQuery->vehicle_number* under Contract ID: *$amcQuery->amc_display_number*. \n\n";
+                    $messageDue = "Dear $amcQueryServiceDue->customer_name, \n\n";
+                    $messageDue .= "This is a final reminder regarding your pending AMC service for vehicle *$amcQueryServiceDue->vehicle_number* under Contract ID: *$amcQueryServiceDue->amc_display_number*. \n\n";
                     $messageDue .= "Your scheduled service date *$service->display_service_date* has passed, and timely maintenance is essential to keep your vehicle running smoothly and to ensure AMC benefits remain valid. \n\n";
                     $messageDue .= "Please contact us immediately to schedule your service  \n\n";
                     $messageDue .= "Note: Delay in service may impact your AMC coverage. \n\n";
@@ -150,7 +150,7 @@ class ServiceCronJob extends Command
                     $messageDue .= "Support: +91 90233 42463  \n";
 
                     // $sent = $this->sendWhatsAppMessageWithFile($amcQuery->contact_number, $messageDue, $pdfUrl['public_url']);
-                    $sent = $this->sendWhatsAppMessageWithFile($amcQuery->contact_number, $messageDue, $pdfUrl['public_url'], 'amc_pdf');
+                    $sent = $this->sendWhatsAppMessageWithFile($amcQueryServiceDue->contact_number, $messageDue, $pdfUrl['public_url'], 'amc_pdf');
                     if ($sent && File::exists($pdfUrl['public_url'])) {
                         File::delete($pdfUrl['public_url']);
                     }
@@ -193,12 +193,12 @@ class ServiceCronJob extends Command
                 // 1
                 if ($today->greaterThanOrEqualTo($reminderStartDate) && $service->status != 2) {
 
-                    $gujaratiMessage = "પ્રિય {$amcQuery->customer_name},\n";
-                    $gujaratiMessage .= "આ એક નમ્ર યાદ અપાવવાનું સંદેશ છે કે તમારા વાહન ({$amcQuery->vehicle_number}) માટેની આગામી AMC સેવા ટૂંક સમયમાં બાકી છે.\n";
+                    $gujaratiMessage = "પ્રિય {$amc->customer_name},\n";
+                    $gujaratiMessage .= "આ એક નમ્ર યાદ અપાવવાનું સંદેશ છે કે તમારા વાહન ({$amc->vehicle_number}) માટેની આગામી AMC સેવા ટૂંક સમયમાં બાકી છે.\n";
                     $gujaratiMessage .= "નિર્ધારિત તારીખ: *{$service->display_service_date}* \n";
-                    $gujaratiMessage .= "AMC કરાર ID: *{$amcQuery->amc_display_number}*\n";
+                    $gujaratiMessage .= "AMC કરાર ID: *{$amc->amc_display_number}*\n";
                     $gujaratiMessage .= "સ્થળ: *TVS સર્વિસ સેન્ટર, વડોદરા* \n";
-                    $gujaratiMessage .= "કૃપા કરીને вашей એ pointed number પર “*Hi*” મોકલી તમારી નિમણૂક બુક કરો\n";
+                    $gujaratiMessage .= "તમારી એપોઇન્ટમેન્ટ બુક કરવા માટે કૃપા કરીને ઉલ્લેખિત નંબર પર “*Hi*” મોકલો.\n";
                     $gujaratiMessage .= "*9023342463* \n";
                     $gujaratiMessage .= "TVS પસંદ કરવા બદલ આપનો આભાર! \n";
                     $gujaratiMessage .= "મદદ માટે, અમને +૯૧ ૯૦૨૩૩ ૪૨૪૬૩ પર કોલ કરો.\n";
@@ -212,10 +212,10 @@ class ServiceCronJob extends Command
                 // When Service Due on date
                 if ($today->isSameDay($reminderStartDate) && $service->status != 2) {
 
-                    $gujaratiMessageOnDue = "પ્રિય {$amcQuery->customer_name}, \n\n";
-                    $gujaratiMessageOnDue .= "અમે નોંધ્યું કે તમારા વાહન *{$amcQuery->vehicle_number}* માટેની AMC સેવા $service->display_service_date ના રોજ બાકી હતી પરંતુ હજુ પૂર્ણ થઈ નથી. \n";
+                    $gujaratiMessageOnDue = "પ્રિય {$amc->customer_name}, \n\n";
+                    $gujaratiMessageOnDue .= "અમે નોંધ્યું કે તમારા વાહન *{$amc->vehicle_number}* માટેની AMC સેવા $service->display_service_date ના રોજ બાકી હતી પરંતુ હજુ પૂર્ણ થઈ નથી. \n";
                     $gujaratiMessageOnDue .= " \n";
-                    $gujaratiMessageOnDue .= "તમારો AMC કરાર *{$amcQuery->amc_display_number}* હજુ સક્રિય છે, અને અમે ખાતરી કરવા માંગીએ છીએ કે તમારા વાહનને યોગ્ય કામગીરી માટે સમયસર મેઈન્ટેનન્સ મળે. \n";
+                    $gujaratiMessageOnDue .= "તમારો AMC કરાર *{$amc->amc_display_number}* હજુ સક્રિય છે, અને અમે ખાતરી કરવા માંગીએ છીએ કે તમારા વાહનને યોગ્ય કામગીરી માટે સમયસર મેઈન્ટેનન્સ મળે. \n";
                     $gujaratiMessageOnDue .= " \n";
                     $gujaratiMessageOnDue .= "કૃપા કરીને નોંધો કે અનિયમિત સેવા તમારા વોરંટી લાભો અને AMC લાભોને અસર કરી શકે છે. \n";
                     $gujaratiMessageOnDue .= " \n";
@@ -233,8 +233,8 @@ class ServiceCronJob extends Command
                 // When Service Due (After) every day
                 if ($today->greaterThan($reminderStartDate) && $service->status != 2) {
 
-                    $gujaratiMessageDue = "પ્રિય {$amcQuery->customer_name},\n\n";
-                    $gujaratiMessageDue .= "આ તમારા બાકી AMC સેવા માટેની અંતિમ યાદ અપાવવાનું સંદેશ છે, જે વાહન *{$amcQuery->vehicle_number}* હેઠળ કરાર ID: *{$amcQuery->amc_display_number}* માં બાકી છે.\n\n";
+                    $gujaratiMessageDue = "પ્રિય {$amc->customer_name},\n\n";
+                    $gujaratiMessageDue .= "આ તમારા બાકી AMC સેવા માટેની અંતિમ યાદ અપાવવાનું સંદેશ છે, જે વાહન *{$amc->vehicle_number}* હેઠળ કરાર ID: *{$amc->amc_display_number}* માં બાકી છે.\n\n";
                     $gujaratiMessageDue .= "તમારી નિર્ધારિત સર્વિસ તારીખ *{$service->display_service_date}* પસાર થઈ ગઈ છે, અને સમયસર મેઈન્ટેનન્સ જરૂરી છે જેથી તમારું વાહન સારી સ્થિતિમાં ચાલતું રહે અને AMC લાભો માન્ય રહે.\n\n";
                     $gujaratiMessageDue .= "કૃપા કરીને તરત અમારી સાથે સંપર્ક કરો અને તમારી સેવા માટે નિમણૂક બુક કરો.\n\n";
                     $gujaratiMessageDue .= "નોંધ: સેવા માં મોડાશી તમારી AMC કવરેજ પર અસર કરી શકે છે.\n\n";

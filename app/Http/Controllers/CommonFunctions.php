@@ -453,7 +453,7 @@ trait CommonFunctions
                 if (!empty($locationTypes)) {
                     foreach ($locationTypes as $loc) {
                         if ($loc == 1) {
-                            $message .= "📍 Location (Sama Savli Road)\n\n";
+                            $message .= "Location (Sama Savli Road)\n\n";
                             $message .= "GF 23/24 Earth Eon\n";
                             $message .= "Opp Sama Lake\n";
                             $message .= "Opp Urmi School\n";
@@ -461,7 +461,7 @@ trait CommonFunctions
                             $message .= "Vadodara - 390008\n\n";
                             $message .= "Google Map: https://share.google/V12FOd5tDP79YrMlS\n\n";
                         } elseif ($loc == 2) {
-                            $message .= "📍 Location (Kalali-Vadsar Road)\n\n";
+                            $message .= "Location (Kalali-Vadsar Road)\n\n";
                             $message .= "Abhishek Landmark\n";
                             $message .= "Opp Jagnath Mahadev Mandir\n";
                             $message .= "Near Khiskoli Circle\n";
