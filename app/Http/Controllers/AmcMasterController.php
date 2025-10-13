@@ -249,24 +249,30 @@ class AmcMasterController extends Controller
                     }
 
                     for ($i = 0; $i < count($serviceDates); $i++) {
-                        $serviceType = 2;
+                        $serviceType = 1;
                         $reminderDays = 0;
                         if ($amcMaster->vehicle_master_id == 4) {
                             // TVS King EV Max
                             if ($i <= 2) {
                                 $serviceType = 1;
+                            }else{
+                                $serviceType = 2;
                             }
                             $reminderDays = $this->reminderDays['4'][$i];
                         } elseif ($amcMaster->vehicle_master_id == 6) {
                             // TVS King Deluxe
                             if ($i <= 2) {
                                 $serviceType = 1;
+                            }else{
+                                $serviceType = 2;
                             }
                             $reminderDays = $this->reminderDays['6'][$i];
                         } elseif ($amcMaster->vehicle_master_id == 5) {
                             // TVS King Duramax Plus
                             if ($i <= 2) {
                                 $serviceType = 1;
+                            }else{
+                                $serviceType = 2;
                             }
                             $reminderDays = $this->reminderDays['5'][$i];
                         }
@@ -464,24 +470,30 @@ class AmcMasterController extends Controller
                     }
 
                     for ($i = 0; $i < count($serviceDates); $i++) {
-                        $serviceType = 2;
+                        $serviceType = 1;
                         $reminderDays = 0;
                         if ($amcMaster->vehicle_master_id == 4) {
                             // TVS King EV Max
                             if ($i <= 2) {
                                 $serviceType = 1;
+                            }else{
+                                $serviceType = 2;
                             }
                             $reminderDays = $this->reminderDays['4'][$i];
                         } elseif ($amcMaster->vehicle_master_id == 6) {
                             // TVS King Deluxe
                             if ($i <= 2) {
                                 $serviceType = 1;
+                            }else{
+                                $serviceType = 2;
                             }
                             $reminderDays = $this->reminderDays['6'][$i];
                         } elseif ($amcMaster->vehicle_master_id == 5) {
                             // TVS King Duramax Plus
                             if ($i <= 2) {
                                 $serviceType = 1;
+                            }else{
+                                $serviceType = 2;
                             }
                             $reminderDays = $this->reminderDays['5'][$i];
                         }
@@ -632,24 +644,30 @@ class AmcMasterController extends Controller
                     }
 
                     for ($i = 0; $i < count($serviceDates); $i++) {
-                        $serviceType = 2;
+                        $serviceType = 1;
                         $reminderDays = 0;
                         if ($amcMaster->vehicle_master_id == 4) {
                             // TVS King EV Max
                             if ($i <= 2) {
                                 $serviceType = 1;
+                            }else{
+                                $serviceType = 2;
                             }
                             $reminderDays = $this->reminderDays['4'][$i];
                         } elseif ($amcMaster->vehicle_master_id == 6) {
                             // TVS King Deluxe
                             if ($i <= 2) {
                                 $serviceType = 1;
+                            }else{
+                                $serviceType = 2;
                             }
                             $reminderDays = $this->reminderDays['6'][$i];
                         } elseif ($amcMaster->vehicle_master_id == 5) {
                             // TVS King Duramax Plus
                             if ($i <= 2) {
                                 $serviceType = 1;
+                            }else{
+                                $serviceType = 2;
                             }
                             $reminderDays = $this->reminderDays['5'][$i];
                         }
