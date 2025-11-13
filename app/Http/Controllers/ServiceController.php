@@ -146,7 +146,7 @@ class ServiceController extends Controller
         $status_id = $request->status_id;
 
         $amcMaster = AmcMaster::find($amc_id);
-      //  dd($amcMaster)->vehicle_master_id;
+        //  dd($amcMaster)->vehicle_master_id;
 
         $updateData['service_remark'] = $service_remark;
         $updateData['status'] = $status_id;
@@ -271,7 +271,6 @@ class ServiceController extends Controller
                 $whatsAppMsg .= "આગામી સર્વિસ કિમી પછી: *$nextServiceKm* \n";
             }
 
-            $whatsAppMsg .= "સ્થાન: એમ્પિયર સર્વિસ સેન્ટર, વડોદરા \n\n";
             $whatsAppMsg .= "અમારી ટીમે AMC માર્ગદર્શિકાઓ અનુસાર જરૂરી તમામ ચકાસણીઓ અને જાળવણી પૂર્ણ કરી છે. તમારું વાહન હવે ડિલિવરી માટે તૈયાર છે. \n\n";
             $whatsAppMsg .= "તમારા પ્રતિસાદ અથવા પ્રશ્નો માટે, આ સંદેશનો જવાબ આપી શકો છો. \n";
             $whatsAppMsg .= "TVS પસંદ કરવા બદલ આપનો આભાર! \n";
