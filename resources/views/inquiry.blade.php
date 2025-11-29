@@ -18,7 +18,11 @@
                         <div class="card-header">
                             <h5 class="card-title">Inquiry</h5>
                             <div class="d-flex justify-content-end">
-                                <a href="javascript:void(0);" class="btn btn-primary btn-sm d-none" id="exportExcel">
+                                <a href="{{route('inquiry.create-inquiry')}}" class="btn btn-primary btn-sm" id="addInquiryBtn">
+                                    <i class="bi bi-plus-lg me-1 align-middle me-1"></i> Add Inquiry
+
+                                </a>
+                                 <a href="javascript:void(0);" class="btn btn-primary btn-sm d-none" id="exportExcel">
                                     <form action="{{ route('user.inquiry.excel.export') }}" method="POST"
                                         id="exportExcelForm">
                                         @csrf

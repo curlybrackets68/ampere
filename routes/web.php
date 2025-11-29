@@ -39,6 +39,7 @@ Route::middleware(['auth', 'CheckSession'])->group(function () {
     Route::post('export-inquiry', [DashboardController::class, 'export'])->name('user.inquiry.excel.export');
     Route::post('send-message', [DashboardController::class, 'sendMessage'])->name('send-message');
     Route::get('get-inquiry-history/{type_id?}', [DashboardController::class, 'getInquiryHistory'])->name('inquiry.get-history');
+    Route::get('create-inquiry', [DashboardController::class, 'createInquiry'])->name('inquiry.create-inquiry');
 
     Route::resource('leads', LeadsController::class);
     Route::post('export-leads', [LeadsController::class, 'export'])->name('user.leads.excel.export');
@@ -56,6 +57,7 @@ Route::middleware(['auth', 'CheckSession'])->group(function () {
 
     // Route::resource('orders', OrdersController::class);
     Route::get('orders', [OrdersController::class, 'index'])->name('orders');
+    Route::get('orders-create', [OrdersController::class, 'create'])->name('orders.orders-create');
     Route::post('orders-change-status', [OrdersController::class, 'changeStatus'])->name('orders.change-status');
 
     Route::get('get-history/{type_id?}', [OrdersController::class, 'getHistory'])->name('orders.get-history');

@@ -415,4 +415,11 @@ class DashboardController
                 ->make(true);
         }
     }
+
+    public function createInquiry()
+    {
+        $branches = $this->branchArray;
+        $serviceTypes = $this->serviceTypeArray;
+        return view('add-inquiry', compact('branches', 'serviceTypes'));
+    }
 }

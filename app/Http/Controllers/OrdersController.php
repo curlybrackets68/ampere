@@ -149,4 +149,11 @@ class OrdersController extends Controller
                 ->make(true);
         }
     }
+
+     public function create(Request $request)
+    {
+        $branches = $this->branchArray;
+        $serviceTypes = $this->serviceTypeArray;
+        return view('add-order', compact('branches', 'serviceTypes'));
+    }
 }

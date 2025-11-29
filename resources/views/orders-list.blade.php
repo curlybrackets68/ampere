@@ -17,19 +17,13 @@
                     <div class="card mb-4">
                         <div class="card-header">
                             <h5 class="card-title">Order</h5>
-                            {{-- <div class="d-flex justify-content-end">
-                                <a href="javascript:void(0);" class="btn btn-primary btn-sm d-none" id="exportExcel">
-                                    <form action="{{ route('user.inquiry.excel.export') }}" method="POST"
-                                        id="exportExcelForm">
-                                        @csrf
-                                        {{ Form::hidden('exportStartDate', null, ['id' => 'exportStartDate']) }}
-                                        {{ Form::hidden('exportEndDate', null, ['id' => 'exportEndDate']) }}
-                                        {{ Form::hidden('exportStatusId', 0, ['id' => 'exportStatusId']) }}
-                                        {{ Form::hidden('exportBranchId', 0, ['id' => 'exportBranchId']) }}
-                                        <i class="bi bi-cloud-download me-1 align-middle me-1"></i> Export
-                                    </form>
+                            <div class="d-flex justify-content-end">
+                                <a href="{{ route('orders.orders-create') }}" class="btn btn-primary btn-sm"
+                                    id="addOrderBtn">
+                                    <i class="bi bi-plus-lg me-1 align-middle me-1"></i> Add Order
                                 </a>
-                            </div> --}}
+
+                            </div>
                         </div>
                         <div class="card-body">
                             <div class="row">
@@ -462,7 +456,7 @@
                     }
 
                 ],
-                 order: [
+                order: [
                     [0, 'desc']
                 ],
 
