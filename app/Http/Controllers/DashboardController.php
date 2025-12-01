@@ -422,4 +422,21 @@ class DashboardController
         $serviceTypes = $this->serviceTypeArray;
         return view('add-inquiry', compact('branches', 'serviceTypes'));
     }
+
+    public function saveInquiry(Request $request)
+    {
+        $inquiry = new InquiryDetails();
+        $lastInquiryId = InquiryDetails::orderBy('id', 'desc')->first()->id ?? 0;
+        $inquiry->inquiry_no = 'INQ-' . ($lastInquiryId + 1);
+        $inquiry->name = $request->name;
+        $inquiry->mobile = $request->mobile;
+        $inquiry->vehicle_no = $request->vehicle_no;
+        $inquiry->service_type_id = $request->service_type_id;
+        $inquiry->branch_id = $request->branch_id;
+        $inquiry->status_id = 1; // Pending
+        $inquiry->created_by = auth()->id();
+        $inquiry->save();
+
+        return redirect()->route('inquiry')->with('success', 'Inquiry created successfully with Inquiry No: ' . $inquiry->inquiry_no);
+    }
 }

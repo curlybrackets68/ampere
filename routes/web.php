@@ -40,6 +40,7 @@ Route::middleware(['auth', 'CheckSession'])->group(function () {
     Route::post('send-message', [DashboardController::class, 'sendMessage'])->name('send-message');
     Route::get('get-inquiry-history/{type_id?}', [DashboardController::class, 'getInquiryHistory'])->name('inquiry.get-history');
     Route::get('create-inquiry', [DashboardController::class, 'createInquiry'])->name('inquiry.create-inquiry');
+    Route::post('save-inquiry', [DashboardController::class, 'saveInquiry'])->name('inquiry.save-inquiry');
 
     Route::resource('leads', LeadsController::class);
     Route::post('export-leads', [LeadsController::class, 'export'])->name('user.leads.excel.export');
