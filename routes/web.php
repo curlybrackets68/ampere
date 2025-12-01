@@ -59,6 +59,7 @@ Route::middleware(['auth', 'CheckSession'])->group(function () {
     // Route::resource('orders', OrdersController::class);
     Route::get('orders', [OrdersController::class, 'index'])->name('orders');
     Route::get('orders-create', [OrdersController::class, 'create'])->name('orders.orders-create');
+    Route::post('orders-save', [OrdersController::class, 'saveOrder'])->name('orders.orders-save');
     Route::post('orders-change-status', [OrdersController::class, 'changeStatus'])->name('orders.change-status');
 
     Route::get('get-history/{type_id?}', [OrdersController::class, 'getHistory'])->name('orders.get-history');

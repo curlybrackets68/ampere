@@ -14,7 +14,7 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12">
-                    <form name="inquiryForm" action="" method="post">
+                    <form name="inquiryForm" action="{{route('orders.orders-save')}}" method="post">
                         @csrf
 
                         <div class="card mb-4">
@@ -85,7 +85,7 @@
 
                             <div class="card-footer">
                                 <button type="submit" class="btn btn-primary btn-sm"
-                                    id="addUpdateAmcMaster">Submit</button>
+                                    id="addOrder">Submit</button>
                                 <button type="reset" class="btn btn-light btn-sm">Cancel</button>
                             </div>
                         </div>
@@ -214,151 +214,61 @@
             });
         });
 
-        $(document).on('click', '#addUpdateAmcMaster', function(e) {
+        $(document).on('click', '#addOrder', function(e) {
             e.preventDefault();
 
             $('.error-message').remove();
-            let chassis_number = $('#chassis_number').val();
-            let vehicle_type = $('#vehicle_type').val();
-            let vehicle_master_id = $('#vehicle_master_id').val();
-            let amc_package_type_id = $('#amc_package_type_id').val();
-            let contact_number = $('#contact_number').val();
             let customer_name = $('#customer_name').val();
-            let amc_basic_price = $('#amc_basic_price').val();
-            let payment_type = $('#payment_type').val();
-            let amc_start_km = $('#amc_start_km').val();
+            let customer_mobile = $('#customer_mobile').val();
+            let customer_vehicle_no = $('#customer_vehicle_no').val();
+            let branch_id = $('#branch_id').val();
+            let order_name = $('#order_name').val();
 
             let isValid = true;
-
-            if (chassis_number === '') {
-                $('#chassis_number').after(
-                    '<small class="error-message text-danger">Chassis number is required.</small>');
-                isValid = false;
-            }
-            if (vehicle_type === '') {
-                $('#vehicle_type').after(
-                    '<small class="error-message text-danger">Please select a vehicle type.</small>');
-                isValid = false;
-            }
-            if (vehicle_master_id === '') {
-                $('#vehicle_master_id').after(
-                    '<small class="error-message text-danger">Please select a vehicle.</small>');
-                isValid = false;
-            }
-            if (amc_package_type_id === '') {
-                $('#amc_package_type_id').after(
-                    '<small class="error-message text-danger">Please select package.</small>');
-                isValid = false;
-            }
-            if (contact_number === '') {
-                $('#contact_number').after(
-                    '<small class="error-message text-danger">Mobile number is required.</small>');
-                isValid = false;
-            } else if (!/^\d{10}$/.test(contact_number)) {
-                $('#contact_number').after(
-                    '<small class="error-message text-danger">Enter a valid 10-digit mobile number.</small>');
-                isValid = false;
-            }
 
             if (customer_name === '') {
                 $('#customer_name').after(
                     '<small class="error-message text-danger">Customer name is required.</small>');
                 isValid = false;
             }
-
-            if (amc_basic_price === '') {
-                $('#amc_basic_price').after(
-                    '<small class="error-message text-danger">Enter valid Amount.</small>');
+            if (customer_mobile === '') {
+                $('#customer_mobile').after(
+                    '<small class="error-message text-danger">Customer mobile is required.</small>');
+                isValid = false;
+            } else if (!/^\d{10}$/.test(customer_mobile)) {
+                $('#customer_mobile').after(
+                    '<small class="error-message text-danger">Enter a valid 10-digit mobile number.</small>');
                 isValid = false;
             }
 
-            if (payment_type === '') {
-                $('#payment_type').after(
-                    '<small class="error-message text-danger">Please select payment type.</small>');
+
+
+            if (customer_vehicle_no === '') {
+                $('#customer_vehicle_no').after(
+                    '<small class="error-message text-danger">Vehicle number is required.</small>');
                 isValid = false;
             }
-            if (amc_start_km === '' || parseInt(amc_start_km) === 0) {
-                $('#amc_start_km').after(
-                    '<small class="error-message text-danger">Please enter a valid starting KM (greater than 0).</small>'
-                );
+
+            if (branch_id === '') {
+                $('#branch_id').after(
+                    '<small class="error-message text-danger">Branch is required.</small>');
+                isValid = false;
+            }if (order_name === '') {
+                $('#order_name').after(
+                    '<small class="error-message text-danger">Order name is required.</small>');
                 isValid = false;
             }
+
+
 
             if (isValid) {
-                loaderButton('addUpdateAmcMaster', true);
+                loaderButton('addOrder', true);
                 $('form[name="inquiryForm"]').submit();
             }
         });
 
 
-        function calculateAmcEndDate() {
-            let timePeriod = parseInt($('#amc_package_type_id option:selected').data('time-period'));
-            let startDateStr = $('#amc_start_date').val();
 
-            if (timePeriod && startDateStr) {
-                let [day, month, year] = startDateStr.split('-');
-                let startDate = new Date(`${year}-${month}-${day}`);
 
-                if (isNaN(startDate.getTime())) return;
-
-                let endDate = new Date(startDate.setMonth(startDate.getMonth() + timePeriod));
-
-                // Format as dd-mm-yyyy
-                let formatted = ("0" + endDate.getDate()).slice(-2) + "-" +
-                    ("0" + (endDate.getMonth() + 1)).slice(-2) + "-" +
-                    endDate.getFullYear();
-
-                $('#amc_end_date').val(formatted);
-            } else {
-                $('#amc_end_date').val('');
-            }
-        }
-
-        $(document).on('change', '#amc_package_type_id', function() {
-            calculateAmcEndDate();
-            let timePeriod = parseInt($(this).find(':selected').data('time-period'));
-            let amount = parseInt($(this).find(':selected').data('amount'));
-            if (timePeriod) {
-                $('#amc_start_date').attr('max', moment().add(timePeriod, 'months').format('DD-MM-YYYY'));
-            } else {
-                $('#amc_start_date').removeAttr('max');
-            }
-            $('#amc_basic_price').val(amount);
-        });
-
-        $(document).on('change', '#amc_start_date', calculateAmcEndDate);
-
-        $(document).on('change', '#chassis_number', function() {
-            let chassis_number = $(this).val();
-
-            $.ajax({
-                url: "{{ route('amc-master.check-chassis-number') }}",
-                method: 'GET',
-                data: {
-                    chassis_number: chassis_number,
-
-                },
-                success: function(response) {
-                    if (response.code == '1') {
-                        showToast('error', response.message);
-                        $('#chassis_number').after(
-                            '<small class="error-message text-danger">Chassis number already exist,Please enter new.</small>'
-                        );
-                        $(this).focus();
-                        $(this).val('');
-                        $('#addUpdateAmcMaster').attr('disabled', true);
-                        return false;
-                    } else {
-                        $('#addUpdateAmcMaster').attr('disabled', false);
-                        // Remove any existing error message
-                        $('#chassis_number').next('.error-message').remove();
-                    }
-
-                },
-                error: function(xhr, status, error) {
-                    console.error("Error fetching chart data:", error);
-                }
-            });
-        });
     </script>
 @endsection

@@ -52,12 +52,12 @@ class OrdersController extends Controller
                         $class = 'info';
                     }
                     $checkEditRights = '';
-                    if(checkRights('USER_ORDER_ROLE_EDIT')){
+                    if (checkRights('USER_ORDER_ROLE_EDIT')) {
                         $checkEditRights = ' change-status ';
                     }
                     // $html = '<span class="badge text-bg-' . $class . '">' . $this->getArrayNameById($this->statusArray, $row->status_id) . '</span>';
                     if ($row->status_id == '1' || $row->status_id == '6' || $row->status_id == '7' || $row->status_id == '6') {
-                        $html = '<button type="button" class="btn btn-' . $class . $checkEditRights. ' btn-sm " data-id="' . $row->id . '" data-status="' . $row->status_id . '">' . $this->getArrayNameById($this->statusArray, $row->status_id) . '</button>';
+                        $html = '<button type="button" class="btn btn-' . $class . $checkEditRights . ' btn-sm " data-id="' . $row->id . '" data-status="' . $row->status_id . '">' . $this->getArrayNameById($this->statusArray, $row->status_id) . '</button>';
                     } else {
                         $html = '<button type="button" class="btn btn-' . $class . ' btn-sm">' . $this->getArrayNameById($this->statusArray, $row->status_id) . '</button>';
                     }
@@ -123,7 +123,7 @@ class OrdersController extends Controller
                 'inquiry_id' => 0,
                 'type' => '2', // for Order
                 'type_id' => $request->id, // for Order
-                'remark'     => 'Status changed to ' . $this->getArrayNameById($this->statusArray, $request->statusId) ." Status Remark: - ".$remark,
+                'remark'     => 'Status changed to ' . $this->getArrayNameById($this->statusArray, $request->statusId) . " Status Remark: - " . $remark,
                 'action_id'  => 3,
                 'created_by' => auth()->id(),
             ]);
@@ -142,7 +142,7 @@ class OrdersController extends Controller
             return DataTables::of($order)
                 ->addIndexColumn()
                 ->addColumn('display_action', function ($row) {
-                    return $this->getArrayNameById($this->actionLogsArray,$row->action_id);
+                    return $this->getArrayNameById($this->actionLogsArray, $row->action_id);
                 })->addColumn('display_date', function ($row) {
                     return $this->formatDateTime('d M, Y h:i A', $row->created_at);
                 })
@@ -150,10 +150,30 @@ class OrdersController extends Controller
         }
     }
 
-     public function create(Request $request)
+    public function create(Request $request)
     {
         $branches = $this->branchArray;
         $serviceTypes = $this->serviceTypeArray;
         return view('add-order', compact('branches', 'serviceTypes'));
+    }
+
+    public function saveOrder(Request $request)
+    {
+        $order = new Order();
+        $lastOrderId = Order::orderBy('id', 'desc')->first()->id ?? 0;
+        $order->order_no = 'ORD-' . ($lastOrderId + 1);
+        $order->customer_name = $request->customer_name;
+        $order->order_name = $request->order_name;
+        $order->order_date =now()->format('Y-m-d H:i:s');
+        $order->customer_mobile = $request->customer_mobile;
+        $order->customer_vehicle_no = $request->customer_vehicle_no;
+        $order->branch_id = $request->branch_id;
+        $order->status_id = 1; // Pending
+        $order->created_by = auth()->id();
+        $order->save();
+      ///  dd($order);
+
+
+        return redirect()->route('orders')->with('success', 'Order created successfully with Order No #: ' . $order->order_no);
     }
 }
