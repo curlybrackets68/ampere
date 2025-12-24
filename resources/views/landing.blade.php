@@ -91,7 +91,7 @@
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg text-brand-600">
 
-                        <img src="https://chiragautomotive.com/amper/assets/img/logo.png">
+                        <img src="{{ asset('assets/assets/img/logo.png') }}">
                     </div>
                     <span class="text-xl font-bold tracking-tight text-brand-900">Chirag Automative</span>
                 </div>
@@ -105,7 +105,7 @@
                 </nav>
 
                 <div>
-                    <a href="https://chiragautomotive.com/amper/"
+                    <a href="{{ route('auth.show-login') }}"
                         class="group relative inline-flex items-center justify-center px-6 py-2 text-sm font-semibold text-white transition-all duration-200 bg-brand-600 rounded-full hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-600 shadow-lg">
                         <span>Login</span>
                         <svg class="w-4 h-4 ml-2 -mr-1 transition-transform group-hover:translate-x-1" fill="none"
@@ -140,7 +140,7 @@
                         class="px-8 py-4 bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-full font-bold text-lg hover:bg-white/20 transition-all duration-300">
                         Learn More
                     </a>
-                    <a href="https://chiragautomotive.com/amper/"
+                    <a href="{{ route('auth.show-login') }}"
                         class="px-8 py-4 bg-white text-brand-900 rounded-full font-bold text-lg shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:shadow-[0_0_30px_rgba(255,255,255,0.5)] transform hover:-translate-y-1 transition-all duration-300">
                         Get Started
                     </a>
@@ -277,8 +277,12 @@
         <footer
             class="w-full py-8 text-center text-white/60 text-sm z-10 border-t border-white/10 bg-black/20 backdrop-blur-sm">
             <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4">
-                <p>&copy; 2025 Chirag Automotive. All rights reserved. </p>
-                <div>Developed By <a href="https://www.thecurlybrackets.in/" target="_blank">Curly Brackets</a></div>
+                <p>&copy; {{ date('Y') }} Chirag Automotive. All rights reserved.</p>
+                {{-- <div class="flex gap-6">
+                    <a href="#" class="hover:text-white transition-colors">Privacy</a>
+                    <a href="#" class="hover:text-white transition-colors">Terms</a>
+                    <a href="#" class="hover:text-white transition-colors">Contact</a>
+                </div> --}}
             </div>
         </footer>
     </div>
