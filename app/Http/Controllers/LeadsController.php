@@ -97,7 +97,7 @@ class LeadsController extends Controller
 
         $languageType = $request->language_type;
         $locationType = $request->location_type;
-        
+
         $vehicleIds = array_map('intval', $request->input('vehicle', []));
         $locationTypes = array_map('intval', $request->input('location_type', []));
         $data = $request->all();
@@ -106,30 +106,65 @@ class LeadsController extends Controller
 
         $lead = Lead::create($data);
 
+        $secondParam = 'N/A';
+        $sixParam = '';
+        $sevenParam = 'N/A';
+        $template = $languageType == '1' ? 'lead_generation_english' : 'customer_reminder_gujarati';
+
         if ($lead && !empty($vehicleIds)) {
             if (count($vehicleIds) == 1) {
                 $vehicleInfo = $this->getVehicleInfo($vehicleIds[0]);
                 $vehicleName = $vehicleInfo['name'];
 
-                $message = $this->getLeadMessage(
-                    $languageType,
-                    $request->name,
-                    $vehicleName,
-                    $salesmanName,
-                    $salesmanMobile,
-                    false,
-                    $locationTypes
-                );
+                if ($languageType == '1') { // English
+                    $secondParam = $vehicleName;
+                } else if ($languageType == '2') { // Gujarati
+                    $secondParam = 'તમારો ' . $vehicleName;
+                }
+                // $message = $this->getLeadMessage(
+                //     $languageType,
+                //     $request->name,
+                //     $vehicleName,
+                //     $salesmanName,
+                //     $salesmanMobile,
+                //     false,
+                //     $locationTypes
+                // );
             } else {
-                $message = $this->getLeadMessage(
-                    $languageType,
-                    $request->name,
-                    null,
-                    $salesmanName,
-                    $salesmanMobile,
-                    true,
-                    $locationTypes
-                );
+                if ($languageType == '1') { // English
+                    $secondParam = 'our electric vehicles.';
+                } else if ($languageType == '2') { // Gujarati
+                    $secondParam = 'અમારા ઇલેક્ટ્રિક વાહનોમાં';
+                }
+                // $message = $this->getLeadMessage(
+                //     $languageType,
+                //     $request->name,
+                //     null,
+                //     $salesmanName,
+                //     $salesmanMobile,
+                //     true,
+                //     $locationTypes
+                // );
+            }
+
+            if (!empty($locationTypes)) {
+                foreach ($locationTypes as $loc) {
+                    if ($loc == 1) {
+                        if ($languageType == '1') { // English
+                            $sixParam .= '📍 Location (Sama Savli Road) GF 23/24 Earth Eon Opp Sama Lake Opp Urmi School Sama Savli Road Vadodara - 390008';
+                        } else if ($languageType == '2') { // Gujarati
+                            $sixParam .= '📍 સ્થાન (સમા-સાવલી રોડ) જી.એફ. 23/24 અર્થ ઇઓન સમા તળાવ સામે ઉર્મિ સ્કૂલ સામે સમા-સાવલી રોડ વડોદરા - 390008';
+                        }
+                        $sevenParam = 'Google Map: https://share.google/V12FOd5tDP79YrMlS';
+                    } elseif ($loc == 2) {
+                        if ($languageType == '1') { // English
+                            $sixParam .= '📍 Location (Kalali-Vadsar Road) Abhishek Landmark Opp Jagnath Mahadev Mandir Near Khiskoli Circle Kalali-Vadsar Road Vadodara - 390012';
+                        } else if ($languageType == '2') { // Gujarati 
+                            $sixParam .= '📍 સ્થાન (કાલાલી-વડસાર રોડ) અભિષેક લૅન્ડમાર્ક જાગનાથ મહાદેવ મંદિર સામે ખિસકોલી સર્કલ નજીક કલાલી-વડસાર રોડ વડોદરા - 390012';
+                        }
+                        $sevenParam = 'Google Map: https://g.co/kgs/LAesMhy';
+                    }
+                }
             }
 
             $firstVehicleInfo = $this->getVehicleInfo($vehicleIds[0]);
@@ -150,7 +185,18 @@ class LeadsController extends Controller
                 $this->sendVehicleMedia($vehicleId, $request->mobile, $vehicleName);
             }
 
-            $this->sendWhatsAppMessageForLead($request->mobile, $message);
+            $data = [
+                $request->name ?? 'N/A',
+                $secondParam,
+                $salesmanName ?? 'N/A',
+                $salesmanName ?? 'N/A',
+                $salesmanMobile ?? 'N/A',
+                $sixParam,
+                $sevenParam
+            ];
+
+            $this->sendMetaWhatsappMessage($request->mobile, $template, $data);
+            // $this->sendWhatsAppMessageForLead($request->mobile, $message);
             SystemLogs::create([
                 'inquiry_id' => 0,
                 'type'       => '3',

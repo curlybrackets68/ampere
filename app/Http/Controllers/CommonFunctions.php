@@ -16,6 +16,12 @@ trait CommonFunctions
     // start fix constants for project
     protected $data = [];
 
+    protected $WHATSAPP_LICENSE_NUMBER = '94601679459';
+
+    protected $WHATSAPP_API_KEY = '3CvztP4HIDFU5hOKjEfTV9Jaw';
+
+    protected $WHATSAPP_URL = 'https://app.ampala.in/api/sendtemplate.php';
+
     protected $serviceTypeArray = [
         "1" => 'Regular service',
         "2" => 'Vehicle Off Road',
@@ -569,5 +575,83 @@ trait CommonFunctions
         }
 
         return $message;
+    }
+
+    function sendMetaWhatsappMessage($mobile, $template, $param = [])
+    {
+        $returnData = null;
+        $safeParams = array_map(function ($value) {
+            if (!is_string($value)) {
+                return $value;
+            }
+            return str_replace(',', ' ', trim($value));
+        }, $param);
+
+
+        $textParam = implode(',', $safeParams);
+        // dd($textParam);
+        // dd($textParam);
+        $url = $this->WHATSAPP_URL
+            . '?LicenseNumber=' . $this->WHATSAPP_LICENSE_NUMBER
+            . '&APIKey=' . $this->WHATSAPP_API_KEY
+            . '&Contact=' . '91' . $mobile
+            . '&Template=' . $template
+            . '&Param=' . $textParam;
+
+        try {
+            $response = Http::withOptions(['verify' => false])->get($url);
+
+            if (!$response->successful()) {
+                $returnData = [
+                    'status' => false,
+                    'message' => 'HTTP request failed',
+                    'response' => $response->body(),
+                ];
+            }
+
+            $data = $response->json();
+
+            if (
+                isset($data['ApiResponse']) &&
+                $data['ApiResponse'] === 'Success' &&
+                isset($data['ApiMessage']['messages'][0]['id'])
+            ) {
+                $returnData = [
+                    'status' => true,
+                    'message' => 'WhatsApp message accepted',
+                    'message_id' => $data['ApiMessage']['messages'][0]['id'],
+                    'wa_id' => $data['ApiMessage']['contacts'][0]['wa_id'] ?? null,
+                    'raw' => $data,
+                ];
+            }
+
+            $returnData = [
+                'status' => false,
+                'message' => 'WhatsApp API error',
+                'raw' => $data,
+            ];
+        } catch (\Exception $e) {
+            $returnData = [
+                'status' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+        // dd($returnData);
+        return $returnData;
+    }
+
+    function sanitizeWhatsappParam($value)
+    {
+        if (!is_string($value)) {
+            return $value;
+        }
+
+        return trim(
+            str_replace(
+                [','],
+                [' '], // replace comma with space
+                $value
+            )
+        );
     }
 }
