@@ -258,8 +258,9 @@ class ServiceController extends Controller
             'created_by' => Auth::id(),
         ]);
 
-
+        $template = 'service_english';
         if ($amcMaster->vehicle_master_id == '4' || $amcMaster->vehicle_master_id == '5' || $amcMaster->vehicle_master_id == '6') {
+            $template = 'gujarati';
             // WhatsApp Message
             $whatsAppMsg = "નમસ્તે $amcMaster->customer_name \n\n";
             $whatsAppMsg .= "તમારું વાહન *$amcMaster->vehicle_number* AMC કરાર ID: *$amcMaster->amc_display_number* હેઠળ સફળતાપૂર્વક સર્વિસ થયું છે. \n\n";
@@ -297,6 +298,23 @@ class ServiceController extends Controller
 
         $pdfUrl = $this->generateAndStorePdf('pdf.amc-pdf', ['amc' => $amcMaster], 'amc_pdfs');
         $data = $this->sendWhatsAppMessageWithFile($amcMaster->contact_number, $whatsAppMsg, $pdfUrl['public_url'], 'amc_pdf');
+        
+        // Meta Send
+        $paramFive = 'N/A';
+        if (!empty($checkPendingServiceCount)) {
+            $paramFive .= "Next Service Due Date: *$nextserviceDate* \n";
+            $paramFive .= "Pending Service: *$checkPendingServiceCount* \n";
+            $paramFive .= "Next Service after KM: *$nextServiceKm* \n";
+        }
+        $metaData = [
+            $amcMaster->customer_name ?? 'N/A',
+            $amcMaster->vehicle_number,
+            $amcMaster->amc_display_number ?? 'N/A',
+            $serviceData->display_service_date ?? 'N/A',
+            $paramFive ?? 'N/A'
+        ];
+
+        $this->sendMetaWhatsappMessage($amcMaster->contact_number, $template, $metaData);
 
         // Check if all services are completed
         $checkPendingServiceCount = ServiceDetail::where('amc_id', $amc_id)
@@ -316,6 +334,9 @@ class ServiceController extends Controller
             $whatsLast .= "*9023342463*";
 
             $this->sendWhatsAppMessage($amcMaster->contact_number, $whatsLast);
+
+            // Meta Send
+            $this->sendMetaWhatsappMessage($amcMaster->contact_number, 'service_completed');
         }
 
         return redirect()->route('amc-master-service.index')->with('success', 'Service Update successfully!');

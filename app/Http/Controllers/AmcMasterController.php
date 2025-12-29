@@ -255,7 +255,7 @@ class AmcMasterController extends Controller
                             // TVS King EV Max
                             if ($i <= 2) {
                                 $serviceType = 1;
-                            }else{
+                            } else {
                                 $serviceType = 2;
                             }
                             $reminderDays = $this->reminderDays['4'][$i];
@@ -263,7 +263,7 @@ class AmcMasterController extends Controller
                             // TVS King Deluxe
                             if ($i <= 2) {
                                 $serviceType = 1;
-                            }else{
+                            } else {
                                 $serviceType = 2;
                             }
                             $reminderDays = $this->reminderDays['6'][$i];
@@ -271,7 +271,7 @@ class AmcMasterController extends Controller
                             // TVS King Duramax Plus
                             if ($i <= 2) {
                                 $serviceType = 1;
-                            }else{
+                            } else {
                                 $serviceType = 2;
                             }
                             $reminderDays = $this->reminderDays['5'][$i];
@@ -296,7 +296,9 @@ class AmcMasterController extends Controller
                     $vehicleName  = Vehicle::where('id', $amcMaster->vehicle_master_id)->first()->name ?? '';
                     $packageString = $amcPackageMasterData->service_count . ' Sevices - ' . $amcPackageMasterData->price . ' duration ' . $amcPackageMasterData->time_period . 'months';
 
+                    $template = 'amc_english';
                     if ($amcMaster->vehicle_master_id == '4' || $amcMaster->vehicle_master_id == '5' || $amcMaster->vehicle_master_id == '6') {
+                        $template = '';
                         $whatsAppMsg = "નમસ્તે $amcMaster->customer_name \n \n";
 
                         $whatsAppMsg .= "તમારા વાહન *$amcMaster->vehicle_number* માટેનો AMC કરાર સફળતાપૂર્વક બનાવવામાં આવ્યો છે. \n \n";
@@ -328,6 +330,20 @@ class AmcMasterController extends Controller
                     $pdfUrl = $this->generateAndStorePdf('pdf.amc-pdf', ['amc' => $amcMaster], 'amc_pdfs');
 
                     $data = $this->sendWhatsAppMessageWithFile($amcMaster->contact_number, $whatsAppMsg, $pdfUrl['public_url'], 'amc_pdf');
+
+                    // Meta Send
+                    $metaData = [
+                        $amcMaster->customer_name ?? 'N/A',
+                        $amcMaster->vehicle_number,
+                        $amcMaster->amc_display_number ?? 'N/A',
+                        $vehicleTypeName ?? 'N/A',
+                        $startDate ?? 'N/A',
+                        $endDate,
+                        $vehicleName,
+                        $packageString
+                    ];
+
+                    $this->sendMetaWhatsappMessage($amcMaster->contact_number, $template, $metaData);
                 }
             }
             SystemLogs::create([
@@ -476,7 +492,7 @@ class AmcMasterController extends Controller
                             // TVS King EV Max
                             if ($i <= 2) {
                                 $serviceType = 1;
-                            }else{
+                            } else {
                                 $serviceType = 2;
                             }
                             $reminderDays = $this->reminderDays['4'][$i];
@@ -484,7 +500,7 @@ class AmcMasterController extends Controller
                             // TVS King Deluxe
                             if ($i <= 2) {
                                 $serviceType = 1;
-                            }else{
+                            } else {
                                 $serviceType = 2;
                             }
                             $reminderDays = $this->reminderDays['6'][$i];
@@ -492,7 +508,7 @@ class AmcMasterController extends Controller
                             // TVS King Duramax Plus
                             if ($i <= 2) {
                                 $serviceType = 1;
-                            }else{
+                            } else {
                                 $serviceType = 2;
                             }
                             $reminderDays = $this->reminderDays['5'][$i];
@@ -650,7 +666,7 @@ class AmcMasterController extends Controller
                             // TVS King EV Max
                             if ($i <= 2) {
                                 $serviceType = 1;
-                            }else{
+                            } else {
                                 $serviceType = 2;
                             }
                             $reminderDays = $this->reminderDays['4'][$i];
@@ -658,7 +674,7 @@ class AmcMasterController extends Controller
                             // TVS King Deluxe
                             if ($i <= 2) {
                                 $serviceType = 1;
-                            }else{
+                            } else {
                                 $serviceType = 2;
                             }
                             $reminderDays = $this->reminderDays['6'][$i];
@@ -666,7 +682,7 @@ class AmcMasterController extends Controller
                             // TVS King Duramax Plus
                             if ($i <= 2) {
                                 $serviceType = 1;
-                            }else{
+                            } else {
                                 $serviceType = 2;
                             }
                             $reminderDays = $this->reminderDays['5'][$i];

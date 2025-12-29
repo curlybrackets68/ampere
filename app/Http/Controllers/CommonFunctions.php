@@ -580,23 +580,24 @@ trait CommonFunctions
     function sendMetaWhatsappMessage($mobile, $template, $param = [])
     {
         $returnData = null;
-        $safeParams = array_map(function ($value) {
-            if (!is_string($value)) {
-                return $value;
-            }
-            return str_replace(',', ' ', trim($value));
-        }, $param);
 
-
-        $textParam = implode(',', $safeParams);
-        // dd($textParam);
-        // dd($textParam);
         $url = $this->WHATSAPP_URL
             . '?LicenseNumber=' . $this->WHATSAPP_LICENSE_NUMBER
             . '&APIKey=' . $this->WHATSAPP_API_KEY
-            . '&Contact=' . '91' . $mobile
-            . '&Template=' . $template
-            . '&Param=' . $textParam;
+            . '&Contact=91' . $mobile
+            . '&Template=' . $template;
+
+        if (!empty($param)) {
+            $safeParams = array_map(function ($value) {
+                if (!is_string($value)) {
+                    return $value;
+                }
+                return str_replace(',', ' ', trim($value));
+            }, $param);
+
+            $textParam = implode(',', $safeParams);
+            $url .= '&Param=' . urlencode($textParam);
+        }
 
         try {
             $response = Http::withOptions(['verify' => false])->get($url);

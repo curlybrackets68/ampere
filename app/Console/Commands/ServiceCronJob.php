@@ -70,6 +70,17 @@ class ServiceCronJob extends Command
 
                         // $sent = $this->sendWhatsAppMessageWithFile($amcQuery->contact_number, $message, $pdfUrl['public_url']);
                         $sent = $this->sendWhatsAppMessageWithFile($amcQuery->contact_number, $message, $pdfUrl['public_url'], 'amc_pdf');
+
+                        // Meta Send
+                        $metaData = [
+                            $amcQuery->customer_name ?? 'N/A',
+                            $amcQuery->vehicle_number,
+                            $amcQuery->display_service_date ?? 'N/A',
+                            $amcQuery->amc_display_number ?? 'N/A',
+                        ];
+
+                        $this->sendMetaWhatsappMessage($amcQuery->contact_number, 'amc_service_due_reminder', $metaData);
+
                         if ($sent && File::exists($pdfUrl['public_url'])) {
                             File::delete($pdfUrl['public_url']);
                         }
@@ -151,6 +162,17 @@ class ServiceCronJob extends Command
 
                     // $sent = $this->sendWhatsAppMessageWithFile($amcQuery->contact_number, $messageDue, $pdfUrl['public_url']);
                     $sent = $this->sendWhatsAppMessageWithFile($amcQueryServiceDue->contact_number, $messageDue, $pdfUrl['public_url'], 'amc_pdf');
+
+                    // Meta Send
+                    $metaData = [
+                        $amcQueryServiceDue->customer_name ?? 'N/A',
+                        $amcQueryServiceDue->vehicle_number,
+                        $amcQueryServiceDue->display_service_date ?? 'N/A',
+                        $amcQueryServiceDue->amc_display_number ?? 'N/A',
+                    ];
+
+                    $this->sendMetaWhatsappMessage($amcQuery->contact_number, 'amc_service_overdue_final', $metaData);
+
                     if ($sent && File::exists($pdfUrl['public_url'])) {
                         File::delete($pdfUrl['public_url']);
                     }

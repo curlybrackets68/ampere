@@ -63,6 +63,18 @@ class AMCCronJob extends Command
                     // $sent = $this->sendWhatsAppMessageWithFile($amc->contact_number, $message, $pdfUrl['full_path']);
 
                     $sent = $this->sendWhatsAppMessageWithFile($amc->contact_number, $message, $pdfUrl['public_url'], 'amc_pdf');
+
+                    // Meta Send
+                    $metaData = [
+                        $amc->customer_name ?? 'N/A',
+                        $amc->amc_display_number ?? 'N/A',
+                        $amc->vehicle_number,
+                        $amc->display_amc_end_date ?? 'N/A',
+                        $amc->vehicle_name ?? 'N/A'
+                    ];
+
+                    $this->sendMetaWhatsappMessage($amc->contact_number, 'amc_renewal_reminder', $metaData);
+
                     if ($sent && File::exists($pdfUrl['public_url'])) {
                         File::delete($pdfUrl['public_url']);
                     }
@@ -120,6 +132,17 @@ class AMCCronJob extends Command
                     $this->sendWhatsAppMessage($amcDue->contact_number, $gujaratiMessageDue);
                 } else {
                     $sent = $this->sendWhatsAppMessageWithFile($amcDue->contact_number, $messageDue, $pdfUrl['public_url'], 'amc_pdf');
+
+                    // Meta Send
+                    $metaData = [
+                        $amcDue->customer_name ?? 'N/A',
+                        $amcDue->amc_display_number ?? 'N/A',
+                        $amcDue->vehicle_number,
+                        $amcDue->display_amc_end_date ?? 'N/A'
+                    ];
+
+                    $this->sendMetaWhatsappMessage($amcDue->contact_number, 'amc_due_reminder', $metaData);
+
                     if ($sent && File::exists($pdfUrl['public_url'])) {
                         File::delete($pdfUrl['public_url']);
                     }
