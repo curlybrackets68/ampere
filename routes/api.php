@@ -23,5 +23,6 @@ Route::prefix('v1')->group(function () {
     Route::post('add-inquiry', [InquiryDetailsController::class, 'addInquiry']);
     Route::post('check-inquiry', [InquiryDetailsController::class, 'checkInquiry']);
     Route::post('run-artisan', [InquiryDetailsController::class, 'runArtisan']);
+    Route::post('add-inquiry-web-hook', [InquiryDetailsController::class, 'addInquiryWebHook']);
 
 });
