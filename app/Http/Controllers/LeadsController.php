@@ -89,114 +89,106 @@ class LeadsController extends Controller
         $salesmanName = '';
         $salesmanMobile = '';
 
-        $nameQuery = User::find($request->salesman);
-        if ($nameQuery) {
-            $salesmanName = $nameQuery->user_name;
-            $salesmanMobile = $nameQuery->mobile;
+        if ($request->salesman) {
+            $salesman = User::find($request->salesman);
+            if ($salesman) {
+                $salesmanName = $salesman->user_name;
+                $salesmanMobile = $salesman->mobile;
+            }
         }
 
-        $languageType = $request->language_type;
-        $locationType = $request->location_type;
-
-        $vehicleIds = array_map('intval', $request->input('vehicle', []));
+        $languageType  = $request->language_type;
+        $vehicleIds    = array_map('intval', $request->input('vehicle', []));
         $locationTypes = array_map('intval', $request->input('location_type', []));
+
         $data = $request->all();
-        $data['vehicle'] = $vehicleIds;
+        $data['vehicle']       = $vehicleIds;
         $data['location_type'] = $locationTypes;
 
         $lead = Lead::create($data);
 
-        $secondParam = 'N/A';
-        $sixParam = '';
-        $sevenParam = 'N/A';
-        $template = $languageType == '1' ? 'lead_generation_english' : 'customer_reminder_gujarati';
+        /** ---------------- Template Selection ---------------- */
+        $template = '';
 
-        if ($lead && !empty($vehicleIds)) {
-            if (count($vehicleIds) == 1) {
+        if (in_array(1, $locationTypes) && in_array(2, $locationTypes)) {
+            $template = $languageType == '1'
+                ? 'lead_all_address_english' // Add google map link in meta template
+                : 'lead_all_address_gujarati'; // Pending to remove header pdf from meta template
+        } elseif (in_array(1, $locationTypes)) { 
+            $template = $languageType == '1'
+                ? 'lead_sama_address_english'
+                : 'lead_sama_address_gujarati';// Pending to remove header pdf from meta template
+        } elseif (in_array(2, $locationTypes)) {
+            $template = $languageType == '1'
+                ? 'lead_kalali_address_english'
+                : 'lead_kalali_address_gujarati';
+        }
+
+        /** ---------------- Vehicle Logic ---------------- */
+        $secondParam = 'N/A';
+        $pdfUrl = null;
+        $pdfName = null;
+
+        if (!empty($vehicleIds)) {
+
+            // ONLY ONE VEHICLE
+            if (count($vehicleIds) === 1) {
+
                 $vehicleInfo = $this->getVehicleInfo($vehicleIds[0]);
                 $vehicleName = $vehicleInfo['name'];
 
-                if ($languageType == '1') { // English
+                if ($languageType == '1') {
                     $secondParam = $vehicleName;
-                } else if ($languageType == '2') { // Gujarati
-                    $secondParam = 'તમારો ' . $vehicleName;
+                } else {
+                    $secondParam = 'તમારો ' . $vehicleName . ' માં';
                 }
-                // $message = $this->getLeadMessage(
-                //     $languageType,
-                //     $request->name,
-                //     $vehicleName,
-                //     $salesmanName,
-                //     $salesmanMobile,
-                //     false,
-                //     $locationTypes
-                // );
-            } else {
-                if ($languageType == '1') { // English
+            }
+            // MULTIPLE VEHICLES (NO VEHICLE NAME)
+            else {
+                if ($languageType == '1') {
                     $secondParam = 'our electric vehicles.';
-                } else if ($languageType == '2') { // Gujarati
+                } else {
                     $secondParam = 'અમારા ઇલેક્ટ્રિક વાહનોમાં';
                 }
-                // $message = $this->getLeadMessage(
-                //     $languageType,
-                //     $request->name,
-                //     null,
-                //     $salesmanName,
-                //     $salesmanMobile,
-                //     true,
-                //     $locationTypes
-                // );
             }
+        }
 
-            if (!empty($locationTypes)) {
-                foreach ($locationTypes as $loc) {
-                    if ($loc == 1) {
-                        if ($languageType == '1') { // English
-                            $sixParam .= '📍 Location (Sama Savli Road) GF 23/24 Earth Eon Opp Sama Lake Opp Urmi School Sama Savli Road Vadodara - 390008';
-                        } else if ($languageType == '2') { // Gujarati
-                            $sixParam .= '📍 સ્થાન (સમા-સાવલી રોડ) જી.એફ. 23/24 અર્થ ઇઓન સમા તળાવ સામે ઉર્મિ સ્કૂલ સામે સમા-સાવલી રોડ વડોદરા - 390008';
-                        }
-                        $sevenParam = 'Google Map: https://share.google/V12FOd5tDP79YrMlS';
-                    } elseif ($loc == 2) {
-                        if ($languageType == '1') { // English
-                            $sixParam .= '📍 Location (Kalali-Vadsar Road) Abhishek Landmark Opp Jagnath Mahadev Mandir Near Khiskoli Circle Kalali-Vadsar Road Vadodara - 390012';
-                        } else if ($languageType == '2') { // Gujarati 
-                            $sixParam .= '📍 સ્થાન (કાલાલી-વડસાર રોડ) અભિષેક લૅન્ડમાર્ક જાગનાથ મહાદેવ મંદિર સામે ખિસકોલી સર્કલ નજીક કલાલી-વડસાર રોડ વડોદરા - 390012';
-                        }
-                        $sevenParam = 'Google Map: https://g.co/kgs/LAesMhy';
-                    }
-                }
-            }
+        /** ---------------- WhatsApp Params ---------------- */
+        $params = [
+            $request->name ?? 'N/A',
+            $secondParam,
+            $salesmanName ?: 'N/A',
+            $salesmanName ?: 'N/A',
+            $salesmanMobile ?: 'N/A',
+        ];
 
-            $firstVehicleInfo = $this->getVehicleInfo($vehicleIds[0]);
-            $firstPdfUrl = $firstVehicleInfo['pdf'];
-            $firstVehicleName = $firstVehicleInfo['name'];
-            $this->sendWhatsAppMessageWithFileForLead($request->mobile, '', $firstPdfUrl, $firstVehicleName);
-            sleep(2);
-            foreach ($vehicleIds as $index => $vehicleId) {
+        /** ---------------- Send WhatsApp Message ---------------- */
+        if ($lead && $template) {
+
+            // 1 Send message ONCE
+            $this->sendMetaWhatsappMessage(
+                $request->mobile,
+                $template,
+                $params
+            );
+
+            sleep(1);
+
+            // 2 VEHICLE-WISE PDF + IMAGES
+            foreach ($vehicleIds as $vehicleId) {
                 $vehicleInfo = $this->getVehicleInfo($vehicleId);
-                $vehicleName = $vehicleInfo['name'];
-                $pdfUrl = $vehicleInfo['pdf'];
-
-                if ($index != 0) {
-                    $this->sendWhatsAppMessageWithFileForLead($request->mobile, '', $pdfUrl, $vehicleName);
-                    sleep(2);
+                // Send THIS vehicle PDF
+                if (!empty($vehicleInfo['pdf'])) {
+                    $this->sendMetaMediaMessage($request->mobile, $vehicleInfo['pdf'], 'document');
+                    sleep(1);
                 }
 
-                $this->sendVehicleMedia($vehicleId, $request->mobile, $vehicleName);
+                // Send THIS vehicle images / video
+                $this->sendVehicleMedia($vehicleId, $request->mobile);
+                sleep(2);
             }
 
-            $data = [
-                $request->name ?? 'N/A',
-                $secondParam,
-                $salesmanName ?? 'N/A',
-                $salesmanName ?? 'N/A',
-                $salesmanMobile ?? 'N/A',
-                $sixParam,
-                $sevenParam
-            ];
-
-            $this->sendMetaWhatsappMessage($request->mobile, $template, $data);
-            // $this->sendWhatsAppMessageForLead($request->mobile, $message);
+            /** ---------------- Logs ---------------- */
             SystemLogs::create([
                 'inquiry_id' => 0,
                 'type'       => '3',
@@ -207,8 +199,10 @@ class LeadsController extends Controller
             ]);
         }
 
-        return redirect()->route('leads.index')->with('success', 'Lead added successfully!');
+        return redirect()->route('leads.index')
+            ->with('success', 'Lead added successfully!');
     }
+
 
     /**
      * Get vehicle name and PDF URL by ID
@@ -230,45 +224,45 @@ class LeadsController extends Controller
     /**
      * Send vehicle images and videos by vehicle ID
      */
-    private function sendVehicleMedia($vehicleId, $mobile, $vehicleName)
+    private function sendVehicleMedia($vehicleId, $mobile)
     {
         if ($vehicleId === 1) { // Nexus
             for ($i = 1; $i <= 4; $i++) {
                 $imageUrl = "https://chiragautomotive.com/amper/assets/pdf/images/nexus/{$i}.jpg";
-                $this->sendWhatsAppMessageWithFileForLead($mobile, '', $imageUrl, $vehicleName);
+                $this->sendMetaMediaMessage($mobile, $imageUrl, 'image');
                 sleep(1);
             }
             $videoUrl = 'https://chiragautomotive.com/amper/assets/pdf/images/nexus/nexus_video.mp4';
-            $this->sendWhatsAppMessageWithFileForLead($mobile, '', $videoUrl, $vehicleName);
+            $this->sendMetaMediaMessage($mobile, $videoUrl, 'video');
             sleep(2);
         } elseif ($vehicleId === 2) { // Magnus
             for ($i = 6; $i <= 11; $i++) {
                 $imageUrl = "https://chiragautomotive.com/amper/assets/pdf/images/magnus/{$i}.jpg";
-                $this->sendWhatsAppMessageWithFileForLead($mobile, '', $imageUrl, $vehicleName);
+                $this->sendMetaMediaMessage($mobile, $imageUrl, 'image');
                 sleep(1);
             }
         } elseif ($vehicleId === 4) { // TVS King EV Max
             for ($i = 1; $i <= 7; $i++) {
                 $imageUrl = "https://chiragautomotive.com/amper/assets/pdf/images/tvs_king_ev_max/{$i}.jpg";
-                $this->sendWhatsAppMessageWithFileForLead($mobile, '', $imageUrl, $vehicleName);
+                $this->sendMetaMediaMessage($mobile, $imageUrl, 'image');
                 sleep(1);
             }
         } elseif ($vehicleId === 5) { // TVS King Duramax Plus
             for ($i = 1; $i <= 4; $i++) {
                 $imageUrl = "https://chiragautomotive.com/amper/assets/pdf/images/duramax/{$i}.jpg";
-                $this->sendWhatsAppMessageWithFileForLead($mobile, '', $imageUrl, $vehicleName);
+                $this->sendMetaMediaMessage($mobile, $imageUrl, 'image');
                 sleep(1);
             }
         } elseif ($vehicleId === 6) { // TVS King Deluxe
             for ($i = 1; $i <= 4; $i++) {
                 $imageUrl = "https://chiragautomotive.com/amper/assets/pdf/images/deluxe/{$i}.jpg";
-                $this->sendWhatsAppMessageWithFileForLead($mobile, '', $imageUrl, $vehicleName);
+                $this->sendMetaMediaMessage($mobile, $imageUrl, 'image');
                 sleep(1);
             }
         } elseif ($vehicleId === 7) { // TVS King Kargo HD EV
             for ($i = 1; $i <= 7; $i++) {
                 $imageUrl = "https://chiragautomotive.com/amper/assets/pdf/images/tvs_king_kargo_hd_ev/{$i}.jpg";
-                $this->sendWhatsAppMessageWithFileForLead($mobile, '', $imageUrl, $vehicleName);
+                $this->sendMetaMediaMessage($mobile, $imageUrl, 'image');
                 sleep(1);
             }
         }
