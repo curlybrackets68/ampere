@@ -211,7 +211,7 @@ class DashboardController
             }
 
             //$this->sendWhatsAppMessage($inquiryDetails->mobile, $message);
-            $this->sendWhatsAppMessage($inquiryDetails->mobile, $metaTemplateName, $metaTemplateData);
+            $this->sendMetaWhatsappMessage($inquiryDetails->mobile, $metaTemplateName, $metaTemplateData);
             SystemLogs::create([
                 'inquiry_id' => $request->id,
                 'type' => '1', // for Inq

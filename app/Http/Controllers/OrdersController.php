@@ -97,28 +97,54 @@ class OrdersController extends Controller
         if ($save) {
             $orderDetails = Order::find($request->id);
             $message        = '';
+            $metaTemplateName = '';
+            $metaTemplateData = [];
             //  dd($request->statusId);
             if ($request->statusId == '6') { // Ordered
-                $message = 'Your Ordered #' . $orderDetails->order_no . " successful.\n";
-                $message .= "We will contact you once the part has arrived \n";
-
-                $message .= "Remark: " . $remark . "\n";
+                // $message = 'Your Ordered #' . $orderDetails->order_no . " successful.\n";
+                // $message .= "We will contact you once the part has arrived \n";
+                // $message .= "Remark: " . $remark . "\n";
+                $metaTemplateName = 'order_status_change_order';
+                $metaTemplateData = [
+                    $orderDetails->order_no,
+                    $remark
+                ];
             } else if ($request->statusId == '7') { // received
-                $message = "Your part has been received. Our executive will reach out to you for the fitment of the same \n";
-                $message .= "Remark: " . $remark . "\n";
+                // $message = "Your part has been received. Our executive will reach out to you for the fitment of the same \n";
+                // $message .= "Remark: " . $remark . "\n";
+                $metaTemplateName = 'order_status_change_received';
+                $metaTemplateData = [
+                    $remark
+                ];
             } else if ($request->statusId == '8') { // Cancelled
-                $message = 'Your Ordered #' . $orderDetails->order_no . " is Cancelled.\n";
-                $message .= "Remark: " . $remark . "\n";
+                // $message = 'Your Ordered #' . $orderDetails->order_no . " is Cancelled.\n";
+                // $message .= "Remark: " . $remark . "\n";
+                $metaTemplateName = 'order_status_change_cancelled';
+
+                $metaTemplateData = [
+                    $orderDetails->order_no,
+                    $remark
+                ];order_status_change_fitment
             } else if ($request->statusId == '9') { // Fitment
-                $message = 'Your Ordered #' . $orderDetails->order_no . " is Fitment.\n";
-                $message .= "Name: " . $orderDetails->customer_name . "\n";
-                $message .= "Mobile: " . $orderDetails->customer_mobile . "\n";
-                $message .= "Vehicle No: " . $orderDetails->customer_vehicle_no . "\n";
-                $message .= "Part Details: " . $orderDetails->order_name . "\n";
-                $message .= "Remark: " . $remark . "\n";
+                // $message = 'Your Ordered #' . $orderDetails->order_no . " is Fitment.\n";
+                // $message .= "Name: " . $orderDetails->customer_name . "\n";
+                // $message .= "Mobile: " . $orderDetails->customer_mobile . "\n";
+                // $message .= "Vehicle No: " . $orderDetails->customer_vehicle_no . "\n";
+                // $message .= "Part Details: " . $orderDetails->order_name . "\n";
+                // $message .= "Remark: " . $remark . "\n";
+                 $metaTemplateName = 'order_status_change_fitment';
+
+                $metaTemplateData = [
+                    $orderDetails->order_no,
+                    $orderDetails->customer_name,
+                    $orderDetails->customer_vehicle_no,
+                    $orderDetails->order_name,
+                    $remark
+                ];
             }
 
-            $this->sendWhatsAppMessage($orderDetails->customer_mobile, $message);
+            // $this->sendWhatsAppMessage($orderDetails->customer_mobile, $message);
+            $this->sendMetaWhatsappMessage($orderDetails->mobile, $metaTemplateName, $metaTemplateData);
             SystemLogs::create([
                 'inquiry_id' => 0,
                 'type' => '2', // for Order
@@ -164,14 +190,14 @@ class OrdersController extends Controller
         $order->order_no = 'ORD-' . ($lastOrderId + 1);
         $order->customer_name = $request->customer_name;
         $order->order_name = $request->order_name;
-        $order->order_date =now()->format('Y-m-d H:i:s');
+        $order->order_date = now()->format('Y-m-d H:i:s');
         $order->customer_mobile = $request->customer_mobile;
         $order->customer_vehicle_no = $request->customer_vehicle_no;
         $order->branch_id = $request->branch_id;
         $order->status_id = 1; // Pending
         $order->created_by = auth()->id();
         $order->save();
-      ///  dd($order);
+        ///  dd($order);
 
 
         return redirect()->route('orders')->with('success', 'Order created successfully with Order No #: ' . $order->order_no);
