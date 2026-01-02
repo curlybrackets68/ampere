@@ -294,42 +294,43 @@ class AmcMasterController extends Controller
                     $endDate = $this->formatDateTime('d-M-Y', $amcMaster->amc_end_date);
                     // $vehicleName  = Vehicle::find($amcMaster->vehicle_master_id)->first()->name ?? '';
                     $vehicleName  = Vehicle::where('id', $amcMaster->vehicle_master_id)->first()->name ?? '';
-                    $packageString = $amcPackageMasterData->service_count . ' Sevices - ' . $amcPackageMasterData->price . ' duration ' . $amcPackageMasterData->time_period . 'months';
+                    $packageString = $amcPackageMasterData->service_count . ' Service - ' . $amcPackageMasterData->price . ' duration ' . $amcPackageMasterData->time_period . 'months';
 
                     $template = 'amc_english';
                     if ($amcMaster->vehicle_master_id == '4' || $amcMaster->vehicle_master_id == '5' || $amcMaster->vehicle_master_id == '6') {
-                        $template = '';
-                        $whatsAppMsg = "નમસ્તે $amcMaster->customer_name \n \n";
+                        $template = 'amc_gujarati';
+                        // $whatsAppMsg = "નમસ્તે $amcMaster->customer_name \n \n";
 
-                        $whatsAppMsg .= "તમારા વાહન *$amcMaster->vehicle_number* માટેનો AMC કરાર સફળતાપૂર્વક બનાવવામાં આવ્યો છે. \n \n";
-                        $whatsAppMsg .= "કરાર આઈડી: *$amcMaster->amc_display_number* \n";
-                        $whatsAppMsg .= "વાહન કેટેગરી: *$vehicleTypeName* \n";
-                        $whatsAppMsg .= "કરાર શરૂ તારીખ: *$startDate* \n";
-                        $whatsAppMsg .= "કરાર સમાપ્ત તારીખ: *$endDate* \n";
-                        $whatsAppMsg .= "વાહન મોડેલ: *$vehicleName* \n";
-                        $whatsAppMsg .= "સેવા વિગતો: *$packageString* \n \n";
-                        $whatsAppMsg .= "હવે તમે તમારા AMC પ્લાન હેઠળ નિઃચિંતા સેવા અને પ્રાથમિકતા સપોર્ટનો આનંદ લઈ શકો છો. \n \n";
-                        $whatsAppMsg .= "TVS પસંદ કરવા બદલ આપનો આભાર! \n";
-                        $whatsAppMsg .= "કોઈ પણ પૂછપરછ માટે, કૃપા કરીને અમારો સંપર્ક કરો:\n ";
-                        $whatsAppMsg .= "+91 99749442223.";
-                    } else {
-                        $whatsAppMsg = "Hi $amcMaster->customer_name \n \n";
+                        // $whatsAppMsg .= "તમારા વાહન *$amcMaster->vehicle_number* માટેનો AMC કરાર સફળતાપૂર્વક બનાવવામાં આવ્યો છે. \n \n";
+                        // $whatsAppMsg .= "કરાર આઈડી: *$amcMaster->amc_display_number* \n";
+                        // $whatsAppMsg .= "વાહન કેટેગરી: *$vehicleTypeName* \n";
+                        // $whatsAppMsg .= "કરાર શરૂ તારીખ: *$startDate* \n";
+                        // $whatsAppMsg .= "કરાર સમાપ્ત તારીખ: *$endDate* \n";
+                        // $whatsAppMsg .= "વાહન મોડેલ: *$vehicleName* \n";
+                        // $whatsAppMsg .= "સેવા વિગતો: *$packageString* \n \n";
+                        // $whatsAppMsg .= "હવે તમે તમારા AMC પ્લાન હેઠળ નિઃચિંતા સેવા અને પ્રાથમિકતા સપોર્ટનો આનંદ લઈ શકો છો. \n \n";
+                        // $whatsAppMsg .= "TVS પસંદ કરવા બદલ આપનો આભાર! \n";
+                        // $whatsAppMsg .= "કોઈ પણ પૂછપરછ માટે, કૃપા કરીને અમારો સંપર્ક કરો:\n ";
+                        // $whatsAppMsg .= "+91 99749442223.";
+                    } 
+                    // else {
+                    //     $whatsAppMsg = "Hi $amcMaster->customer_name \n \n";
 
-                        $whatsAppMsg .= "Your AMC contract has been successfully generated for your vehicle *$amcMaster->vehicle_number* \n \n";
-                        $whatsAppMsg .= "Contract ID: *$amcMaster->amc_display_number* \n";
-                        $whatsAppMsg .= "Vehicle Category: *$vehicleTypeName* \n";
-                        $whatsAppMsg .= "Contract Start Date: *$startDate* \n";
-                        $whatsAppMsg .= "Valid Till: *$endDate* \n";
-                        $whatsAppMsg .= "Vehicle Model: *$vehicleName* \n";
-                        $whatsAppMsg .= "Service Details: *$packageString* \n \n";
-                        $whatsAppMsg .= "You can now enjoy hassle-free service and priority support under your AMC plan. \n \n";
-                        $whatsAppMsg .= "Thank you for choosing Ampere! \n";
-                        $whatsAppMsg .= "For queries, contact us at +91 90233 42463.";
-                    }
+                    //     $whatsAppMsg .= "Your AMC contract has been successfully generated for your vehicle *$amcMaster->vehicle_number* \n \n";
+                    //     $whatsAppMsg .= "Contract ID: *$amcMaster->amc_display_number* \n";
+                    //     $whatsAppMsg .= "Vehicle Category: *$vehicleTypeName* \n";
+                    //     $whatsAppMsg .= "Contract Start Date: *$startDate* \n";
+                    //     $whatsAppMsg .= "Valid Till: *$endDate* \n";
+                    //     $whatsAppMsg .= "Vehicle Model: *$vehicleName* \n";
+                    //     $whatsAppMsg .= "Service Details: *$packageString* \n \n";
+                    //     $whatsAppMsg .= "You can now enjoy hassle-free service and priority support under your AMC plan. \n \n";
+                    //     $whatsAppMsg .= "Thank you for choosing Ampere! \n";
+                    //     $whatsAppMsg .= "For queries, contact us at +91 90233 42463.";
+                    // }
 
                     $pdfUrl = $this->generateAndStorePdf('pdf.amc-pdf', ['amc' => $amcMaster], 'amc_pdfs');
 
-                    $data = $this->sendWhatsAppMessageWithFile($amcMaster->contact_number, $whatsAppMsg, $pdfUrl['public_url'], 'amc_pdf');
+                    // $data = $this->sendWhatsAppMessageWithFile($amcMaster->contact_number, $whatsAppMsg, $pdfUrl['public_url'], 'amc_pdf');
 
                     // Meta Send
                     $metaData = [
@@ -343,7 +344,7 @@ class AmcMasterController extends Controller
                         $packageString
                     ];
 
-                    $this->sendMetaWhatsappMessage($amcMaster->contact_number, $template, $metaData);
+                    $this->sendMetaWhatsappMessage($amcMaster->contact_number, $template, $metaData, $pdfUrl, 'AMC_FILE');
                 }
             }
             SystemLogs::create([
