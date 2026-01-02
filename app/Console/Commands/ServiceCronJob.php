@@ -69,17 +69,17 @@ class ServiceCronJob extends Command
                         $message .= "For assistance, call us at +91 90233 42463.\n";
 
                         // $sent = $this->sendWhatsAppMessageWithFile($amcQuery->contact_number, $message, $pdfUrl['public_url']);
-                        $sent = $this->sendWhatsAppMessageWithFile($amcQuery->contact_number, $message, $pdfUrl['public_url'], 'amc_pdf');
+                        // $sent = $this->sendWhatsAppMessageWithFile($amcQuery->contact_number, $message, $pdfUrl['public_url'], 'amc_pdf');
 
                         // Meta Send
                         $metaData = [
                             $amcQuery->customer_name ?? 'N/A',
                             $amcQuery->vehicle_number,
-                            $amcQuery->display_service_date ?? 'N/A',
+                            $service->display_service_date ?? 'N/A',
                             $amcQuery->amc_display_number ?? 'N/A',
                         ];
 
-                        $this->sendMetaWhatsappMessage($amcQuery->contact_number, 'amc_service_due_reminder', $metaData);
+                        $sent = $this->sendMetaWhatsappMessage($amcQuery->contact_number, 'amc_service_due_reminder', $metaData, $pdfUrl['public_url'], 'AMC_FILE');
 
                         if ($sent && File::exists($pdfUrl['public_url'])) {
                             File::delete($pdfUrl['public_url']);
@@ -125,7 +125,19 @@ class ServiceCronJob extends Command
                     $messageOnDue .= "For assistance, call +91 90233 42463. \n";
 
                     // $sent = $this->sendWhatsAppMessageWithFile($amcQuery->contact_number, $messageOnDue, $pdfUrl['public_url']);
-                    $sent = $this->sendWhatsAppMessageWithFile($amcQueryDue->contact_number, $messageOnDue, $pdfUrl['public_url'], 'amc_pdf');
+                    // $sent = $this->sendWhatsAppMessageWithFile($amcQueryDue->contact_number, $messageOnDue, $pdfUrl['public_url'], 'amc_pdf');
+
+                    // Meta Send
+                    $metaData = [
+                        $amcQueryDue->customer_name ?? 'N/A',
+                        $amcQueryDue->vehicle_number,
+                        $service->display_service_date ?? 'N/A',
+                        $amcQueryDue->amc_display_number ?? 'N/A',
+                    ];
+
+                    $sent = $this->sendMetaWhatsappMessage($amcQueryDue->contact_number, 'amc_service_due_on_date_english_v2', $metaData, $pdfUrl['public_url'], 'AMC_FILE');
+
+
                     if ($sent && File::exists($pdfUrl['public_url'])) {
                         File::delete($pdfUrl['public_url']);
                     }
@@ -161,17 +173,17 @@ class ServiceCronJob extends Command
                     $messageDue .= "Support: +91 90233 42463  \n";
 
                     // $sent = $this->sendWhatsAppMessageWithFile($amcQuery->contact_number, $messageDue, $pdfUrl['public_url']);
-                    $sent = $this->sendWhatsAppMessageWithFile($amcQueryServiceDue->contact_number, $messageDue, $pdfUrl['public_url'], 'amc_pdf');
+                    // $sent = $this->sendWhatsAppMessageWithFile($amcQueryServiceDue->contact_number, $messageDue, $pdfUrl['public_url'], 'amc_pdf');
 
                     // Meta Send
                     $metaData = [
                         $amcQueryServiceDue->customer_name ?? 'N/A',
                         $amcQueryServiceDue->vehicle_number,
-                        $amcQueryServiceDue->display_service_date ?? 'N/A',
+                        $service->display_service_date ?? 'N/A',
                         $amcQueryServiceDue->amc_display_number ?? 'N/A',
                     ];
 
-                    $this->sendMetaWhatsappMessage($amcQuery->contact_number, 'amc_service_overdue_final', $metaData);
+                    $sent = $this->sendMetaWhatsappMessage($amcQueryServiceDue->contact_number, 'amc_service_overdue_final', $metaData, $pdfUrl['public_url'], 'AMC_FILE');
 
                     if ($sent && File::exists($pdfUrl['public_url'])) {
                         File::delete($pdfUrl['public_url']);
@@ -225,7 +237,17 @@ class ServiceCronJob extends Command
                     $gujaratiMessage .= "TVS પસંદ કરવા બદલ આપનો આભાર! \n";
                     $gujaratiMessage .= "મદદ માટે, અમને +૯૧ ૯૦૨૩૩ ૪૨૪૬૩ પર કોલ કરો.\n";
 
-                    $this->sendWhatsAppMessage($amc->contact_number, $gujaratiMessage);
+                    // $this->sendWhatsAppMessage($amc->contact_number, $gujaratiMessage);
+
+                    // Meta Send
+                    $metaData = [
+                        $amc->customer_name ?? 'N/A',
+                        $amc->vehicle_number,
+                        $service->display_service_date ?? 'N/A',
+                        $amc->amc_display_number ?? 'N/A',
+                    ];
+
+                    $this->sendMetaWhatsappMessage($amc->contact_number, 'amc_upcoming_service_gujarati', $metaData);
 
                     $this->info("Reminder sent for AMC ID {$amc->id}, Service #{$service->service_no}");
                     \Log::info("Reminder sent for AMC ID {$amc->id}, Service #{$service->service_no}");
@@ -246,7 +268,17 @@ class ServiceCronJob extends Command
                     $gujaratiMessageOnDue .= "TVS પસંદ કરવા બદલ આપનો આભાર. \n";
                     $gujaratiMessageOnDue .= "મદદ માટે, +૯૧ ૯૦૨૩૩ ૪૨૪૬૩ પર કોલ કરો. \n";
 
-                    $this->sendWhatsAppMessage($amc->contact_number, $gujaratiMessageOnDue);
+                    // $this->sendWhatsAppMessage($amc->contact_number, $gujaratiMessageOnDue);
+
+                    // Meta Send
+                    $metaData = [
+                        $amc->customer_name ?? 'N/A',
+                        $amc->vehicle_number,
+                        $service->display_service_date ?? 'N/A',
+                        $amc->amc_display_number ?? 'N/A',
+                    ];
+
+                    $this->sendMetaWhatsappMessage($amc->contact_number, 'amc_service_due_gujarati', $metaData);
 
                     $this->info("🔔 Due Today: Reminder sent for AMC ID {$amc->id}, Service #{$service->service_no}");
                     \Log::info("🔔 Due Today: Reminder sent for AMC ID {$amc->id}, Service #{$service->service_no}");
@@ -263,7 +295,17 @@ class ServiceCronJob extends Command
                     $gujaratiMessageDue .= "TVS પસંદ કરવા બદલ આપનો આભાર.\n";
                     $gujaratiMessageDue .= "મદદ માટે, +૯૧ ૯૦૨૩૩ ૪૨૪૬૩ પર કોલ કરો.\n";
 
-                    $this->sendWhatsAppMessage($amc->contact_number, $gujaratiMessageDue);
+                    // $this->sendWhatsAppMessage($amc->contact_number, $gujaratiMessageDue);
+
+                    // Meta Send
+                    $metaData = [
+                        $amc->customer_name ?? 'N/A',
+                        $amc->vehicle_number,
+                        $amc->amc_display_number ?? 'N/A',
+                        $service->display_service_date ?? 'N/A',
+                    ];
+
+                    $this->sendMetaWhatsappMessage($amc->contact_number, 'amc_service_final_due_gujarati', $metaData);
 
                     $this->info("⚠️ Overdue: Reminder sent for AMC ID {$amc->id}, Service #{$service->service_no}");
                     \Log::info("⚠️ Overdue: Reminder sent for AMC ID {$amc->id}, Service #{$service->service_no}");
