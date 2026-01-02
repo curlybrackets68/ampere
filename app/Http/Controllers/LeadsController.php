@@ -112,12 +112,12 @@ class LeadsController extends Controller
 
         if (in_array(1, $locationTypes) && in_array(2, $locationTypes)) {
             $template = $languageType == '1'
-                ? 'lead_all_address_english' // Add google map link in meta template
-                : 'lead_all_address_gujarati'; // Pending to remove header pdf from meta template
+                ? 'lead_all_address_english'
+                : 'lead_all_address_gujarati';
         } elseif (in_array(1, $locationTypes)) { 
             $template = $languageType == '1'
                 ? 'lead_sama_address_english'
-                : 'lead_sama_address_gujarati';// Pending to remove header pdf from meta template
+                : 'lead_sama_address_gujarati';
         } elseif (in_array(2, $locationTypes)) {
             $template = $languageType == '1'
                 ? 'lead_kalali_address_english'
