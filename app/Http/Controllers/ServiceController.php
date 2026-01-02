@@ -260,61 +260,31 @@ class ServiceController extends Controller
 
         $template = 'service_english';
         if ($amcMaster->vehicle_master_id == '4' || $amcMaster->vehicle_master_id == '5' || $amcMaster->vehicle_master_id == '6') {
-            $template = 'gujarati';
-            // WhatsApp Message
-            $whatsAppMsg = "નમસ્તે $amcMaster->customer_name \n\n";
-            $whatsAppMsg .= "તમારું વાહન *$amcMaster->vehicle_number* AMC કરાર ID: *$amcMaster->amc_display_number* હેઠળ સફળતાપૂર્વક સર્વિસ થયું છે. \n\n";
-            $whatsAppMsg .= "સેવાની તારીખ: *$serviceData->display_service_date* \n";
-
-            if (!empty($checkPendingServiceCount)) {
-                $whatsAppMsg .= "આગામી સર્વિસની તારીખ: *$nextserviceDate* \n";
-                $whatsAppMsg .= "બાકી રહેલી સર્વિસ: *$checkPendingServiceCount* \n";
-                $whatsAppMsg .= "આગામી સર્વિસ કિમી પછી: *$nextServiceKm* \n";
-            }
-
-            $whatsAppMsg .= "અમારી ટીમે AMC માર્ગદર્શિકાઓ અનુસાર જરૂરી તમામ ચકાસણીઓ અને જાળવણી પૂર્ણ કરી છે. તમારું વાહન હવે ડિલિવરી માટે તૈયાર છે. \n\n";
-            $whatsAppMsg .= "તમારા પ્રતિસાદ અથવા પ્રશ્નો માટે, આ સંદેશનો જવાબ આપી શકો છો. \n";
-            $whatsAppMsg .= "TVS પસંદ કરવા બદલ આપનો આભાર! \n";
-            $whatsAppMsg .= "કોઈ પણ પૂછપરછ માટે, કૃપા કરીને અમારો સંપર્ક કરો:\n ";
-            $whatsAppMsg .= "+91 99749442223.";
-        } else {
-            // WhatsApp Message
-            $whatsAppMsg = "Hi $amcMaster->customer_name \n\n";
-            $whatsAppMsg .= "Your vehicle *$amcMaster->vehicle_number* has been successfully serviced under AMC Contract ID: *$amcMaster->amc_display_number* \n\n";
-            $whatsAppMsg .= "Service Date: *$serviceData->display_service_date* \n";
-
-            if (!empty($checkPendingServiceCount)) {
-                $whatsAppMsg .= "Next Service Due Date: *$nextserviceDate* \n";
-                $whatsAppMsg .= "Pending Service: *$checkPendingServiceCount* \n";
-                $whatsAppMsg .= "Next Service after KM: *$nextServiceKm* \n";
-            }
-
-            $whatsAppMsg .= "Location: Ampere Service Center, Vadodara \n\n";
-            $whatsAppMsg .= "Our team has completed all required checks and maintenance as per AMC guidelines. Your vehicle is now ready for delivery. \n\n";
-            $whatsAppMsg .= "For feedback or questions, feel free to reply to this message. \n";
-            $whatsAppMsg .= "Thank you for choosing Ampere! \n\n";
-            $whatsAppMsg .= "Support: +91 90233 42463";
+            $template = 'service_gujarati';
         }
-
-        $pdfUrl = $this->generateAndStorePdf('pdf.amc-pdf', ['amc' => $amcMaster], 'amc_pdfs');
-        $data = $this->sendWhatsAppMessageWithFile($amcMaster->contact_number, $whatsAppMsg, $pdfUrl['public_url'], 'amc_pdf');
         
-        // Meta Send
-        $paramFive = 'N/A';
-        if (!empty($checkPendingServiceCount)) {
-            $paramFive .= "Next Service Due Date: *$nextserviceDate* \n";
-            $paramFive .= "Pending Service: *$checkPendingServiceCount* \n";
-            $paramFive .= "Next Service after KM: *$nextServiceKm* \n";
-        }
         $metaData = [
             $amcMaster->customer_name ?? 'N/A',
             $amcMaster->vehicle_number,
             $amcMaster->amc_display_number ?? 'N/A',
             $serviceData->display_service_date ?? 'N/A',
-            $paramFive ?? 'N/A'
         ];
 
-        $this->sendMetaWhatsappMessage($amcMaster->contact_number, $template, $metaData);
+        if (!empty($checkPendingServiceCount)) {
+            $template = 'next_service_english';
+            if ($amcMaster->vehicle_master_id == '4' || $amcMaster->vehicle_master_id == '5' || $amcMaster->vehicle_master_id == '6') {
+                $template = 'next_service_gujarati';
+            }
+            $metaData[] = $nextserviceDate ?? 'N/A';
+            $metaData[] = $checkPendingServiceCount ?? 'N/A';
+            $metaData[] = $nextServiceKm ?? 'N/A';
+        }
+
+        $pdfUrl = $this->generateAndStorePdf('pdf.amc-pdf', ['amc' => $amcMaster], 'amc_pdfs');
+        // $data = $this->sendWhatsAppMessageWithFile($amcMaster->contact_number, $whatsAppMsg, $pdfUrl['public_url'], 'amc_pdf');
+
+        // Meta Send
+        $this->sendMetaWhatsappMessage($amcMaster->contact_number, $template, $metaData, $pdfUrl['public_url'], 'AMC_FILE');
 
         // Check if all services are completed
         $checkPendingServiceCount = ServiceDetail::where('amc_id', $amc_id)
@@ -325,16 +295,7 @@ class ServiceController extends Controller
             $amcMaster->update([
                 'status' => $this->getArrayIdByName($this->statusArray, 'Deactive')
             ]);
-
-            $whatsLast = "Dear sir, \n\n";
-            $whatsLast .= "You have availed all the services under the AMC contract. *Renew it today* to keep your electric scooter up to date and in proper state.\n\n";
-            $whatsLast .= "*Irregular servicing can lead to loss of warranty benefits.*\n\n";
-            $whatsLast .= "To renew your contract,\n\n";
-            $whatsLast .= "Call now on\n\n";
-            $whatsLast .= "*9023342463*";
-
-            $this->sendWhatsAppMessage($amcMaster->contact_number, $whatsLast);
-
+            
             // Meta Send
             $this->sendMetaWhatsappMessage($amcMaster->contact_number, 'service_completed');
         }
