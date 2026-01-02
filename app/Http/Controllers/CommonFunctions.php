@@ -425,7 +425,11 @@ trait CommonFunctions
         }
 
         // $publicFolder = 'assets/temp';
-        $publicHtmlAssetsPath = base_path('../public_html/amper/assets/temp');
+        if (env('SERVER_MODE') == 'live') {
+            $publicHtmlAssetsPath = base_path('../public_html/amper/assets/temp');
+        } else {
+            $publicHtmlAssetsPath = base_path('../../public_html/ampere-testing/assets/temp');
+        }
 
         if (!file_exists($publicHtmlAssetsPath)) {
             mkdir($publicHtmlAssetsPath, 0775, true);

@@ -344,7 +344,7 @@ class AmcMasterController extends Controller
                         $packageString
                     ];
 
-                    $this->sendMetaWhatsappMessage($amcMaster->contact_number, $template, $metaData, $pdfUrl, 'AMC_FILE');
+                    $this->sendMetaWhatsappMessage($amcMaster->contact_number, $template, $metaData, $pdfUrl['public_url'], 'AMC_FILE');
                 }
             }
             SystemLogs::create([

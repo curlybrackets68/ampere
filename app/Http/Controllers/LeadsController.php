@@ -84,6 +84,7 @@ class LeadsController extends Controller
     /**
      * Store a newly created resource in storage.
      */
+
     public function store(Request $request)
     {
         $salesmanName = '';
@@ -92,7 +93,7 @@ class LeadsController extends Controller
         if ($request->salesman) {
             $salesman = User::find($request->salesman);
             if ($salesman) {
-                $salesmanName = $salesman->user_name;
+                $salesmanName   = $salesman->user_name;
                 $salesmanMobile = $salesman->mobile;
             }
         }
@@ -107,14 +108,14 @@ class LeadsController extends Controller
 
         $lead = Lead::create($data);
 
-        /** ---------------- Template Selection ---------------- */
+        /* ---------------- TEMPLATE SELECTION ---------------- */
         $template = '';
 
         if (in_array(1, $locationTypes) && in_array(2, $locationTypes)) {
             $template = $languageType == '1'
                 ? 'lead_all_address_english'
                 : 'lead_all_address_gujarati';
-        } elseif (in_array(1, $locationTypes)) { 
+        } elseif (in_array(1, $locationTypes)) {
             $template = $languageType == '1'
                 ? 'lead_sama_address_english'
                 : 'lead_sama_address_gujarati';
@@ -124,36 +125,25 @@ class LeadsController extends Controller
                 : 'lead_kalali_address_gujarati';
         }
 
-        /** ---------------- Vehicle Logic ---------------- */
+        /* ---------------- VEHICLE LOGIC ---------------- */
         $secondParam = 'N/A';
-        $pdfUrl = null;
-        $pdfName = null;
 
         if (!empty($vehicleIds)) {
-
-            // ONLY ONE VEHICLE
             if (count($vehicleIds) === 1) {
-
                 $vehicleInfo = $this->getVehicleInfo($vehicleIds[0]);
-                $vehicleName = $vehicleInfo['name'];
+                $vehicleName = $vehicleInfo['name'] ?? '';
 
-                if ($languageType == '1') {
-                    $secondParam = $vehicleName;
-                } else {
-                    $secondParam = 'તમારો ' . $vehicleName . ' માં';
-                }
-            }
-            // MULTIPLE VEHICLES (NO VEHICLE NAME)
-            else {
-                if ($languageType == '1') {
-                    $secondParam = 'our electric vehicles.';
-                } else {
-                    $secondParam = 'અમારા ઇલેક્ટ્રિક વાહનોમાં';
-                }
+                $secondParam = $languageType == '1'
+                    ? $vehicleName
+                    : 'તમારો ' . $vehicleName . ' માં';
+            } else {
+                $secondParam = $languageType == '1'
+                    ? 'our electric vehicles.'
+                    : 'અમારા ઇલેક્ટ્રિક વાહનોમાં';
             }
         }
 
-        /** ---------------- WhatsApp Params ---------------- */
+        /* ---------------- WHATSAPP PARAMS ---------------- */
         $params = [
             $request->name ?? 'N/A',
             $secondParam,
@@ -162,33 +152,39 @@ class LeadsController extends Controller
             $salesmanMobile ?: 'N/A',
         ];
 
-        /** ---------------- Send WhatsApp Message ---------------- */
+        /* ---------------- SEND WHATSAPP ---------------- */
         if ($lead && $template) {
 
-            // 1 Send message ONCE
+            /* 1️⃣ SEND MESSAGE FIRST */
             $this->sendMetaWhatsappMessage(
                 $request->mobile,
                 $template,
                 $params
             );
 
-            sleep(1);
+            sleep(3);
 
-            // 2 VEHICLE-WISE PDF + IMAGES
+            /* SEND ALL PDFs */
             foreach ($vehicleIds as $vehicleId) {
                 $vehicleInfo = $this->getVehicleInfo($vehicleId);
-                // Send THIS vehicle PDF
-                if (!empty($vehicleInfo['pdf'])) {
-                    $this->sendMetaMediaMessage($request->mobile, $vehicleInfo['pdf'], 'document');
-                    sleep(1);
-                }
 
-                // Send THIS vehicle images / video
+                if (!empty($vehicleInfo['pdf'])) {
+                    $this->sendMetaMediaMessage(
+                        $request->mobile,
+                        $vehicleInfo['pdf'],
+                        'document'
+                    );
+                    sleep(2);
+                }
+            }
+
+            /* SEND ALL PHOTOS / VIDEOS */
+            foreach ($vehicleIds as $vehicleId) {
                 $this->sendVehicleMedia($vehicleId, $request->mobile);
                 sleep(2);
             }
 
-            /** ---------------- Logs ---------------- */
+            /* ---------------- LOGS ---------------- */
             SystemLogs::create([
                 'inquiry_id' => 0,
                 'type'       => '3',
@@ -202,6 +198,7 @@ class LeadsController extends Controller
         return redirect()->route('leads.index')
             ->with('success', 'Lead added successfully!');
     }
+
 
 
     /**
