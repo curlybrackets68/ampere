@@ -51,18 +51,18 @@ class AMCCronJob extends Command
                     //     ? "Your AMC is expiring today"
                     //     : "Your AMC is expiring in {$daysLeft} day" . ($daysLeft != 1 ? 's' : '');
 
-                    $message = "Dear $amc->customer_name,\n\n";
-                    $message .= "We hope your experience with Ampere AMC service has been smooth and satisfying.\n\n";
-                    $message .= "Your AMC contract ID : $amc->amc_display_number for vehicle *$amc->vehicle_number* is due for renewal:\n\n";
-                    $message .= "Expiry Date: *$amc->display_amc_end_date* \n";
-                    $message .= "Vehicle Model: *$amc->vehicle_name*   \n\n";
-                    $message .= "Renew now to continue enjoying priority service, hassle-free maintenance, and peace of mind. \n\n";
-                    $message .= "To renew your AMC, reply to this message or call us at +91 90233 42463. \n\n";
-                    $message .= "Thank you for trusting Ampere! \n";
+                    // $message = "Dear $amc->customer_name,\n\n";
+                    // $message .= "We hope your experience with Ampere AMC service has been smooth and satisfying.\n\n";
+                    // $message .= "Your AMC contract ID : $amc->amc_display_number for vehicle *$amc->vehicle_number* is due for renewal:\n\n";
+                    // $message .= "Expiry Date: *$amc->display_amc_end_date* \n";
+                    // $message .= "Vehicle Model: *$amc->vehicle_name*   \n\n";
+                    // $message .= "Renew now to continue enjoying priority service, hassle-free maintenance, and peace of mind. \n\n";
+                    // $message .= "To renew your AMC, reply to this message or call us at +91 90233 42463. \n\n";
+                    // $message .= "Thank you for trusting Ampere! \n";
 
                     // $sent = $this->sendWhatsAppMessageWithFile($amc->contact_number, $message, $pdfUrl['full_path']);
 
-                    $sent = $this->sendWhatsAppMessageWithFile($amc->contact_number, $message, $pdfUrl['public_url'], 'amc_pdf');
+                    // $sent = $this->sendWhatsAppMessageWithFile($amc->contact_number, $message, $pdfUrl['public_url'], 'amc_pdf');
 
                     // Meta Send
                     $metaData = [
@@ -73,13 +73,13 @@ class AMCCronJob extends Command
                         $amc->vehicle_name ?? 'N/A'
                     ];
 
-                    $this->sendMetaWhatsappMessage($amc->contact_number, 'amc_renewal_reminder', $metaData);
+                    $sent = $this->sendMetaWhatsappMessage($amc->contact_number, 'amc_renewal_reminder', $metaData, $pdfUrl['public_url'], 'AMC_FILE');
 
                     if ($sent && File::exists($pdfUrl['public_url'])) {
                         File::delete($pdfUrl['public_url']);
                     }
-                    $this->info($message);
-                    \Log::info($message);
+                    // $this->info($message);
+                    // \Log::info($message);
                 }
             }
         } else {
@@ -128,28 +128,44 @@ class AMCCronJob extends Command
 
                 // $sent = $this->sendWhatsAppMessageWithFile($amcDue->contact_number, $messageDue, $pdfUrl['full_path']);
 
-                if (in_array($amcDue->vehicle_master_id, [4, 5, 6])) {
-                    $this->sendWhatsAppMessage($amcDue->contact_number, $gujaratiMessageDue);
-                } else {
-                    $sent = $this->sendWhatsAppMessageWithFile($amcDue->contact_number, $messageDue, $pdfUrl['public_url'], 'amc_pdf');
+                // Meta Send
+                $metaData = [
+                    $amcDue->customer_name ?? 'N/A',
+                    $amcDue->amc_display_number ?? 'N/A',
+                    $amcDue->vehicle_number,
+                    $amcDue->display_amc_end_date ?? 'N/A'
+                ];
 
-                    // Meta Send
+                $template = 'amc_due_reminder';
+                $pdfFile = $pdfUrl['public_url'];
+                $fileName = 'AMC_FILE';
+
+                if (in_array($amcDue->vehicle_master_id, [4, 5, 6])) {
                     $metaData = [
                         $amcDue->customer_name ?? 'N/A',
-                        $amcDue->amc_display_number ?? 'N/A',
                         $amcDue->vehicle_number,
+                        $amcDue->amc_display_number ?? 'N/A',
                         $amcDue->display_amc_end_date ?? 'N/A'
                     ];
 
-                    $this->sendMetaWhatsappMessage($amcDue->contact_number, 'amc_due_reminder', $metaData);
+                    $template = 'amc_due_reminder_gujarati';
+                    $pdfFile = '';
+                    $fileName = '';
+                    // $this->sendWhatsAppMessage($amcDue->contact_number, $gujaratiMessageDue);
+                }
+                // else {
 
-                    if ($sent && File::exists($pdfUrl['public_url'])) {
-                        File::delete($pdfUrl['public_url']);
-                    }
+                // $sent = $this->sendWhatsAppMessageWithFile($amcDue->contact_number, $messageDue, $pdfUrl['public_url'], 'amc_pdf');
+                // }
+
+                $sent = $this->sendMetaWhatsappMessage($amcDue->contact_number, $template, $metaData, $pdfFile, $fileName);
+
+                if ($sent && File::exists($pdfUrl['public_url'])) {
+                    File::delete($pdfUrl['public_url']);
                 }
 
-                $this->info($messageDue);
-                \Log::info($messageDue);
+                // $this->info($messageDue);
+                // \Log::info($messageDue);
             }
         } else {
             $this->info("No AMC Due expiry messages needed today.");
