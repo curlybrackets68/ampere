@@ -139,7 +139,8 @@ class InquiryDetailsController extends Controller
             $branch        = $responseData['branch'] ?? '';
             $serviceType   = $responseData['service_type'] ?? '';
             $flowToken     = $responseData['flow_token'] ?? '';
-
+            $metaTemplateName = '';
+            $metaData = [];
             $latestNumber = 0;
             if ($visit == 'Part Order') {
                 $lastOrderId = Order::orderBy('id', 'desc')->first()->id ?? 0;
@@ -179,7 +180,7 @@ class InquiryDetailsController extends Controller
                 $metaData = [
                     $latestNumber
                 ];
-                $this->sendMetaWhatsappMessage($mobileNo, 'add_part_order', $metaData);
+                $metaTemplateName = 'add_part_order';
             } else {
                 $inquirySave = InquiryDetails::create($data);
                 $latestNumber = $inquirySave->inquiry_no;
@@ -194,11 +195,11 @@ class InquiryDetailsController extends Controller
                 $metaData = [
                     $latestNumber
                 ];
-                $this->sendMetaWhatsappMessage($mobileNo, 'add_inqury', $metaData);
+                $metaTemplateName = 'add_part_orderadd_inqury';
             }
 
 
-
+            $this->sendMetaWhatsappMessage($mobileNo, $metaTemplateName, $metaData);
 
             return response()->json([
                 'status' => true,
