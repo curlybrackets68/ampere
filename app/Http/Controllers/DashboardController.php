@@ -158,30 +158,60 @@ class DashboardController
         if ($save) {
             $inquiryDetails = InquiryDetails::find($request->id);
             $message = '';
+            $metaTemplateName = '';
+            $metaTemplateData = [];
             if ($request->statusId == '2') { // Completed
-                $message = 'Your service completed for #' . $inquiryDetails->inquiry_no . "\n";
-                $message .= "Name: " . $inquiryDetails->name . "\n";
-                $message .= "Mobile: " . $inquiryDetails->mobile . "\n";
-                $message .= "Vehicle No: " . $inquiryDetails->vehicle_no . "\n";
-                $message .= "Remark: " . $remark . "\n";
+                // $message = 'Your service completed for #' . $inquiryDetails->inquiry_no . "\n";
+                // $message .= "Name: " . $inquiryDetails->name . "\n";
+                // $message .= "Mobile: " . $inquiryDetails->mobile . "\n";
+                // $message .= "Vehicle No: " . $inquiryDetails->vehicle_no . "\n";
+                // $message .= "Remark: " . $remark . "\n";
+                $metaTemplateName = 'inquiry_change_status_completed';
+                $metaTemplateData = [
+                    $inquiryDetails->inquiry_no,
+                    $inquiryDetails->name,
+                    $inquiryDetails->mobile,
+                    $inquiryDetails->vehicle_no,
+                    $remark
+                ];
+                // $this->sendWhatsAppMessage($inquiryDetails->mobile,'inquiry_change_status_completed' $message);
             } else if ($request->statusId == '4') { // Confirmed
-                $message = 'Your booking confirmed as #' . $inquiryDetails->inquiry_no . "\n";
-                $message .= "Date: " . $this->formatDateTime('d M, Y h:i A', $inquiryDetails->confirm_date) . "\n";
-                $message .= "Name: " . $inquiryDetails->name . "\n";
-                $message .= "Mobile: " . $inquiryDetails->mobile . "\n";
-                $message .= "Vehicle No: " . $inquiryDetails->vehicle_no . "\n";
-                $message .= "Service Type: " . $this->serviceTypeArray[$inquiryDetails->service_type_id] . "\n";
-                $message .= "Location: " . $this->branchArray[$inquiryDetails->branch_id] . "\n";
+                // $message = 'Your booking confirmed as #' . $inquiryDetails->inquiry_no . "\n";
+                // $message .= "Date: " . $this->formatDateTime('d M, Y h:i A', $inquiryDetails->confirm_date) . "\n";
+                // $message .= "Name: " . $inquiryDetails->name . "\n";
+                // $message .= "Mobile: " . $inquiryDetails->mobile . "\n";
+                // $message .= "Vehicle No: " . $inquiryDetails->vehicle_no . "\n";
+                // $message .= "Service Type: " . $this->serviceTypeArray[$inquiryDetails->service_type_id] . "\n";
+                // $message .= "Location: " . $this->branchArray[$inquiryDetails->branch_id] . "\n";
+                $metaTemplateName = 'inquiry_change_status_confirmed';
+                $metaTemplateData = [
+                    $inquiryDetails->inquiry_no,
+                    $this->formatDateTime('d M, Y h:i A', $inquiryDetails->confirm_date),
+                    $inquiryDetails->name,
+                    $inquiryDetails->mobile,
+                    $inquiryDetails->vehicle_no,
+                    $this->getArrayNameById($this->serviceTypeArray, $inquiryDetails->service_type_id),
+                    $this->getArrayNameById($this->branchArray, $inquiryDetails->branch_id),
+                ];
             } else if ($request->statusId == '3') { // Rejected
-                $message = 'Your service rejected for #' . $inquiryDetails->inquiry_no . "\n";
-                $message .= "Name: " . $inquiryDetails->name . "\n";
-                $message .= "Mobile: " . $inquiryDetails->mobile . "\n";
-                $message .= "Vehicle No: " . $inquiryDetails->vehicle_no . "\n";
-                $message .= "Remark: " . $remark . "\n";
-                $message .= "To book appointment again, please send Hi on whatsapp";
+                // $message = 'Your service rejected for #' . $inquiryDetails->inquiry_no . "\n";
+                // $message .= "Name: " . $inquiryDetails->name . "\n";
+                // $message .= "Mobile: " . $inquiryDetails->mobile . "\n";
+                // $message .= "Vehicle No: " . $inquiryDetails->vehicle_no . "\n";
+                // $message .= "Remark: " . $remark . "\n";
+                // $message .= "To book appointment again, please send Hi on whatsapp";
+                $metaTemplateName = 'inquiry_change_status_rejected';
+                $metaTemplateData = [
+                    $inquiryDetails->inquiry_no,
+                    $inquiryDetails->name,
+                    $inquiryDetails->mobile,
+                    $inquiryDetails->vehicle_no,
+                    $remark
+                ];
             }
 
-            $this->sendWhatsAppMessage($inquiryDetails->mobile, $message);
+            //$this->sendWhatsAppMessage($inquiryDetails->mobile, $message);
+            $this->sendWhatsAppMessage($inquiryDetails->mobile, $metaTemplateName, $metaTemplateData);
             SystemLogs::create([
                 'inquiry_id' => $request->id,
                 'type' => '1', // for Inq

@@ -176,6 +176,10 @@ class InquiryDetailsController extends Controller
                     'action_id'  => 1,
                     'created_by' => 1,
                 ]);
+                $metaData = [
+                    $latestNumber
+                ];
+                $this->sendMetaWhatsappMessage($mobileNo, 'add_part_order', $metaData);
             } else {
                 $inquirySave = InquiryDetails::create($data);
                 $latestNumber = $inquirySave->inquiry_no;
@@ -187,7 +191,14 @@ class InquiryDetailsController extends Controller
                     'action_id'  => 1,
                     'created_by' => 1,
                 ]);
+                $metaData = [
+                    $latestNumber
+                ];
+                $this->sendMetaWhatsappMessage($mobileNo, 'add_inqury', $metaData);
             }
+
+
+
 
             return response()->json([
                 'status' => true,
