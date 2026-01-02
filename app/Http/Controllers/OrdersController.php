@@ -124,7 +124,7 @@ class OrdersController extends Controller
                 $metaTemplateData = [
                     $orderDetails->order_no,
                     $remark
-                ];order_status_change_fitment
+                ];
             } else if ($request->statusId == '9') { // Fitment
                 // $message = 'Your Ordered #' . $orderDetails->order_no . " is Fitment.\n";
                 // $message .= "Name: " . $orderDetails->customer_name . "\n";
