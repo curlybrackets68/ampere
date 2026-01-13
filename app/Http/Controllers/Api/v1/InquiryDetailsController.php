@@ -195,7 +195,7 @@ class InquiryDetailsController extends Controller
                 $metaData = [
                     $latestNumber
                 ];
-                $metaTemplateName = 'add_part_orderadd_inqury';
+                $metaTemplateName = 'add_inqury';
             }
 
 

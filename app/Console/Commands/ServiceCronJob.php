@@ -135,7 +135,7 @@ class ServiceCronJob extends Command
                         $amcQueryDue->amc_display_number ?? 'N/A',
                     ];
 
-                    $sent = $this->sendMetaWhatsappMessage($amcQueryDue->contact_number, 'amc_service_due_on_date_english_v2', $metaData, $pdfUrl['public_url'], 'AMC_FILE');
+                    $sent = $this->sendMetaWhatsappMessage($amcQueryDue->contact_number, 'amc_service_due_on_date_english_v3', $metaData, $pdfUrl['public_url'], 'AMC_FILE');
 
 
                     if ($sent && File::exists($pdfUrl['public_url'])) {
@@ -247,7 +247,7 @@ class ServiceCronJob extends Command
                         $amc->amc_display_number ?? 'N/A',
                     ];
 
-                    $this->sendMetaWhatsappMessage($amc->contact_number, 'amc_upcoming_service_gujarati', $metaData);
+                    $this->sendMetaWhatsappMessage($amc->contact_number, 'amc_upcoming_service_gujarati_v2', $metaData);
 
                     $this->info("Reminder sent for AMC ID {$amc->id}, Service #{$service->service_no}");
                     \Log::info("Reminder sent for AMC ID {$amc->id}, Service #{$service->service_no}");
@@ -278,7 +278,7 @@ class ServiceCronJob extends Command
                         $amc->amc_display_number ?? 'N/A',
                     ];
 
-                    $this->sendMetaWhatsappMessage($amc->contact_number, 'amc_service_due_gujarati', $metaData);
+                    $this->sendMetaWhatsappMessage($amc->contact_number, 'amc_service_due_gujarati_v2', $metaData);
 
                     $this->info("🔔 Due Today: Reminder sent for AMC ID {$amc->id}, Service #{$service->service_no}");
                     \Log::info("🔔 Due Today: Reminder sent for AMC ID {$amc->id}, Service #{$service->service_no}");
@@ -305,7 +305,7 @@ class ServiceCronJob extends Command
                         $service->display_service_date ?? 'N/A',
                     ];
 
-                    $this->sendMetaWhatsappMessage($amc->contact_number, 'amc_service_final_due_gujarati', $metaData);
+                    $this->sendMetaWhatsappMessage($amc->contact_number, 'amc_service_final_due_gujarati_v2', $metaData);
 
                     $this->info("⚠️ Overdue: Reminder sent for AMC ID {$amc->id}, Service #{$service->service_no}");
                     \Log::info("⚠️ Overdue: Reminder sent for AMC ID {$amc->id}, Service #{$service->service_no}");

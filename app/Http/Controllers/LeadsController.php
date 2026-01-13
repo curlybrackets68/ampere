@@ -108,7 +108,6 @@ class LeadsController extends Controller
 
         $lead = Lead::create($data);
 
-        /* ---------------- TEMPLATE SELECTION ---------------- */
         $template = '';
 
         if (in_array(1, $locationTypes) && in_array(2, $locationTypes)) {
@@ -125,7 +124,6 @@ class LeadsController extends Controller
                 : 'lead_kalali_address_gujarati';
         }
 
-        /* ---------------- VEHICLE LOGIC ---------------- */
         $secondParam = 'N/A';
 
         if (!empty($vehicleIds)) {
@@ -143,7 +141,6 @@ class LeadsController extends Controller
             }
         }
 
-        /* ---------------- WHATSAPP PARAMS ---------------- */
         $params = [
             $request->name ?? 'N/A',
             $secondParam,
@@ -152,10 +149,8 @@ class LeadsController extends Controller
             $salesmanMobile ?: 'N/A',
         ];
 
-        /* ---------------- SEND WHATSAPP ---------------- */
         if ($lead && $template) {
 
-            /* 1️⃣ SEND MESSAGE FIRST */
             $this->sendMetaWhatsappMessage(
                 $request->mobile,
                 $template,
@@ -164,7 +159,6 @@ class LeadsController extends Controller
 
             sleep(3);
 
-            /* SEND ALL PDFs */
             foreach ($vehicleIds as $vehicleId) {
                 $vehicleInfo = $this->getVehicleInfo($vehicleId);
 
@@ -178,13 +172,11 @@ class LeadsController extends Controller
                 }
             }
 
-            /* SEND ALL PHOTOS / VIDEOS */
             foreach ($vehicleIds as $vehicleId) {
                 $this->sendVehicleMedia($vehicleId, $request->mobile);
                 sleep(2);
             }
 
-            /* ---------------- LOGS ---------------- */
             SystemLogs::create([
                 'inquiry_id' => 0,
                 'type'       => '3',
