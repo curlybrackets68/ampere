@@ -214,6 +214,7 @@
             if (amcMaster) {
                 console.log(amcMaster)
                 $('#vehicle_type').trigger('change');
+                $('#vehicle_master_id').trigger('change');
                 flatpickr("#amc_start_date", {
                     dateFormat: "Y-m-d", // parse backend date
                     altInput: true, // show pretty format
