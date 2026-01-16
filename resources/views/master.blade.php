@@ -17,7 +17,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.min.css"
         integrity="sha256-Qsx5lrStHZyR9REqhUF8iQt73X06c8LGIUPzpOhwRrI=" crossorigin="anonymous">
 
-    <link rel="stylesheet" href="{{ shared_asset('assets/css/adminlte.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/adminlte.css') }}">
 
     {{-- <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/dataTables.bootstrap4.min.css"> --}}
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
@@ -54,7 +54,7 @@
         </nav> <!--end::Header--> <!--begin::Sidebar-->
         <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
             <div class="sidebar-brand"> <!--begin::Brand Link--> <a href="{{ route('dashboard') }}" class="brand-link">
-                    <!--begin::Brand Image--> <img src="{{ shared_asset('assets/assets/img/AdminLTELogo.png') }}"
+                    <!--begin::Brand Image--> <img src="{{ asset('assets/img/AdminLTELogo.png') }}"
                         alt="AdminLTE Logo" class="brand-image opacity-75 shadow"><span
                         class="brand-text fw-light">AMPERE</span></a>
             </div>
@@ -76,45 +76,6 @@
 
                         @empty
                         @endforelse
-                        {{--                        <li class="nav-header">Dashboard</li> --}}
-                        {{--                        <li class="nav-item"> --}}
-                        {{--                            <a href="{{ route('dashboard') }}" class="nav-link"> <i --}}
-                        {{--                                    class="nav-icon bi bi-grip-horizontal"></i> --}}
-                        {{--                                <p>Dashboard</p> --}}
-                        {{--                            </a> --}}
-                        {{--                        </li> --}}
-                        {{--                        <li class="nav-item"> --}}
-                        {{--                            <a href="{{ route('inquiry') }}" class="nav-link"> <i class="nav-icon bi bi-star-half"></i> --}}
-                        {{--                                <p>Inquiry</p> --}}
-                        {{--                            </a> --}}
-                        {{--                        </li> --}}
-
-                        {{--                        <li class="nav-item"> --}}
-                        {{--                            <a href="{{ route('leads.index') }}" class="nav-link"> <i class="nav-icon bi bi-table"></i> --}}
-                        {{--                                <p>Leads</p> --}}
-                        {{--                            </a> --}}
-                        {{--                        </li> --}}
-                        {{--                        </li> --}}
-                        {{--                        <li class="nav-item"> --}}
-                        {{--                            <a href="{{ route('orders') }}" class="nav-link"> <i class="nav-icon bi bi-box-seam-fill"></i> --}}
-                        {{--                                <p>Orders</p> --}}
-                        {{--                            </a> --}}
-                        {{--                        </li> --}}
-                        {{--                        <li class="nav-item"> <a href="#" class="nav-link"> <i class="nav-icon bi bi-gear"></i> --}}
-                        {{--                                <p> --}}
-                        {{--                                    Settings --}}
-                        {{--                                    <i class="nav-arrow bi bi-chevron-right"></i> --}}
-                        {{--                                </p> --}}
-                        {{--                            </a> --}}
-                        {{--                            <ul class="nav nav-treeview"> --}}
-                        {{--                                <li class="nav-item"> --}}
-                        {{--                                    <a href="{{ route('salesman') }}" class="nav-link"> <i --}}
-                        {{--                                            class="nav-icon bi bi-circle"></i> --}}
-                        {{--                                        <p>Salesman</p> --}}
-                        {{--                                    </a> --}}
-                        {{--                                </li> --}}
-                        {{--                            </ul> --}}
-                        {{--                        </li> --}}
                     </ul> <!--end::Sidebar Menu-->
                 </nav>
             </div> <!--end::Sidebar Wrapper-->
@@ -129,10 +90,10 @@
             <!--end::Copyright-->
         </footer> <!--end::Footer-->
     </div> <!--end::App Wrapper--> <!--begin::Script--> <!--begin::Third Party Plugin(OverlayScrollbars)-->
-    <script src="{{ shared_asset('assets/js/jquery-3.6.0.min.js') }}"
+    <script src="{{ asset('assets/js/jquery-3.6.0.min.js') }}"
         integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 
-    <script src="{{ shared_asset('assets/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ asset('assets/js/bootstrap.bundle.min.js') }}"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.3.0/browser/overlayscrollbars.browser.es6.min.js"
         integrity="sha256-H2VM7BKda+v2Z4+DRy69uknwxjyDRhszjXFhsL4gD3w=" crossorigin="anonymous"></script>
@@ -143,8 +104,8 @@
 
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
-    <script src="{{ shared_asset('assets/js/adminlte.js') }}"></script> <!--end::Required Plugin(AdminLTE)--><!--begin::OverlayScrollbars Configure-->
-    <script src="{{ shared_asset('assets/js/custom.js') }}"></script>
+    <script src="{{ asset('assets/js/adminlte.js') }}"></script> <!--end::Required Plugin(AdminLTE)--><!--begin::OverlayScrollbars Configure-->
+    <script src="{{ asset('assets/js/custom.js') }}"></script>
 
     <script src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
     <script src="https://cdn.datatables.net/2.1.8/js/dataTables.bootstrap4.js"></script>
