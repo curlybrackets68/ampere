@@ -205,13 +205,14 @@ class ServiceCronJob extends Command
             ->get();
 
         foreach ($vehicleServiceRecords as $amc) {
-            $amcDate = Carbon::parse($amc->amc_start_date);
 
             $services = ServiceDetail::where('amc_id', $amc->id)
                 ->orderBy('service_no', 'asc')
                 ->get();
 
             foreach ($services as $service) {
+                $serviceDate = Carbon::parse($service->service_date);
+
                 $reminderStartDay = (int) $service->reminder_days;
 
                 if (!$reminderStartDay) {
@@ -219,7 +220,7 @@ class ServiceCronJob extends Command
                     continue;
                 }
 
-                $reminderStartDate = $amcDate->copy()->addDays($reminderStartDay);
+                $reminderStartDate = $serviceDate->copy()->addDays($reminderStartDay);
 
                 \Log::info($reminderStartDay);
                 \Log::info($reminderStartDate);
