@@ -590,7 +590,6 @@ trait CommonFunctions
             . '&APIKey=' . $this->WHATSAPP_API_KEY
             . '&Contact=91' . $mobile
             . '&Template=' . $template;
-
         if (!empty($param)) {
             $safeParams = array_map(function ($value) {
                 if (!is_string($value)) {
@@ -608,8 +607,9 @@ trait CommonFunctions
         }
 
         if (!empty($fileName)) {
-            $url = '&PDFName=' . $fileName;
+            $url .= '&PDFName=' . $fileName;
         }
+            // dd($url);
 
         try {
             $response = Http::withOptions(['verify' => false])->get($url);
@@ -624,7 +624,7 @@ trait CommonFunctions
 
             $data = $response->json();
 
-            // dd($data);
+            dd($data);
             if (
                 isset($data['ApiResponse']) &&
                 $data['ApiResponse'] === 'Success' &&

@@ -112,11 +112,11 @@ class LeadsController extends Controller
 
         if (in_array(1, $locationTypes) && in_array(2, $locationTypes)) {
             $template = $languageType == '1'
-                ? 'lead_all_address_english'
-                : 'lead_all_address_gujarati';
+                ? 'lead_all_address_english_v2'
+                : 'lead_all_address_gujarati_v2';
         } elseif (in_array(1, $locationTypes)) {
             $template = $languageType == '1'
-                ? 'lead_sama_address_english'
+                ? 'lead_sama_address_english_v2'
                 : 'lead_sama_address_gujarati';
         } elseif (in_array(2, $locationTypes)) {
             $template = $languageType == '1'
@@ -125,6 +125,8 @@ class LeadsController extends Controller
         }
 
         $secondParam = 'N/A';
+
+        $utilityTemplate = ['lead_all_address_english_v2', 'lead_all_address_gujarati_v2', 'lead_sama_address_english_v2'];
 
         if (!empty($vehicleIds)) {
             if (count($vehicleIds) === 1) {
@@ -149,33 +151,50 @@ class LeadsController extends Controller
             $salesmanMobile ?: 'N/A',
         ];
 
+        if (in_array($template, $utilityTemplate)) {
+            $params = [
+                $request->name ?? 'N/A',
+                $secondParam,
+                $salesmanName ?: 'N/A',
+                $salesmanMobile ?: 'N/A',
+            ];
+        }
+
         if ($lead && $template) {
-
-            $this->sendMetaWhatsappMessage(
-                $request->mobile,
-                $template,
-                $params
-            );
-
-            sleep(3);
-
             foreach ($vehicleIds as $vehicleId) {
                 $vehicleInfo = $this->getVehicleInfo($vehicleId);
 
-                if (!empty($vehicleInfo['pdf'])) {
-                    $this->sendMetaMediaMessage(
-                        $request->mobile,
-                        $vehicleInfo['pdf'],
-                        'document'
-                    );
-                    sleep(2);
+                $fileUrl = '';
+                $fileName = '';
+                if (in_array($template, $utilityTemplate)) {
+                    $fileUrl = $vehicleInfo['pdf'];
+                    $fileName = $vehicleInfo['name'];
                 }
+
+                $this->sendMetaWhatsappMessage(
+                    $request->mobile,
+                    $template,
+                    $params,
+                    $fileUrl,
+                    $fileName
+                );
+
+                sleep(3);
+
+                // if (!empty($vehicleInfo['pdf'])) {
+                //     $this->sendMetaMediaMessage(
+                //         $request->mobile,
+                //         $vehicleInfo['pdf'],
+                //         'document'
+                //     );
+                //     sleep(2);
+                // }
             }
 
-            foreach ($vehicleIds as $vehicleId) {
-                $this->sendVehicleMedia($vehicleId, $request->mobile);
-                sleep(2);
-            }
+            // foreach ($vehicleIds as $vehicleId) {
+            //     $this->sendVehicleMedia($vehicleId, $request->mobile);
+            //     sleep(2);
+            // }
 
             SystemLogs::create([
                 'inquiry_id' => 0,
