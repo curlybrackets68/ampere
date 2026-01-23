@@ -179,8 +179,8 @@ class ServiceCronJob extends Command
                     $metaData = [
                         $amcQueryServiceDue->customer_name ?? 'N/A',
                         $amcQueryServiceDue->vehicle_number,
-                        $service->display_service_date ?? 'N/A',
                         $amcQueryServiceDue->amc_display_number ?? 'N/A',
+                        $service->display_service_date ?? 'N/A',
                     ];
 
                     $sent = $this->sendMetaWhatsappMessage($amcQueryServiceDue->contact_number, 'amc_service_overdue_final', $metaData, $pdfUrl['public_url'], 'AMC_FILE');
@@ -241,11 +241,14 @@ class ServiceCronJob extends Command
                     // $this->sendWhatsAppMessage($amc->contact_number, $gujaratiMessage);
 
                     // Meta Send
+                    $place = 'TVS સર્વિસ સેન્ટર વડોદરા';
                     $metaData = [
                         $amc->customer_name ?? 'N/A',
                         $amc->vehicle_number,
                         $service->display_service_date ?? 'N/A',
                         $amc->amc_display_number ?? 'N/A',
+                        $place ?? 'N/A',
+                        '+91 74349 00453' ?? 'N/A',
                     ];
 
                     $this->sendMetaWhatsappMessage($amc->contact_number, 'amc_upcoming_service_gujarati_v2', $metaData);
