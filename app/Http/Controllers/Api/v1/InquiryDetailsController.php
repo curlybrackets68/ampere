@@ -95,9 +95,17 @@ class InquiryDetailsController extends Controller
 
     public function runArtisan(Request $request)
     {
-        $command = $request->command;
-        Artisan::call($command);
-        return;
+        try {
+            $command = $request->command;
+    
+            Artisan::call($command);
+    
+            return response()->json(Artisan::output());
+    
+        } catch (\Exception $e) {
+    
+            return response()->json($e->getMessage());
+        }
     }
 
     public function checkInquiry(Request $request)
