@@ -181,71 +181,83 @@ class AmcMasterController extends Controller
                     $firstServiceDays = $amcPackageMasterData->vehicle_type == '1' ? 30 : 120; // for new vehicle first service after 30 days
                     $kmInterval = $amcPackageMasterData->vehicle_type == '1' ? 1000 : 4000; // you can change this based on requirement
 
-                    if ($amcMaster->vehicle_master_id == 4) {
-                        // TVS King EV Max
-                        $firstServiceDays = $amcPackageMasterData->vehicle_type == '1' ? 40 : 40; // for new vehicle first service after 30 days
-                        $kmInterval = $amcPackageMasterData->vehicle_type == '1' ? 1000 : 1000; // you can change this based on requirement
-                    } else if ($amcMaster->vehicle_master_id == 6) {
-                        // TVS King Deluxe
-                        $firstServiceDays = $amcPackageMasterData->vehicle_type == '1' ? 25 : 25; // for new vehicle first service after 30 days
-                        $kmInterval = $amcPackageMasterData->vehicle_type == '1' ? 1000 : 1000; // you can change this based on requirement
+                    // Special handling for TVS King Deluxe - always create exactly 3 services
+                    if ($amcMaster->vehicle_master_id == 6) {
+                        // TVS King Deluxe - 3 services with specific days and km
+                        $serviceDates = [];
+                        $serviceKm = [];
+                        
+                        // Service 1: 25 days from purchase, 750 km
+                        $serviceDates[] = $contractStartDate->copy()->addDays(25);
+                        $serviceKm[] = $amcMaster->amc_start_km + 750;
+                        
+                        // Service 2: 70 days from purchase, 4500 km
+                        $serviceDates[] = $contractStartDate->copy()->addDays(70);
+                        $serviceKm[] = $amcMaster->amc_start_km + 4500;
+                        
+                        // Service 3: 115 days from purchase, 9500 km
+                        $serviceDates[] = $contractStartDate->copy()->addDays(115);
+                        $serviceKm[] = $amcMaster->amc_start_km + 9500;
                     } else if ($amcMaster->vehicle_master_id == 5) {
-                        // TVS King Duramax Plus
-                        $firstServiceDays = $amcPackageMasterData->vehicle_type == '1' ? 35 : 35; // for new vehicle first service after 30 days
-                        $kmInterval = $amcPackageMasterData->vehicle_type == '1' ? 1000 : 1000; // you can change this based on requirement
-                    }
-                    $firstServiceDate = $contractStartDate->copy()->addDays($firstServiceDays);
-                    $firstServiceKm = $amcMaster->amc_start_km + $kmInterval;
-                    $serviceDates[] = $firstServiceDate;
-                    $serviceKm[] = $firstServiceKm; // Add initial KM
+                        // TVS King Duramax Plus - 3 services with specific days and km
+                        $serviceDates = [];
+                        $serviceKm = [];
+                        
+                        // Service 1: 35 days from purchase, 750 km
+                        $serviceDates[] = $contractStartDate->copy()->addDays(35);
+                        $serviceKm[] = $amcMaster->amc_start_km + 750;
+                        
+                        // Service 2: 100 days from purchase, 9500 km
+                        $serviceDates[] = $contractStartDate->copy()->addDays(100);
+                        $serviceKm[] = $amcMaster->amc_start_km + 9500;
+                        
+                        // Service 3: 165 days from purchase, 19500 km
+                        $serviceDates[] = $contractStartDate->copy()->addDays(165);
+                        $serviceKm[] = $amcMaster->amc_start_km + 19500;
+                    } else if ($amcMaster->vehicle_master_id == 4) {
+                        // TVS King EV Max - 3 services with specific days and km
+                        $serviceDates = [];
+                        $serviceKm = [];
+                        
+                        // Service 1: 40 days from purchase, 950 km
+                        $serviceDates[] = $contractStartDate->copy()->addDays(40);
+                        $serviceKm[] = $amcMaster->amc_start_km + 950;
+                        
+                        // Service 2: 85 days from purchase, 9500 km
+                        $serviceDates[] = $contractStartDate->copy()->addDays(85);
+                        $serviceKm[] = $amcMaster->amc_start_km + 9500;
+                        
+                        // Service 3: 175 days from purchase, 19500 km
+                        $serviceDates[] = $contractStartDate->copy()->addDays(175);
+                        $serviceKm[] = $amcMaster->amc_start_km + 19500;
+                    } else {
+                        // For other vehicles, use existing logic
+                        $firstServiceDays = $amcPackageMasterData->vehicle_type == '1' ? 30 : 120; // for new vehicle first service after 30 days
+                        $kmInterval = $amcPackageMasterData->vehicle_type == '1' ? 1000 : 4000; // you can change this based on requirement
+                        
+                        $firstServiceDate = $contractStartDate->copy()->addDays($firstServiceDays);
+                        $firstServiceKm = $amcMaster->amc_start_km + $kmInterval;
+                        $serviceDates[] = $firstServiceDate;
+                        $serviceKm[] = $firstServiceKm; // Add initial KM
 
+                        $totalServices = $amcPackageMasterData->service_count;
+                        $lastServiceDate = $firstServiceDate;
+                        $lastServiceKm = $firstServiceKm;
 
-                    $totalServices = $amcPackageMasterData->service_count;
-                    $lastServiceDate = $firstServiceDate;
-                    $lastServiceKm = $firstServiceKm;
+                        for ($i = 1; $i < $totalServices; $i++) {
+                            $daysAdd = 120;
+                            $additionKm = 4000;
 
-                    for ($i = 1; $i < $totalServices; $i++) {
-                        $daysAdd = 120;
-                        $additionKm = 4000;
-                        if ($amcMaster->vehicle_master_id == 4) {
-                            // TVS King EV Max
-                            $additionKm = 10000;
-                            if ($i <= 2) {
-                                $daysAdd = 40;
-                            } else if ($i <= 3 && $i >= 5) {
-                                $daysAdd = 90;
-                            } else if ($i <= 6 && $i >= 16) {
-                                $daysAdd = 120;
-                            }
-                        } else  if ($amcMaster->vehicle_master_id == 6) {
-                            // TVS King Deluxe
-                            //  $additionKm = 5000;
-                            if ($i == 1) {
-                                $daysAdd = 25;
-                            } else {
-                                $daysAdd = 45;
-                            }
-                        } else  if ($amcMaster->vehicle_master_id == 5) {
-                            // TVS King Duramax Plus
-                            $additionKm = 10000;
-                            if ($i == 1) {
-                                $daysAdd = 35;
-                            } else if ($i == 7) {
-                                $daysAdd = 70;
-                            } else {
-                                $daysAdd = 65;
-                            }
+                            $nextServiceDate = $lastServiceDate->copy()->addDays($daysAdd); // Next service after 120 days
+
+                            $nextServiceKm = $lastServiceKm + $additionKm; // Add KM interval
+
+                            $serviceDates[] = $nextServiceDate;
+                            $serviceKm[] = $nextServiceKm;
+
+                            $lastServiceDate = $nextServiceDate;
+                            $lastServiceKm = $nextServiceKm;
                         }
-
-                        $nextServiceDate = $lastServiceDate->copy()->addDays($daysAdd); // Next service after 120 days
-
-                        $nextServiceKm = $lastServiceKm + $additionKm; // Add KM interval
-
-                        $serviceDates[] = $nextServiceDate;
-                        $serviceKm[] = $nextServiceKm;
-
-                        $lastServiceDate = $nextServiceDate;
-                        $lastServiceKm = $nextServiceKm;
                     }
 
                     for ($i = 0; $i < count($serviceDates); $i++) {
@@ -419,71 +431,74 @@ class AmcMasterController extends Controller
                     $contractStartDate = Carbon::parse($amcMaster->amc_start_date);
                     $serviceDates = [];
                     $serviceKm = [];
-                    $firstServiceDays = $amcPackageMasterData->vehicle_type == '1' ? 30 : 120; // for new vehicle first service after 30 days
-                    $kmInterval = $amcPackageMasterData->vehicle_type == '1' ? 1000 : 4000; // you can change this based on requirement
-
-
-                    if ($amcMaster->vehicle_master_id == 4) {
-                        // TVS King EV Max
-                        $firstServiceDays = $amcPackageMasterData->vehicle_type == '1' ? 40 : 40; // for new vehicle first service after 30 days
-                        $kmInterval = $amcPackageMasterData->vehicle_type == '1' ? 1000 : 1000; // you can change this based on requirement
-                    } else if ($amcMaster->vehicle_master_id == 6) {
-                        // TVS King Deluxe
-                        $firstServiceDays = $amcPackageMasterData->vehicle_type == '1' ? 25 : 25; // for new vehicle first service after 30 days
-                        $kmInterval = $amcPackageMasterData->vehicle_type == '1' ? 1000 : 1000; // you can change this based on requirement
+                    
+                    // Special handling for TVS King Deluxe - always create exactly 3 services
+                    if ($amcMaster->vehicle_master_id == 6) {
+                        // TVS King Deluxe - 3 services with specific days and km
+                        // Service 1: 25 days from purchase, 750 km
+                        $serviceDates[] = $contractStartDate->copy()->addDays(25);
+                        $serviceKm[] = $amcMaster->amc_start_km + 750;
+                        
+                        // Service 2: 70 days from purchase, 4500 km
+                        $serviceDates[] = $contractStartDate->copy()->addDays(70);
+                        $serviceKm[] = $amcMaster->amc_start_km + 4500;
+                        
+                        // Service 3: 115 days from purchase, 9500 km
+                        $serviceDates[] = $contractStartDate->copy()->addDays(115);
+                        $serviceKm[] = $amcMaster->amc_start_km + 9500;
                     } else if ($amcMaster->vehicle_master_id == 5) {
-                        // TVS King Duramax Plus
-                        $firstServiceDays = $amcPackageMasterData->vehicle_type == '1' ? 35 : 35; // for new vehicle first service after 30 days
-                        $kmInterval = $amcPackageMasterData->vehicle_type == '1' ? 1000 : 1000; // you can change this based on requirement
-                    }
-                    $firstServiceDate = $contractStartDate->copy()->addDays($firstServiceDays);
-                    $firstServiceKm = $amcMaster->amc_start_km + $kmInterval;
-                    $serviceDates[] = $firstServiceDate;
-                    $serviceKm[] = $firstServiceKm; // Add initial KM
+                        // TVS King Duramax Plus - 3 services with specific days and km
+                        // Service 1: 35 days from purchase, 750 km
+                        $serviceDates[] = $contractStartDate->copy()->addDays(35);
+                        $serviceKm[] = $amcMaster->amc_start_km + 750;
+                        
+                        // Service 2: 100 days from purchase, 9500 km
+                        $serviceDates[] = $contractStartDate->copy()->addDays(100);
+                        $serviceKm[] = $amcMaster->amc_start_km + 9500;
+                        
+                        // Service 3: 165 days from purchase, 19500 km
+                        $serviceDates[] = $contractStartDate->copy()->addDays(165);
+                        $serviceKm[] = $amcMaster->amc_start_km + 19500;
+                    } else if ($amcMaster->vehicle_master_id == 4) {
+                        // TVS King EV Max - 3 services with specific days and km
+                        // Service 1: 40 days from purchase, 950 km
+                        $serviceDates[] = $contractStartDate->copy()->addDays(40);
+                        $serviceKm[] = $amcMaster->amc_start_km + 950;
+                        
+                        // Service 2: 85 days from purchase, 9500 km
+                        $serviceDates[] = $contractStartDate->copy()->addDays(85);
+                        $serviceKm[] = $amcMaster->amc_start_km + 9500;
+                        
+                        // Service 3: 175 days from purchase, 19500 km
+                        $serviceDates[] = $contractStartDate->copy()->addDays(175);
+                        $serviceKm[] = $amcMaster->amc_start_km + 19500;
+                    } else {
+                        // For other vehicles, use existing logic
+                        $firstServiceDays = $amcPackageMasterData->vehicle_type == '1' ? 30 : 120; // for new vehicle first service after 30 days
+                        $kmInterval = $amcPackageMasterData->vehicle_type == '1' ? 1000 : 4000; // you can change this based on requirement
+                        
+                        $firstServiceDate = $contractStartDate->copy()->addDays($firstServiceDays);
+                        $firstServiceKm = $amcMaster->amc_start_km + $kmInterval;
+                        $serviceDates[] = $firstServiceDate;
+                        $serviceKm[] = $firstServiceKm; // Add initial KM
 
-                    $totalServices = $amcPackageMasterData->service_count;
-                    $lastServiceDate = $firstServiceDate;
-                    $lastServiceKm = $firstServiceKm;
+                        $totalServices = $amcPackageMasterData->service_count;
+                        $lastServiceDate = $firstServiceDate;
+                        $lastServiceKm = $firstServiceKm;
 
-                    for ($i = 1; $i < $totalServices; $i++) {
-                        $daysAdd = 120;
-                        $additionKm = 4000;
-                        if ($amcMaster->vehicle_master_id == 4) {
-                            $additionKm = 10000;
-                            if ($i <= 2) {
-                                $daysAdd = 40;
-                            } else if ($i <= 3 && $i >= 5) {
-                                $daysAdd = 90;
-                            } else if ($i <= 6 && $i >= 16) {
-                                $daysAdd = 120;
-                            }
-                        } else  if ($amcMaster->vehicle_master_id == 6) {
-                            // TVS King Deluxe
-                            //  $additionKm = 5000;
-                            if ($i == 1) {
-                                $daysAdd = 25;
-                            } else {
-                                $daysAdd = 45;
-                            }
-                        } else  if ($amcMaster->vehicle_master_id == 5) {
-                            // TVS King Duramax Plus
-                            $additionKm = 10000;
-                            if ($i == 1) {
-                                $daysAdd = 35;
-                            } else if ($i == 7) {
-                                $daysAdd = 70;
-                            } else {
-                                $daysAdd = 65;
-                            }
+                        for ($i = 1; $i < $totalServices; $i++) {
+                            $daysAdd = 120;
+                            $additionKm = 4000;
+                            
+                            $nextServiceDate = $lastServiceDate->copy()->addDays($daysAdd); // Next service after 120 days
+                            $nextServiceKm = $lastServiceKm + $additionKm; // Add KM interval
+
+                            $serviceDates[] = $nextServiceDate;
+                            $serviceKm[] = $nextServiceKm;
+
+                            $lastServiceDate = $nextServiceDate;
+                            $lastServiceKm = $nextServiceKm;
                         }
-                        $nextServiceDate = $lastServiceDate->copy()->addDays($daysAdd); // Next service after 120 days
-                        $nextServiceKm = $lastServiceKm + $additionKm; // Add KM interval
-
-                        $serviceDates[] = $nextServiceDate;
-                        $serviceKm[] = $nextServiceKm;
-
-                        $lastServiceDate = $nextServiceDate;
-                        $lastServiceKm = $nextServiceKm;
                     }
 
                     for ($i = 0; $i < count($serviceDates); $i++) {
@@ -593,71 +608,74 @@ class AmcMasterController extends Controller
                     $contractStartDate = Carbon::parse($amcMaster->amc_start_date);
                     $serviceDates = [];
                     $serviceKm = [];
-                    $firstServiceDays = $amcPackageMasterData->vehicle_type == '1' ? 30 : 120; // for new vehicle first service after 30 days
-                    $kmInterval = $amcPackageMasterData->vehicle_type == '1' ? 1000 : 4000; // you can change this based on requirement
-
-                    if ($amcMaster->vehicle_master_id == 4) {
-                        // TVS King EV Max
-                        $firstServiceDays = $amcPackageMasterData->vehicle_type == '1' ? 40 : 40; // for new vehicle first service after 30 days
-                        $kmInterval = $amcPackageMasterData->vehicle_type == '1' ? 1000 : 1000; // you can change this based on requirement
-                    } else if ($amcMaster->vehicle_master_id == 6) {
-                        // TVS King Deluxe
-                        $firstServiceDays = $amcPackageMasterData->vehicle_type == '1' ? 25 : 25; // for new vehicle first service after 30 days
-                        $kmInterval = $amcPackageMasterData->vehicle_type == '1' ? 1000 : 1000; // you can change this based on requirement
+                    
+                    // Special handling for TVS King Deluxe - always create exactly 3 services
+                    if ($amcMaster->vehicle_master_id == 6) {
+                        // TVS King Deluxe - 3 services with specific days and km
+                        // Service 1: 25 days from purchase, 750 km
+                        $serviceDates[] = $contractStartDate->copy()->addDays(25);
+                        $serviceKm[] = $amcMaster->amc_start_km + 750;
+                        
+                        // Service 2: 70 days from purchase, 4500 km
+                        $serviceDates[] = $contractStartDate->copy()->addDays(70);
+                        $serviceKm[] = $amcMaster->amc_start_km + 4500;
+                        
+                        // Service 3: 115 days from purchase, 9500 km
+                        $serviceDates[] = $contractStartDate->copy()->addDays(115);
+                        $serviceKm[] = $amcMaster->amc_start_km + 9500;
                     } else if ($amcMaster->vehicle_master_id == 5) {
-                        // TVS King Duramax Plus
-                        $firstServiceDays = $amcPackageMasterData->vehicle_type == '1' ? 35 : 35; // for new vehicle first service after 30 days
-                        $kmInterval = $amcPackageMasterData->vehicle_type == '1' ? 1000 : 1000; // you can change this based on requirement
-                    }
+                        // TVS King Duramax Plus - 3 services with specific days and km
+                        // Service 1: 35 days from purchase, 750 km
+                        $serviceDates[] = $contractStartDate->copy()->addDays(35);
+                        $serviceKm[] = $amcMaster->amc_start_km + 750;
+                        
+                        // Service 2: 100 days from purchase, 9500 km
+                        $serviceDates[] = $contractStartDate->copy()->addDays(100);
+                        $serviceKm[] = $amcMaster->amc_start_km + 9500;
+                        
+                        // Service 3: 165 days from purchase, 19500 km
+                        $serviceDates[] = $contractStartDate->copy()->addDays(165);
+                        $serviceKm[] = $amcMaster->amc_start_km + 19500;
+                    } else if ($amcMaster->vehicle_master_id == 4) {
+                        // TVS King EV Max - 3 services with specific days and km
+                        // Service 1: 40 days from purchase, 950 km
+                        $serviceDates[] = $contractStartDate->copy()->addDays(40);
+                        $serviceKm[] = $amcMaster->amc_start_km + 950;
+                        
+                        // Service 2: 85 days from purchase, 9500 km
+                        $serviceDates[] = $contractStartDate->copy()->addDays(85);
+                        $serviceKm[] = $amcMaster->amc_start_km + 9500;
+                        
+                        // Service 3: 175 days from purchase, 19500 km
+                        $serviceDates[] = $contractStartDate->copy()->addDays(175);
+                        $serviceKm[] = $amcMaster->amc_start_km + 19500;
+                    } else {
+                        // For other vehicles, use existing logic
+                        $firstServiceDays = $amcPackageMasterData->vehicle_type == '1' ? 30 : 120; // for new vehicle first service after 30 days
+                        $kmInterval = $amcPackageMasterData->vehicle_type == '1' ? 1000 : 4000; // you can change this based on requirement
 
-                    $firstServiceDate = $contractStartDate->copy()->addDays($firstServiceDays);
-                    $firstServiceKm = $amcMaster->amc_start_km + $kmInterval;
-                    $serviceDates[] = $firstServiceDate;
-                    $serviceKm[] = $firstServiceKm; // Add initial KM
+                        $firstServiceDate = $contractStartDate->copy()->addDays($firstServiceDays);
+                        $firstServiceKm = $amcMaster->amc_start_km + $kmInterval;
+                        $serviceDates[] = $firstServiceDate;
+                        $serviceKm[] = $firstServiceKm; // Add initial KM
 
-                    $totalServices = $amcPackageMasterData->service_count;
-                    $lastServiceDate = $firstServiceDate;
-                    $lastServiceKm = $firstServiceKm;
+                        $totalServices = $amcPackageMasterData->service_count;
+                        $lastServiceDate = $firstServiceDate;
+                        $lastServiceKm = $firstServiceKm;
 
-                    for ($i = 1; $i < $totalServices; $i++) {
-                        $daysAdd = 120;
-                        $additionKm = 4000;
-                        if ($amcMaster->vehicle_master_id == 4) {
-                            $additionKm = 10000;
-                            if ($i <= 2) {
-                                $daysAdd = 45;
-                            } else if ($i <= 3 && $i >= 5) {
-                                $daysAdd = 90;
-                            } else if ($i <= 6 && $i >= 16) {
-                                $daysAdd = 120;
-                            }
-                        } else  if ($amcMaster->vehicle_master_id == 6) {
-                            // TVS King Deluxe
-                            //$additionKm = 5000;
-                            if ($i == 1) {
-                                $daysAdd = 25;
-                            } else {
-                                $daysAdd = 45;
-                            }
-                        } else  if ($amcMaster->vehicle_master_id == 5) {
-                            // TVS King Duramax Plus
-                            $additionKm = 10000;
-                            if ($i == 1) {
-                                $daysAdd = 35;
-                            } else if ($i == 7) {
-                                $daysAdd = 70;
-                            } else {
-                                $daysAdd = 65;
-                            }
+                        for ($i = 1; $i < $totalServices; $i++) {
+                            $daysAdd = 120;
+                            $additionKm = 4000;
+                            
+                            $nextServiceDate = $lastServiceDate->copy()->addDays($daysAdd); // Next service after 120 days
+                            $nextServiceKm = $lastServiceKm + $additionKm; // Add KM interval
+
+                            $serviceDates[] = $nextServiceDate;
+                            $serviceKm[] = $nextServiceKm;
+
+                            $lastServiceDate = $nextServiceDate;
+                            $lastServiceKm = $nextServiceKm;
                         }
-                        $nextServiceDate = $lastServiceDate->copy()->addDays($daysAdd); // Next service after 120 days
-                        $nextServiceKm = $lastServiceKm + $additionKm; // Add KM interval
-
-                        $serviceDates[] = $nextServiceDate;
-                        $serviceKm[] = $nextServiceKm;
-
-                        $lastServiceDate = $nextServiceDate;
-                        $lastServiceKm = $nextServiceKm;
                     }
 
                     for ($i = 0; $i < count($serviceDates); $i++) {

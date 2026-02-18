@@ -274,30 +274,30 @@
 
                             if (vehicle_master_id == '4') {
                                 // TVS King EV Max  16 service
-                                if (item.service_count == 16) {
+                                if (item.service_count == 3) {
                                     var text =
                                         `${item.service_count} Services`;
-                                    dropdown.append(
+                                    dropdown.html(
                                         `<option value="${item.id}" data-time-period="${item.time_period}" ${selected} data-amount="${item.price}">${text}</option>`
                                     );
                                 }
 
                             } else if (vehicle_master_id == '5') {
                                 // TVS King Duramax Plus
-                                if (item.service_count == 11) {
+                                if (item.service_count == 3) {
                                     var text =
                                         `${item.service_count} Services`;
-                                    dropdown.append(
+                                    dropdown.html(
                                         `<option value="${item.id}" data-time-period="${item.time_period}" ${selected} data-amount="${item.price}">${text}</option>`
                                     );
                                 }
 
                             } else if (vehicle_master_id == '6') {
                                 // TVS King Deluxe
-                                if (item.service_count == 15) {
+                                if (item.service_count == 3) {
                                     var text =
                                         `${item.service_count} Services`;
-                                    dropdown.append(
+                                    dropdown.html(
                                         `<option value="${item.id}" data-time-period="${item.time_period}" ${selected} data-amount="${item.price}">${text}</option>`
                                     );
                                 }
