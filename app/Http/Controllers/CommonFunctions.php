@@ -624,7 +624,7 @@ trait CommonFunctions
 
             $data = $response->json();
 
-            dd($data);
+           // dd($data);
             if (
                 isset($data['ApiResponse']) &&
                 $data['ApiResponse'] === 'Success' &&

@@ -183,6 +183,7 @@
             <li>Services under this contract must be availed only at authorized service centers (as applicable).</li>
             <li><span style="background-color: yellow"><strong>Service will be done on appointment basis
                         only.</span></strong></li>
+            <li> Flat 10% discount on all spare parts, except critical electrical items</li>
         @endif
 
     </ol>
