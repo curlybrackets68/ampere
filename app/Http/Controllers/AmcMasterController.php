@@ -178,11 +178,11 @@ class AmcMasterController extends Controller
                     $serviceDates = [];
                     $serviceKm = [];
 
-                    $firstServiceDays = $amcPackageMasterData->vehicle_type == '1' ? 30 : 120; // for new vehicle first service after 30 days
-                    $kmInterval = $amcPackageMasterData->vehicle_type == '1' ? 1000 : 4000; // you can change this based on requirement
-
-                    // Special handling for TVS King Deluxe - always create exactly 3 services
+                    // TVS Vehicles Special Handling: Create exactly 3 services with specific days and km
+                    // This only applies to TVS vehicles (vehicle_master_id: 4=King EV Max, 5=King Duramax Plus, 6=King Deluxe)
+                    // Only affects AMC creation and edit operations (store, update, renewHandel methods)
                     if ($amcMaster->vehicle_master_id == 6) {
+                        // TVS King Deluxe - 3 services with specific days and km
                         // TVS King Deluxe - 3 services with specific days and km
                         $serviceDates = [];
                         $serviceKm = [];
@@ -432,7 +432,9 @@ class AmcMasterController extends Controller
                     $serviceDates = [];
                     $serviceKm = [];
                     
-                    // Special handling for TVS King Deluxe - always create exactly 3 services
+                    // TVS Vehicles Special Handling: Create exactly 3 services with specific days and km
+                    // This only applies to TVS vehicles (vehicle_master_id: 4=King EV Max, 5=King Duramax Plus, 6=King Deluxe)
+                    // Only affects AMC creation and edit operations (store, update, renewHandel methods)
                     if ($amcMaster->vehicle_master_id == 6) {
                         // TVS King Deluxe - 3 services with specific days and km
                         // Service 1: 25 days from purchase, 750 km
@@ -609,7 +611,9 @@ class AmcMasterController extends Controller
                     $serviceDates = [];
                     $serviceKm = [];
                     
-                    // Special handling for TVS King Deluxe - always create exactly 3 services
+                    // TVS Vehicles Special Handling: Create exactly 3 services with specific days and km
+                    // This only applies to TVS vehicles (vehicle_master_id: 4=King EV Max, 5=King Duramax Plus, 6=King Deluxe)
+                    // Only affects AMC creation and edit operations (store, update, renewHandel methods)
                     if ($amcMaster->vehicle_master_id == 6) {
                         // TVS King Deluxe - 3 services with specific days and km
                         // Service 1: 25 days from purchase, 750 km
