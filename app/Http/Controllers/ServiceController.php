@@ -148,13 +148,10 @@ class ServiceController extends Controller
         $amcMaster = AmcMaster::find($amc_id);
         //  dd($amcMaster)->vehicle_master_id;
 
-        // Prepare update data for completed service
-        // IMPORTANT: Only update status, remark, KM, and attachment. DO NOT update service_type or service_no
         $updateData['service_remark'] = $service_remark;
         $updateData['status'] = $status_id;
         $updateData['service_km'] = $service_km;
         $updateData['modified_by'] = Auth::id();
-        // NOTE: service_type and service_no are NOT included - they remain unchanged
 
         if ($request->hasFile('filename')) {
             $extension = $fileData->getClientOriginalExtension();
@@ -169,144 +166,47 @@ class ServiceController extends Controller
                 $updateData['attachment'] = $imageName;
             }
         }
-        $isTVSVehicle = false;
-        if (in_array($amcMaster->vehicle_master_id, [4, 5, 6])) {
-            $isTVSVehicle = true;
-        }
+
         $serviceData = ServiceDetail::query()->where('id', $service_id)->first();
         $serviceKmDiffernace =  $service_km - $serviceData->service_km;
 
         if (!Carbon::parse($serviceData->service_date)->isToday()) {
             $pendingServices = ServiceDetail::where('amc_id', $amc_id)
                 ->where('status', '1')
-                ->where('id', '!=', $service_id) // Exclude the service being updated
                 ->orderBy('service_no', 'ASC')
                 ->get();
-            if ($isTVSVehicle) {
-                if ($pendingServices->count() > 0) {
-                    // Get completed service to know the service number
-                    $completedService = ServiceDetail::where('id', $service_id)->first();
-                    $completedServiceNo = $completedService->service_no ?? 0;
-                    $completedServiceDate = Carbon::today();
-                    $completedServiceKm = $service_km;
 
-                    $serviceDates = [];
-                    $serviceKm = [];
-                    $lastServiceDate = $completedServiceDate;
-                    $lastServiceKm = $completedServiceKm;
+            if ($pendingServices->count() > 1) {
+                $firstServiceDate = Carbon::today();
+                $serviceDates = [];
+                $lastServiceDate = $firstServiceDate;
 
-                    // Calculate dates and KM for each pending service
-                    // In AmcMasterController, loop index $i corresponds to service_no - 1 (0-based index)
-                    // So for service_no n, we use $i = n - 1
-                    // Store calculations by service_no to ensure correct matching
-                    $calculatedData = [];
-                    foreach ($pendingServices as $index => $service) {
-                        // $i is the loop index used in AmcMasterController (0-based, service_no - 1)
-                        // Use the actual service_no of each pending service to get the correct index
-                        $i = $service->service_no - 1;
-                        $daysAdd = 120;
-                        $additionKm = 4000;
-
-                        if ($amcMaster->vehicle_master_id == 4) {
-                            // TVS King EV Max
-                            $additionKm = 10000;
-                            if ($i <= 2) {
-                                $daysAdd = 40;
-                            } else if ($i >= 3 && $i <= 5) {
-                                $daysAdd = 90;
-                            } else if ($i >= 6 && $i <= 16) {
-                                $daysAdd = 120;
-                            }
-                        } else if ($amcMaster->vehicle_master_id == 6) {
-                            // TVS King Deluxe
-                            if ($i == 1) {
-                                $daysAdd = 25;
-                            } else {
-                                $daysAdd = 45;
-                            }
-                            // KM remains same as default (4000) for King Deluxe
-                        } else if ($amcMaster->vehicle_master_id == 5) {
-                            // TVS King Duramax Plus
-                            $additionKm = 10000;
-                            if ($i == 1) {
-                                $daysAdd = 35;
-                            } else if ($i == 7) {
-                                $daysAdd = 70;
-                            } else {
-                                $daysAdd = 65;
-                            }
-                        }
-
-                        $nextServiceDate = $lastServiceDate->copy()->addDays($daysAdd);
-                        $nextServiceKm = $lastServiceKm + $additionKm;
-
-                        // Store by service_no to ensure correct matching
-                        $calculatedData[$service->service_no] = [
-                            'date' => $nextServiceDate,
-                            'km' => $nextServiceKm
-                        ];
-
-                        $lastServiceDate = $nextServiceDate;
-                        $lastServiceKm = $nextServiceKm;
+                // Generate all service dates
+                for ($i = 0; $i < $pendingServices->count(); $i++) {
+                    if ($i == 0) {
+                        $nextDate = $firstServiceDate;
+                    } elseif ($i == 1) {
+                        $nextDate = $lastServiceDate->copy()->addDays(120);
+                    } else {
+                        $nextDate = $lastServiceDate->copy()->addDays(119);
                     }
-
-                    // Get AMC contract end date as Carbon instance
-                    $amcEndDate = Carbon::parse($amcMaster->amc_end_date ?? null);
-                    
-                    // Update pending services with calculated dates and KM, matching by service_no
-                    // IMPORTANT: Only update service_date and service_km. DO NOT update service_type or service_no
-                    foreach ($pendingServices as $service) {
-                        if (isset($calculatedData[$service->service_no])) {
-                            $calculated = $calculatedData[$service->service_no];
-                            
-                            // Check if this is the last service and if date is within AMC end date
-                            $isLastService = $service->service_no == $pendingServices->max('service_no');
-                            
-                            // Update all services, but check AMC end date for last service
-                            // Only update service_date and service_km - preserve service_type and service_no
-                            if (!$isLastService || ($isLastService && $calculated['date']->lte($amcEndDate))) {
-                                ServiceDetail::where('id', $service->id)->update([
-                                    'service_date' => $calculated['date']->toDateString(),
-                                    'service_km' => $calculated['km']
-                                    // NOTE: service_type and service_no are NOT updated - they remain as set at AMC creation
-                                ]);
-                            }
-                        }
-                    }
+                    $serviceDates[] = $nextDate;
+                    $lastServiceDate = $nextDate;
                 }
-            } else {
-                if ($pendingServices->count() > 1) {
-                    $firstServiceDate = Carbon::today();
-                    $serviceDates = [];
-                    $lastServiceDate = $firstServiceDate;
 
-                    // Generate all service dates
-                    for ($i = 0; $i < $pendingServices->count(); $i++) {
-                        if ($i == 0) {
-                            $nextDate = $firstServiceDate;
-                        } elseif ($i == 1) {
-                            $nextDate = $lastServiceDate->copy()->addDays(120);
-                        } else {
-                            $nextDate = $lastServiceDate->copy()->addDays(119);
-                        }
-                        $serviceDates[] = $nextDate;
-                        $lastServiceDate = $nextDate;
-                    }
+                // Get AMC contract end date as Carbon instance
+                $amcEndDate = Carbon::parse($amcMaster->amc_end_date ?? null);
 
-                    // Get AMC contract end date as Carbon instance
-                    $amcEndDate = Carbon::parse($amcMaster->amc_end_date ?? null);
-
-                    foreach ($pendingServices as $index => $service) {
-                        if ($index < $pendingServices->count() - 1) {
-                            // Update all except the last
+                foreach ($pendingServices as $index => $service) {
+                    if ($index < $pendingServices->count() - 1) {
+                        // Update all except the last
+                        $service->service_date = $serviceDates[$index]->toDateString();
+                        $service->save();
+                    } elseif ($index == $pendingServices->count() - 1) {
+                        // Only update last if service date is within AMC end date
+                        if ($serviceDates[$index]->lte($amcEndDate)) {
                             $service->service_date = $serviceDates[$index]->toDateString();
                             $service->save();
-                        } elseif ($index == $pendingServices->count() - 1) {
-                            // Only update last if service date is within AMC end date
-                            if ($serviceDates[$index]->lte($amcEndDate)) {
-                                $service->service_date = $serviceDates[$index]->toDateString();
-                                $service->save();
-                            }
                         }
                     }
                 }
@@ -318,114 +218,18 @@ class ServiceController extends Controller
         // Save the selected service
         ServiceDetail::where('id', $service_id)->update($updateData);
 
-        // Calculate and update dates and KM for TVS vehicles (when service date IS today)
-        if ($isTVSVehicle && Carbon::parse($serviceData->service_date)->isToday()) {
-            $pendingServices = ServiceDetail::where('amc_id', $amc_id)
-                ->where('status', '1')
-                ->where('id', '!=', $service_id) // Exclude the service being updated
-                ->orderBy('service_no', 'ASC')
-                ->get();
 
-            if ($pendingServices->count() > 0) {
-                // Get completed service to know the service number
-                $completedService = ServiceDetail::where('id', $service_id)->first();
-                $completedServiceNo = $completedService->service_no ?? 0;
-                $completedServiceDate = Carbon::today();
-                $completedServiceKm = $service_km;
 
-                $lastServiceDate = $completedServiceDate;
-                $lastServiceKm = $completedServiceKm;
+        $pendingServices = ServiceDetail::where('amc_id', $amc_id)
+            ->where('status', '1')
+            ->orderBy('service_no', 'ASC')
+            ->get();
 
-                // Calculate dates and KM for each pending service
-                $calculatedData = [];
-                foreach ($pendingServices as $index => $service) {
-                    // $i is the loop index used in AmcMasterController (0-based, service_no - 1)
-                    $i = $service->service_no - 1;
-                    $daysAdd = 120;
-                    $additionKm = 4000;
-
-                    if ($amcMaster->vehicle_master_id == 4) {
-                        // TVS King EV Max
-                        $additionKm = 10000;
-                        if ($i <= 2) {
-                            $daysAdd = 40;
-                        } else if ($i >= 3 && $i <= 5) {
-                            $daysAdd = 90;
-                        } else if ($i >= 6 && $i <= 16) {
-                            $daysAdd = 120;
-                        }
-                    } else if ($amcMaster->vehicle_master_id == 6) {
-                        // TVS King Deluxe
-                        if ($i == 1) {
-                            $daysAdd = 25;
-                        } else {
-                            $daysAdd = 45;
-                        }
-                        // KM remains same as default (4000) for King Deluxe
-                    } else if ($amcMaster->vehicle_master_id == 5) {
-                        // TVS King Duramax Plus
-                        $additionKm = 10000;
-                        if ($i == 1) {
-                            $daysAdd = 35;
-                        } else if ($i == 7) {
-                            $daysAdd = 70;
-                        } else {
-                            $daysAdd = 65;
-                        }
-                    }
-
-                    $nextServiceDate = $lastServiceDate->copy()->addDays($daysAdd);
-                    $nextServiceKm = $lastServiceKm + $additionKm;
-
-                    // Store by service_no to ensure correct matching
-                    $calculatedData[$service->service_no] = [
-                        'date' => $nextServiceDate,
-                        'km' => $nextServiceKm
-                    ];
-
-                    $lastServiceDate = $nextServiceDate;
-                    $lastServiceKm = $nextServiceKm;
-                }
-
-                // Get AMC contract end date as Carbon instance
-                $amcEndDate = Carbon::parse($amcMaster->amc_end_date ?? null);
-
-                // Update pending services with calculated dates and KM
-                // IMPORTANT: Only update service_date and service_km. DO NOT update service_type or service_no
-                foreach ($pendingServices as $service) {
-                    if (isset($calculatedData[$service->service_no])) {
-                        $calculated = $calculatedData[$service->service_no];
-                        
-                        // Check if this is the last service and if date is within AMC end date
-                        $isLastService = $service->service_no == $pendingServices->max('service_no');
-                        
-                        // Update all services, but check AMC end date for last service
-                        // Only update service_date and service_km - preserve service_type and service_no
-                        if (!$isLastService || ($isLastService && $calculated['date']->lte($amcEndDate))) {
-                            ServiceDetail::where('id', $service->id)->update([
-                                'service_date' => $calculated['date']->toDateString(),
-                                'service_km' => $calculated['km']
-                                // NOTE: service_type and service_no are NOT updated - they remain as set at AMC creation
-                            ]);
-                        }
-                    }
-                }
-            }
-        }
-
-        // Update KM for pending services (only for non-TVS vehicles, TVS vehicles already updated above)
-        if (!$isTVSVehicle) {
-            $pendingServices = ServiceDetail::where('amc_id', $amc_id)
-                ->where('status', '1')
-                ->orderBy('service_no', 'ASC')
-                ->get();
-
-            if ($pendingServices) {
-                foreach ($pendingServices as  $service) {
-                    if ($serviceKmDiffernace != 0) {
-                        $service->service_km = $service->service_km + $serviceKmDiffernace;
-                        $service->save();
-                    }
+        if ($pendingServices) {
+            foreach ($pendingServices as  $service) {
+                if ($serviceKmDiffernace != 0) {
+                    $service->service_km = $service->service_km + $serviceKmDiffernace;
+                    $service->save();
                 }
             }
         }
@@ -458,7 +262,7 @@ class ServiceController extends Controller
         if ($amcMaster->vehicle_master_id == '4' || $amcMaster->vehicle_master_id == '5' || $amcMaster->vehicle_master_id == '6') {
             $template = 'service_gujarati';
         }
-
+        
         $metaData = [
             $amcMaster->customer_name ?? 'N/A',
             $amcMaster->vehicle_number,
@@ -491,7 +295,7 @@ class ServiceController extends Controller
             $amcMaster->update([
                 'status' => $this->getArrayIdByName($this->statusArray, 'Deactive')
             ]);
-
+            
             // Meta Send
             $this->sendMetaWhatsappMessage($amcMaster->contact_number, 'service_completed');
         }
