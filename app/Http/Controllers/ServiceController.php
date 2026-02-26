@@ -148,10 +148,15 @@ class ServiceController extends Controller
         $amcMaster = AmcMaster::find($amc_id);
         //  dd($amcMaster)->vehicle_master_id;
 
+
+        // Check if this is a TVS vehicle (vehicle_master_id: 4=King EV Max, 5=King Duramax Plus, 6=King Deluxe)
+        $isTVSVehicle = in_array($amcMaster->vehicle_master_id, [4, 5, 6]);
+
         $updateData['service_remark'] = $service_remark;
         $updateData['status'] = $status_id;
         $updateData['service_km'] = $service_km;
         $updateData['modified_by'] = Auth::id();
+
 
         if ($request->hasFile('filename')) {
             $extension = $fileData->getClientOriginalExtension();
@@ -167,96 +172,128 @@ class ServiceController extends Controller
             }
         }
 
-        $serviceData = ServiceDetail::query()->where('id', $service_id)->first();
-        $serviceKmDiffernace =  $service_km - $serviceData->service_km;
 
-        if (!Carbon::parse($serviceData->service_date)->isToday()) {
+        if ($isTVSVehicle) {
+            if ($request->hasFile('filename')) {
+                $extension = $fileData->getClientOriginalExtension();
+                $imageName = date('YmdHis') . '_' . time()  . '.' . $extension;
+
+                $directory = 'assets/attachment/amc-master/' . $amc_id . '/service/';
+                if (!File::exists($directory)) {
+                    File::makeDirectory($directory, 0755, true);
+                }
+
+                if ($fileData->move($directory, $imageName)) {
+                    $updateData['attachment'] = $imageName;
+                }
+            }
+            if ($request->has('service_date') && !empty($request->service_date)) {
+                $updateData['service_date'] = $this->formatDateTime('Y-m-d H:i:s', $request->service_date);
+            }
+            ServiceDetail::where('id', $service_id)->update($updateData);
+            // Log
+            SystemLogs::create([
+                'inquiry_id' => 0,
+                'type' => '6', // Service Module ID
+                'type_id' => $service_id,
+                'remark'     => 'Service Status Update ',
+                'action_id'  => 1,
+                'created_by' => Auth::id(),
+            ]);
+        } else {
+
+            // non tvs vehicle flow old flow
+            $serviceData = ServiceDetail::query()->where('id', $service_id)->first();
+            $serviceKmDiffernace =  $service_km - $serviceData->service_km;
+
+            if (!Carbon::parse($serviceData->service_date)->isToday()) {
+                $pendingServices = ServiceDetail::where('amc_id', $amc_id)
+                    ->where('status', '1')
+                    ->orderBy('service_no', 'ASC')
+                    ->get();
+
+                if ($pendingServices->count() > 1) {
+                    $firstServiceDate = Carbon::today();
+                    $serviceDates = [];
+                    $lastServiceDate = $firstServiceDate;
+
+                    // Generate all service dates
+                    for ($i = 0; $i < $pendingServices->count(); $i++) {
+                        if ($i == 0) {
+                            $nextDate = $firstServiceDate;
+                        } elseif ($i == 1) {
+                            $nextDate = $lastServiceDate->copy()->addDays(120);
+                        } else {
+                            $nextDate = $lastServiceDate->copy()->addDays(119);
+                        }
+                        $serviceDates[] = $nextDate;
+                        $lastServiceDate = $nextDate;
+                    }
+
+                    // Get AMC contract end date as Carbon instance
+                    $amcEndDate = Carbon::parse($amcMaster->amc_end_date ?? null);
+
+                    foreach ($pendingServices as $index => $service) {
+                        if ($index < $pendingServices->count() - 1) {
+                            // Update all except the last
+                            $service->service_date = $serviceDates[$index]->toDateString();
+                            $service->save();
+                        } elseif ($index == $pendingServices->count() - 1) {
+                            // Only update last if service date is within AMC end date
+                            if ($serviceDates[$index]->lte($amcEndDate)) {
+                                $service->service_date = $serviceDates[$index]->toDateString();
+                                $service->save();
+                            }
+                        }
+                    }
+                }
+            }
+            if ($serviceKmDiffernace != 0) {
+                $updateData['service_km'] = $serviceData->service_km + $serviceKmDiffernace;
+            }
+            // Save the selected service
+            ServiceDetail::where('id', $service_id)->update($updateData);
+
             $pendingServices = ServiceDetail::where('amc_id', $amc_id)
                 ->where('status', '1')
                 ->orderBy('service_no', 'ASC')
                 ->get();
 
-            if ($pendingServices->count() > 1) {
-                $firstServiceDate = Carbon::today();
-                $serviceDates = [];
-                $lastServiceDate = $firstServiceDate;
-
-                // Generate all service dates
-                for ($i = 0; $i < $pendingServices->count(); $i++) {
-                    if ($i == 0) {
-                        $nextDate = $firstServiceDate;
-                    } elseif ($i == 1) {
-                        $nextDate = $lastServiceDate->copy()->addDays(120);
-                    } else {
-                        $nextDate = $lastServiceDate->copy()->addDays(119);
-                    }
-                    $serviceDates[] = $nextDate;
-                    $lastServiceDate = $nextDate;
-                }
-
-                // Get AMC contract end date as Carbon instance
-                $amcEndDate = Carbon::parse($amcMaster->amc_end_date ?? null);
-
-                foreach ($pendingServices as $index => $service) {
-                    if ($index < $pendingServices->count() - 1) {
-                        // Update all except the last
-                        $service->service_date = $serviceDates[$index]->toDateString();
+            if ($pendingServices) {
+                foreach ($pendingServices as  $service) {
+                    if ($serviceKmDiffernace != 0) {
+                        $service->service_km = $service->service_km + $serviceKmDiffernace;
                         $service->save();
-                    } elseif ($index == $pendingServices->count() - 1) {
-                        // Only update last if service date is within AMC end date
-                        if ($serviceDates[$index]->lte($amcEndDate)) {
-                            $service->service_date = $serviceDates[$index]->toDateString();
-                            $service->save();
-                        }
                     }
                 }
             }
+
+            $serviceDataNewServiceData = ServiceDetail::query()
+                ->Where('amc_id', $amc_id)
+                ->orderBy('service_no', 'ASC')
+                ->where('status', '1')
+                ->first();
+
+            $serviceData = ServiceDetail::query()->where('id', $service_id)->first();
+
+            $nextserviceDate = $serviceDataNewServiceData->display_service_date ?? '';
+            $nextServiceKm = $serviceDataNewServiceData->service_km ?? 0;
+            $checkPendingServiceCount = ServiceDetail::where('amc_id', $amc_id)
+                ->where('status', '1')
+                ->count();
+
+            // Log
+            SystemLogs::create([
+                'inquiry_id' => 0,
+                'type' => '6', // Service Module ID
+                'type_id' => $service_id,
+                'remark'     => 'Serive Status Update ',
+                'action_id'  => 1,
+                'created_by' => Auth::id(),
+            ]);
         }
-        if ($serviceKmDiffernace != 0) {
-            $updateData['service_km'] = $serviceData->service_km + $serviceKmDiffernace;
-        }
-        // Save the selected service
-        ServiceDetail::where('id', $service_id)->update($updateData);
 
 
-
-        $pendingServices = ServiceDetail::where('amc_id', $amc_id)
-            ->where('status', '1')
-            ->orderBy('service_no', 'ASC')
-            ->get();
-
-        if ($pendingServices) {
-            foreach ($pendingServices as  $service) {
-                if ($serviceKmDiffernace != 0) {
-                    $service->service_km = $service->service_km + $serviceKmDiffernace;
-                    $service->save();
-                }
-            }
-        }
-
-        $serviceDataNewServiceData = ServiceDetail::query()
-            ->Where('amc_id', $amc_id)
-            ->orderBy('service_no', 'ASC')
-            ->where('status', '1')
-            ->first();
-
-        $serviceData = ServiceDetail::query()->where('id', $service_id)->first();
-
-        $nextserviceDate = $serviceDataNewServiceData->display_service_date ?? '';
-        $nextServiceKm = $serviceDataNewServiceData->service_km ?? 0;
-        $checkPendingServiceCount = ServiceDetail::where('amc_id', $amc_id)
-            ->where('status', '1')
-            ->count();
-
-        // Log
-        SystemLogs::create([
-            'inquiry_id' => 0,
-            'type' => '6', // Service Module ID
-            'type_id' => $service_id,
-            'remark'     => 'Serive Status Update ',
-            'action_id'  => 1,
-            'created_by' => Auth::id(),
-        ]);
 
         $template = 'service_english';
         if ($amcMaster->vehicle_master_id == '4' || $amcMaster->vehicle_master_id == '5' || $amcMaster->vehicle_master_id == '6') {
