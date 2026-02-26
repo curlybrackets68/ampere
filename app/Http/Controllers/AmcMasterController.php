@@ -301,6 +301,18 @@ class AmcMasterController extends Controller
                         ServiceDetail::create($serviceData);
                     }
 
+                    // Update AMC end date: last service date + 15 days
+                    $lastServiceDate = ServiceDetail::where('amc_id', $amcMasterId)
+                        ->orderBy('service_date', 'DESC')
+                        ->orderBy('id', 'DESC')
+                        ->first();
+                    
+                    if ($lastServiceDate) {
+                        $newAmcEndDate = Carbon::parse($lastServiceDate->service_date)->addDays(15);
+                        $amcMaster->update(['amc_end_date' => $newAmcEndDate->format('Y-m-d H:i:s')]);
+                        $amcMaster->refresh(); // Refresh to get updated amc_end_date
+                    }
+
                     $vehicleTypeName = $this->getArrayNameById($this->vehicleTypeArray, $amcMaster->vehicle_type);
                     $startDate = $this->formatDateTime('d-M-Y', $amcMaster->amc_start_date);
                     $endDate = $this->formatDateTime('d-M-Y', $amcMaster->amc_end_date);
@@ -543,6 +555,18 @@ class AmcMasterController extends Controller
 
                         ServiceDetail::create($serviceData);
                     }
+
+                    // Update AMC end date: last service date + 15 days
+                    $lastServiceDate = ServiceDetail::where('amc_id', $amcMasterId)
+                        ->orderBy('service_date', 'DESC')
+                        ->orderBy('id', 'DESC')
+                        ->first();
+                    
+                    if ($lastServiceDate) {
+                        $newAmcEndDate = Carbon::parse($lastServiceDate->service_date)->addDays(15);
+                        $amcMaster->update(['amc_end_date' => $newAmcEndDate->format('Y-m-d H:i:s')]);
+                        $amcMaster->refresh(); // Refresh to get updated amc_end_date
+                    }
                 }
             }
             SystemLogs::create([
@@ -721,6 +745,18 @@ class AmcMasterController extends Controller
                         ];
 
                         ServiceDetail::create($serviceData);
+                    }
+
+                    // Update AMC end date: last service date + 15 days
+                    $lastServiceDate = ServiceDetail::where('amc_id', $amcMasterId)
+                        ->orderBy('service_date', 'DESC')
+                        ->orderBy('id', 'DESC')
+                        ->first();
+                    
+                    if ($lastServiceDate) {
+                        $newAmcEndDate = Carbon::parse($lastServiceDate->service_date)->addDays(15);
+                        $amcMaster->update(['amc_end_date' => $newAmcEndDate->format('Y-m-d H:i:s')]);
+                        $amcMaster->refresh(); // Refresh to get updated amc_end_date
                     }
                 }
             }
