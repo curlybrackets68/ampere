@@ -124,4 +124,48 @@ class AmcMaster extends Model
        
         return $query;
     }
+
+    /**
+     * Get TVS vehicle 3-service schedule (dates and KM).
+     * Reference: AmcMasterController (store/update/renewHandel) - logic taken from there; do not change controller.
+     * Used by TVSVehicleAmcServiceSeeder to update existing services to match Add AMC flow.
+     * Returns array of [ 'date' => Carbon, 'km' => int ] for services 1, 2, 3.
+     * Only valid for vehicle_master_id 4 (King EV Max), 5 (King Duramax Plus), 6 (King Deluxe).
+     *
+     * @return array<int, array{date: \Carbon\Carbon, km: int}>
+     */
+    public function getTVSServiceSchedule(): array
+    {
+        $contractStartDate = Carbon::parse($this->amc_start_date);
+        $startKm = (int) ($this->amc_start_km ?? 0);
+        $schedule = [];
+
+        switch ((int) $this->vehicle_master_id) {
+            case 6: // King Deluxe - 25/70/115 days, 750/4500/9500 km
+                $schedule = [
+                    ['date' => $contractStartDate->copy()->addDays(25), 'km' => $startKm + 750],
+                    ['date' => $contractStartDate->copy()->addDays(70), 'km' => $startKm + 4500],
+                    ['date' => $contractStartDate->copy()->addDays(115), 'km' => $startKm + 9500],
+                ];
+                break;
+            case 5: // King Duramax Plus - 35/100/165 days, 750/9500/19500 km
+                $schedule = [
+                    ['date' => $contractStartDate->copy()->addDays(35), 'km' => $startKm + 750],
+                    ['date' => $contractStartDate->copy()->addDays(100), 'km' => $startKm + 9500],
+                    ['date' => $contractStartDate->copy()->addDays(165), 'km' => $startKm + 19500],
+                ];
+                break;
+            case 4: // King EV Max - 40/85/175 days, 950/9500/19500 km
+                $schedule = [
+                    ['date' => $contractStartDate->copy()->addDays(40), 'km' => $startKm + 950],
+                    ['date' => $contractStartDate->copy()->addDays(85), 'km' => $startKm + 9500],
+                    ['date' => $contractStartDate->copy()->addDays(175), 'km' => $startKm + 19500],
+                ];
+                break;
+            default:
+                $schedule = [];
+        }
+
+        return $schedule;
+    }
 }
