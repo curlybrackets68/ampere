@@ -183,7 +183,7 @@ class ServiceCronJob extends Command
                         $service->display_service_date ?? 'N/A',
                     ];
 
-                    $sent = $this->sendMetaWhatsappMessage($amcQueryServiceDue->contact_number, 'amc_service_overdue_final', $metaData, $pdfUrl['public_url'], 'AMC_FILE');
+                    $sent = $this->sendMetaWhatsappMessage($amcQueryServiceDue->contact_number, 'amc_service_overdue_final_v2', $metaData, $pdfUrl['public_url'], 'AMC_FILE');
 
                     if ($sent && File::exists($pdfUrl['public_url'])) {
                         File::delete($pdfUrl['public_url']);
