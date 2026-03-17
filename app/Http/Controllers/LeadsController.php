@@ -126,8 +126,6 @@ class LeadsController extends Controller
 
         $secondParam = 'N/A';
 
-        $utilityTemplate = ['lead_all_address_english_v2', 'lead_all_address_gujarati_v2', 'lead_sama_address_english_v2'];
-
         if (!empty($vehicleIds)) {
             if (count($vehicleIds) === 1) {
                 $vehicleInfo = $this->getVehicleInfo($vehicleIds[0]);
@@ -147,29 +145,15 @@ class LeadsController extends Controller
             $request->name ?? 'N/A',
             $secondParam,
             $salesmanName ?: 'N/A',
-            $salesmanName ?: 'N/A',
             $salesmanMobile ?: 'N/A',
         ];
-
-        if (in_array($template, $utilityTemplate)) {
-            $params = [
-                $request->name ?? 'N/A',
-                $secondParam,
-                $salesmanName ?: 'N/A',
-                $salesmanMobile ?: 'N/A',
-            ];
-        }
 
         if ($lead && $template) {
             foreach ($vehicleIds as $vehicleId) {
                 $vehicleInfo = $this->getVehicleInfo($vehicleId);
 
-                $fileUrl = '';
-                $fileName = '';
-                if (in_array($template, $utilityTemplate)) {
-                    $fileUrl = $vehicleInfo['pdf'];
-                    $fileName = $vehicleInfo['name'];
-                }
+                $fileUrl = $vehicleInfo['pdf'];
+                $fileName = $vehicleInfo['name'];
 
                 $this->sendMetaWhatsappMessage(
                     $request->mobile,
