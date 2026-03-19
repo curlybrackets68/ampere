@@ -149,11 +149,10 @@ class LeadsController extends Controller
         ];
 
         if ($lead && $template) {
-            foreach ($vehicleIds as $vehicleId) {
-                $vehicleInfo = $this->getVehicleInfo($vehicleId);
-
-                $fileUrl = $vehicleInfo['pdf'];
-                $fileName = $vehicleInfo['name'];
+            if (count($vehicleIds) > 1) {
+                // Multiple vehicles 
+                $fileUrl = 'https://chiragautomotive.com/amper/assets/pdf/Ampere_All_Vehicle.pdf'; 
+                $fileName = 'All Vehicles.pdf';
 
                 $this->sendMetaWhatsappMessage(
                     $request->mobile,
@@ -162,23 +161,25 @@ class LeadsController extends Controller
                     $fileUrl,
                     $fileName
                 );
+            } else {
+                // Single vehicle 
+                foreach ($vehicleIds as $vehicleId) {
+                    $vehicleInfo = $this->getVehicleInfo($vehicleId);
 
-                sleep(3);
+                    $fileUrl = $vehicleInfo['pdf'];
+                    $fileName = $vehicleInfo['name'];
 
-                // if (!empty($vehicleInfo['pdf'])) {
-                //     $this->sendMetaMediaMessage(
-                //         $request->mobile,
-                //         $vehicleInfo['pdf'],
-                //         'document'
-                //     );
-                //     sleep(2);
-                // }
+                    $this->sendMetaWhatsappMessage(
+                        $request->mobile,
+                        $template,
+                        $params,
+                        $fileUrl,
+                        $fileName
+                    );
+
+                    sleep(3);
+                }
             }
-
-            // foreach ($vehicleIds as $vehicleId) {
-            //     $this->sendVehicleMedia($vehicleId, $request->mobile);
-            //     sleep(2);
-            // }
 
             SystemLogs::create([
                 'inquiry_id' => 0,
@@ -203,7 +204,7 @@ class LeadsController extends Controller
     {
         $vehicles = [
             1 => ['name' => 'Ampere Nexus', 'pdf' => 'https://chiragautomotive.com/amper/assets/pdf/Ampere_Nexus.pdf'],
-            2 => ['name' => 'Ampere Magnus Neo', 'pdf' => 'https://chiragautomotive.com/amper/assets/pdf/Magnus_Neo_A4.pdf'],
+            2 => ['name' => 'Ampere Magnus Neo', 'pdf' => 'https://chiragautomotive.com/amper/assets/pdf/Ampere_Magnus_Neo.pdf'],
             3 => ['name' => 'Ampere Reo', 'pdf' => 'https://chiragautomotive.com/amper/assets/pdf/REO_80_KV.pdf'],
             4 => ['name' => 'TVS King EV Max', 'pdf' => 'https://chiragautomotive.com/amper/assets/pdf/King_EV_MAX_English.pdf'],
             5 => ['name' => 'TVS King Duramax Plus', 'pdf' => 'https://chiragautomotive.com/amper/assets/pdf/King_Duramax_Plus_Petrol_English.pdf'],
