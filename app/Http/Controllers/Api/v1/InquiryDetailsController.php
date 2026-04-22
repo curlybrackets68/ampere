@@ -97,13 +97,12 @@ class InquiryDetailsController extends Controller
     {
         try {
             $command = $request->command;
-    
+
             Artisan::call($command);
-    
+
             return response()->json(Artisan::output());
-    
         } catch (\Exception $e) {
-    
+
             return response()->json($e->getMessage());
         }
     }
@@ -147,10 +146,12 @@ class InquiryDetailsController extends Controller
             $branch        = $responseData['branch'] ?? '';
             $serviceType   = $responseData['service_type'] ?? '';
             $flowToken     = $responseData['flow_token'] ?? '';
-            $metaTemplateName = '';
+            $metaTemplateName = 'add_part_order';
             $metaData = [];
+            $typeText = '';
             $latestNumber = 0;
             if ($visit == 'Part Order') {
+                $typeText = 'Order';
                 $lastOrderId = Order::orderBy('id', 'desc')->first()->id ?? 0;
                 $data['created_by'] = 1;
                 $data['customer_name'] = $name;
@@ -161,6 +162,7 @@ class InquiryDetailsController extends Controller
                 $data['order_no'] = 'ORD-' . ($lastOrderId + 1);
                 $data['order_date'] = now()->format('Y-m-d H:i:s');
             } else {
+                $typeText = 'Inquiry';
                 $data = $request->all();
                 $data['created_by'] = 1;
                 $data['vehicle_no'] = strtoupper($vehicleNumber);
@@ -185,10 +187,6 @@ class InquiryDetailsController extends Controller
                     'action_id'  => 1,
                     'created_by' => 1,
                 ]);
-                $metaData = [
-                    $latestNumber
-                ];
-                $metaTemplateName = 'add_part_order';
             } else {
                 $inquirySave = InquiryDetails::create($data);
                 $latestNumber = $inquirySave->inquiry_no;
@@ -200,12 +198,12 @@ class InquiryDetailsController extends Controller
                     'action_id'  => 1,
                     'created_by' => 1,
                 ]);
-                $metaData = [
-                    $latestNumber
-                ];
-                $metaTemplateName = 'add_inqury';
             }
 
+            $metaData = [
+                $typeText,
+                $latestNumber
+            ];
 
             $this->sendMetaWhatsappMessage($mobileNo, $metaTemplateName, $metaData);
 
