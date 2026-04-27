@@ -197,7 +197,14 @@ class OrdersController extends Controller
         $order->status_id = 1; // Pending
         $order->created_by = auth()->id();
         $order->save();
-        ///  dd($order);
+        SystemLogs::create([
+            'inquiry_id' => 0,
+            'type' => '2', // for Order
+            'type_id' => $order->id, // for Order
+            'remark' => 'Part Order Created # ' . $order->order_no,
+            'action_id' => 1, // Add
+            'created_by' => auth()->id(),
+        ]);
 
 
         return redirect()->route('orders')->with('success', 'Order created successfully with Order No #: ' . $order->order_no);

@@ -7,6 +7,35 @@
 @section('css')
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+    <style>
+        #historyModal .modal-dialog {
+            max-width: 1100px;
+        }
+
+        #orderHistoryTable th,
+        #orderHistoryTable td {
+            white-space: nowrap;
+            vertical-align: middle;
+        }
+
+        #orderHistoryTable td:nth-child(4) {
+            white-space: normal;
+            min-width: 280px;
+            word-break: break-word;
+        }
+
+        #orderHistoryTable_wrapper .dataTables_filter input {
+            min-width: 220px;
+        }
+
+        #orderHistoryTable_wrapper .dataTables_length select {
+            min-width: 70px;
+        }
+
+        #historyModal .dataTables_wrapper .dataTables_paginate .paginate_button {
+            padding: 0.2rem 0.55rem;
+        }
+    </style>
 @endsection
 
 @section('content')
@@ -422,17 +451,21 @@
 
         });
 
-        $(document).on('click', '.open-history-modal', async function() {
-            let type_id = $(this).data('type-id');
-            $('#historyModal').modal('show');
+        function initOrderHistoryTable(type_id) {
             let url = '{{ route('orders.get-history', ['type_id' => 'ID']) }}';
             url = url.replace('ID', type_id);
-            $('#orderHistoryTable').DataTable({
+
+            let historyTable = $('#orderHistoryTable').DataTable({
                 serverSide: false,
                 processing: true,
                 destroy: true,
-                responsive: true,
-                scrollX: true,
+                responsive: false,
+                scrollX: false,
+                autoWidth: false,
+                pagingType: 'simple_numbers',
+                language: {
+                    emptyTable: 'No history found for this order'
+                },
                 ajax: {
                     url: url,
                 },
@@ -456,12 +489,46 @@
                     }
 
                 ],
+                columnDefs: [{
+                        targets: [0, 1, 2, 4],
+                        className: 'text-start'
+                    },
+                    {
+                        targets: 3,
+                        className: 'text-start',
+                        width: '35%'
+                    }
+                ],
                 order: [
                     [0, 'desc']
                 ],
 
             });
+            historyTable.columns.adjust().draw();
+        }
 
+        $(document).on('click', '.open-history-modal', function() {
+            let type_id = $(this).data('type-id');
+            $('#historyModal').data('type-id', type_id).modal('show');
+        });
+
+        $('#historyModal').on('shown.bs.modal', function() {
+            let type_id = $(this).data('type-id');
+            if (type_id) {
+                initOrderHistoryTable(type_id);
+                setTimeout(function() {
+                    if ($.fn.DataTable.isDataTable('#orderHistoryTable')) {
+                        $('#orderHistoryTable').DataTable().columns.adjust().draw(false);
+                    }
+                }, 250);
+            }
+        });
+
+        $('#historyModal').on('hidden.bs.modal', function() {
+            if ($.fn.DataTable.isDataTable('#orderHistoryTable')) {
+                $('#orderHistoryTable').DataTable().clear().destroy();
+            }
+            $(this).removeData('type-id');
         });
     </script>
 @endsection
