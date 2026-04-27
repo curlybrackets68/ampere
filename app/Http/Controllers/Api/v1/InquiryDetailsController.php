@@ -146,6 +146,7 @@ class InquiryDetailsController extends Controller
             $branch        = $responseData['branch'] ?? '';
             $serviceType   = $responseData['service_type'] ?? '';
             $flowToken     = $responseData['flow_token'] ?? '';
+            $orderName     = $responseData['part_name'] ?? '';
             $metaTemplateName = 'add_part_order';
             $metaData = [];
             $typeText = '';
@@ -157,7 +158,7 @@ class InquiryDetailsController extends Controller
                 $data['customer_name'] = $name;
                 $data['branch_id'] = $this->getArrayIdByName($this->branchArray, $branch);
                 $data['customer_vehicle_no'] = strtoupper($vehicleNumber);
-                $data['order_name'] = 'ORD';
+                $data['order_name'] = $orderName;
                 $data['customer_mobile'] = $mobileNo;
                 $data['order_no'] = 'ORD-' . ($lastOrderId + 1);
                 $data['order_date'] = now()->format('Y-m-d H:i:s');
