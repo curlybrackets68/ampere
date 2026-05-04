@@ -43,6 +43,7 @@ Route::middleware(['auth', 'CheckSession'])->group(function () {
     Route::post('save-inquiry', [DashboardController::class, 'saveInquiry'])->name('inquiry.save-inquiry');
 
     Route::resource('leads', LeadsController::class);
+    Route::get('check-lead-mobile', [LeadsController::class, 'checkLeadMobile'])->name('check-lead-mobile');
     Route::post('export-leads', [LeadsController::class, 'export'])->name('user.leads.excel.export');
 
     Route::post('add-vehicle', [LeadsController::class, 'addVehicle'])->name('add-vehicle');

@@ -305,8 +305,25 @@
             }
 
             if (isValid) {
-                loaderButton('addUpdateLeads', true);
-                $('form[name="leadsForm"]').submit();
+                $.ajax({
+                    url: "{{ route('check-lead-mobile') }}",
+                    type: 'GET',
+                    data: {
+                        mobile: mobile,
+                        lead_id: "{{ $lead->id ?? '' }}"
+                    },
+                    success: function(response) {
+                        if (response.exists) {
+                            $('#mobile').after(
+                                '<small class="error-message text-danger">This mobile number has already been added in the last 10 days.</small>'
+                            );
+                            return;
+                        }
+
+                        loaderButton('addUpdateLeads', true);
+                        $('form[name="leadsForm"]').submit();
+                    }
+                });
             }
         });
 
