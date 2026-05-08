@@ -356,6 +356,20 @@ class LeadsController extends Controller
         return response()->json($data);
     }
 
+    public function checkLeadMobile(Request $request)
+    {
+        $query = Lead::where('mobile', $request->mobile)
+            ->where('created_at', '>=', now()->subDays(10));
+
+        if ($request->filled('lead_id')) {
+            $query->where('id', '!=', $request->lead_id);
+        }
+
+        return response()->json([
+            'exists' => $query->exists(),
+        ]);
+    }
+
     public function export(Request $request)
     {
         try {
