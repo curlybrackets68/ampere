@@ -38,6 +38,7 @@ class AMCCronJob extends Command
 
         $amcRecords = AmcMaster::where('status', 10)
             ->where('renew_status', 12)
+            ->whereNotIn('vehicle_master_id', [4, 5, 6]) /// as per Chirag bhai said send renewal only  non tvs vechicle
             ->whereDate('amc_end_date', '>=', $startDate)
             ->whereDate('amc_end_date', '<=', $endDate)
             ->get();
@@ -88,7 +89,7 @@ class AMCCronJob extends Command
         }
 
 
-        // When AMC Due (After) 
+        // When AMC Due (After)
 
         $amcRecordsDue = AmcMaster::where('status', 11)
             ->where('renew_status', 12)
