@@ -610,7 +610,7 @@ trait CommonFunctions
         if (!empty($fileName)) {
             $url .= '&PDFName=' . $fileName;
         }
-            // dd($url);
+        // dd($url);
 
         try {
             $response = Http::withOptions(['verify' => false])->get($url);
@@ -625,7 +625,7 @@ trait CommonFunctions
 
             $data = $response->json();
 
-           // dd($data);
+            // dd($data);
             if (
                 isset($data['ApiResponse']) &&
                 $data['ApiResponse'] === 'Success' &&
@@ -712,5 +712,42 @@ trait CommonFunctions
                 $value
             )
         );
+    }
+
+    function addLeadByThirdPartyAPI($data)
+    {
+        $url = "https://14705f6a-8bb2-434a-97df-fc47a88bdf62.neodove.com/integration/custom/c65b269d-6420-4017-83ed-2d9cc853128a/leads";
+        if (isset($data['name']) || isset($data['mobile']) || isset($data['email']) || isset($data['detail1']) || isset($data['detail2'])) {
+            $payload = [
+                'name' => $data['name'] ?? '',
+                'mobile' => $data['mobile'] ?? '',
+                'email' => $data['email'] ?? '',
+                'detail1' => $data['detail1'] ?? '',
+                'detail2' => $data['detail2'] ?? '',
+            ];
+
+            try {
+                $response = Http::withOptions(['verify' => false])->post($url, $payload);
+
+                if ($response->successful()) {
+                    return [
+                        'status' => true,
+                        'message' => 'Lead added successfully',
+                        'response' => $response->json(),
+                    ];
+                } else {
+                    return [
+                        'status' => false,
+                        'message' => 'HTTP request failed',
+                        'response' => $response->body(),
+                    ];
+                }
+            } catch (\Exception $e) {
+                return [
+                    'status' => false,
+                    'message' => $e->getMessage(),
+                ];
+            }
+        }
     }
 }

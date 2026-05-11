@@ -151,7 +151,7 @@ class LeadsController extends Controller
         if ($lead && $template) {
             if (count($vehicleIds) > 1) {
                 // Multiple vehicles 
-                $fileUrl = 'https://chiragautomotive.com/amper/assets/pdf/Ampere_All_Vehicle.pdf'; 
+                $fileUrl = 'https://chiragautomotive.com/amper/assets/pdf/Ampere_All_Vehicle.pdf';
                 $fileName = 'All Vehicles.pdf';
 
                 $this->sendMetaWhatsappMessage(
@@ -189,6 +189,15 @@ class LeadsController extends Controller
                 'action_id'  => 1,
                 'created_by' => auth()->id(),
             ]);
+
+            $leadData = [
+                'name' => $request->name ?? '',
+                'mobile' => $request->mobile ?? '',
+                'email' => $request->email ?? '',
+                'detail1' => 'Vehicle: ' . ($lead->vehicle_details ?: 'N/A') . ' | Salesman: ' . ($salesmanName ?: 'N/A'),
+                'detail2' => 'Location: ' . ($lead->location_type_details ?: 'N/A'),
+            ];
+            $this->addLeadByThirdPartyAPI($leadData);
         }
 
         return redirect()->route('leads.index')

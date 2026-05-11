@@ -172,8 +172,8 @@
                                 <button type="reset" class="btn btn-light btn-sm">Cancel</button>
                             </div>
                         </div>
+                    </form>
                 </div>
-                </form>
             </div>
         </div>
     </div>

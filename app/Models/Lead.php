@@ -42,7 +42,7 @@ class Lead extends Model
         'location_type' => 'array',
     ];
 
-    protected $appends = ['vehicle_details', 'display_created_date'];
+    protected $appends = ['vehicle_details', 'display_created_date', 'location_type_details'];
 
     public function getVehicleDetailsAttribute()
     {
@@ -67,5 +67,25 @@ class Lead extends Model
     function getDisplayCreatedDateAttribute()
     {
         return Carbon::parse($this->created_at)->format('d-M-Y');
+    }
+
+    public function getLocationTypeDetailsAttribute()
+    {
+        if (!empty($this->location_type)) {
+            $locationTypeIds = is_array($this->location_type) ? $this->location_type : json_decode($this->location_type, true);
+            
+            $locationNames = [];
+            foreach ($locationTypeIds as $id) {
+                if ($id == 1) {
+                    $locationNames[] = 'Sama Savli Road';
+                } elseif ($id == 2) {
+                    $locationNames[] = 'Kalali-Vadsar Road';
+                }
+            }
+            
+            return implode(', ', $locationNames);
+        }
+
+        return '';
     }
 }
