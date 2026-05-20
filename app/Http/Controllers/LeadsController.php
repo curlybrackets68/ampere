@@ -194,8 +194,8 @@ class LeadsController extends Controller
                 'name' => $request->name ?? '',
                 'mobile' => $request->mobile ?? '',
                 'email' => $request->email ?? '',
-                'detail1' => 'Vehicle: ' . ($lead->vehicle_details ?: 'N/A') . ' | Salesman: ' . ($salesmanName ?: 'N/A'),
-                'detail2' => 'Location: ' . ($lead->location_type_details ?: 'N/A'),
+                'detail1' => 'Vehicle: ' . ($lead->vehicle_details ?: 'N/A'),
+                'detail2' => $request->notes ?? '',
             ];
             $this->addLeadByThirdPartyAPI($leadData);
         }
