@@ -177,7 +177,7 @@
 
         function leadList(filter = []) {
             $('#leadsTable').DataTable({
-                serverSide: false,
+                serverSide: true,
                 processing: true,
                 destroy: true,
                 responsive: true,
@@ -187,24 +187,27 @@
                 },
                 columns: [{
                         data: 'DT_RowIndex',
-                        name: 'id',
+                        name: 'leads.id',
+                        searchable: false,
+                        orderable: false
+                    },
+                    {
+                        data: 'display_date_time',
+                        name: 'leads.created_at',
                         searchable: false
                     },
                     {
-                        data: 'display_created_date',
-                        name: 'created_at'
-                    },
-                    {
                         data: 'name',
-                        name: 'name'
+                        name: 'leads.name'
                     },
                     {
                         data: 'vehicle_details',
-                        name: 'vehicle_details'
+                        name: 'vehicle_details',
+                        orderable: false
                     },
                     {
                         data: 'mobile',
-                        name: 'mobile'
+                        name: 'leads.mobile'
                     },
                     {
                         data: 'leadSourceName',
@@ -212,11 +215,13 @@
                     },
                     {
                         data: 'salesmanName',
-                        name: 'salesman.name'
+                        name: 'users.user_name'
                     },
                     {
                         data: 'action',
-                        name: 'action'
+                        name: 'action',
+                        searchable: false,
+                        orderable: false
                     }
                 ],
                 order: [

@@ -42,7 +42,7 @@ class Lead extends Model
         'location_type' => 'array',
     ];
 
-    protected $appends = ['vehicle_details', 'display_created_date', 'location_type_details'];
+    protected $appends = ['vehicle_details', 'display_created_date', 'location_type_details', 'display_created_time'];
 
     public function getVehicleDetailsAttribute()
     {
@@ -67,6 +67,11 @@ class Lead extends Model
     function getDisplayCreatedDateAttribute()
     {
         return Carbon::parse($this->created_at)->format('d-M-Y');
+    }
+
+    function getDisplayCreatedTimeAttribute()
+    {
+        return Carbon::parse($this->created_at)->format('h:i A');
     }
 
     public function getLocationTypeDetailsAttribute()

@@ -56,6 +56,9 @@ class LeadsController extends Controller
 
             return DataTables::of($inquiry)
                 ->addIndexColumn()
+                ->addColumn('display_date_time', function ($row) {
+                    return $row->display_created_date.'<br><span>'.$row->display_created_time.'</span>';
+                })
                 ->addColumn('action', function ($row) {
                     $html = '';
                     if (checkRights('USER_LEAD_ROLE_EDIT')) {
@@ -64,6 +67,25 @@ class LeadsController extends Controller
 
                     return $html;
                 })
+                ->filterColumn('vehicle_details', function ($query, $keyword) {
+                    $vehicleIds = Vehicle::where('name', 'like', '%'.$keyword.'%')->pluck('id');
+
+                    if ($vehicleIds->isEmpty()) {
+                        $query->whereRaw('1 = 0');
+
+                        return;
+                    }
+
+                    $query->where(function ($query) use ($vehicleIds) {
+                        foreach ($vehicleIds as $vehicleId) {
+                            $query->orWhereRaw(
+                                'leads.vehicle REGEXP ?',
+                                ['(^|\\[|,)[[:space:]]*"?'.(int) $vehicleId.'"?[[:space:]]*(,|\\]|$)']
+                            );
+                        }
+                    });
+                })
+                ->rawColumns(['display_date_time', 'action'])
                 ->make(true);
         }
 
