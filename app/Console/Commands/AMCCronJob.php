@@ -93,6 +93,7 @@ class AMCCronJob extends Command
 
         $amcRecordsDue = AmcMaster::where('status', 11)
             ->where('renew_status', 12)
+            ->whereNotIn('vehicle_master_id', [4, 5, 6])
             ->whereDate('amc_end_date', '<', $today)
             ->get();
         if ($amcRecordsDue->isNotEmpty()) {
