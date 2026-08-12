@@ -408,6 +408,32 @@
         });
 
 
+        $(document).on('click', '.amc-delete', function() {
+            let amcId = $(this).data('id');
+            if (!confirm('Are you sure you want to permanently delete this AMC and all related services? This cannot be undone.')) {
+                return false;
+            }
+            $.ajax({
+                url: '{{ url('amc-master') }}/' + amcId,
+                type: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    _method: 'DELETE'
+                },
+                success: async function(response) {
+                    if (response.code == '1') {
+                        await amcMasterList();
+                        showToast('success', response.message);
+                    } else {
+                        showToast('error', response.message);
+                    }
+                },
+                error: function() {
+                    showToast('error', 'Failed to delete AMC.');
+                }
+            });
+        });
+
         $(document).on('click', '.change-status', function() {
             let amcId = $(this).data('id');
             $('#statusAmcId').val(amcId);

@@ -123,6 +123,9 @@ class AmcMasterController extends Controller
                     if (Carbon::parse($row->amc_end_date)->isFuture()) {
                         $html .= '<a href="javascript:void(0);" class="dropdown-item change-status" data-id="' . $row->id . '" data-status="' . $row->status . '">Status</a>';
                     }
+                    if (checkRights('USER_AMC_ROLE_DELETE') || checkRights('USER_AMC_ROLE_EDIT')) {
+                        $html .= '<a href="javascript:void(0);" class="dropdown-item text-danger amc-delete" data-id="' . $row->id . '">Delete</a>';
+                    }
                     $html .= '</div>';
                     $html .= '</div>';
                     return $html;
@@ -586,7 +589,38 @@ class AmcMasterController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        if (!checkRights('USER_AMC_ROLE_DELETE') && !checkRights('USER_AMC_ROLE_EDIT')) {
+            return response()->json(['code' => 0, 'message' => 'You do not have permission to delete AMC.']);
+        }
+
+        $amcMaster = AmcMaster::find($id);
+        if (!$amcMaster) {
+            return response()->json(['code' => 0, 'message' => 'AMC not found.']);
+        }
+
+        try {
+            DB::beginTransaction();
+
+            ServiceDetail::withTrashed()->where('amc_id', $id)->forceDelete();
+
+            $amcDisplayNumber = $amcMaster->amc_display_number;
+            $amcMaster->delete();
+
+            SystemLogs::create([
+                'inquiry_id' => 0,
+                'type' => '5',
+                'type_id' => $id,
+                'remark' => 'Delete AMC # ' . $amcDisplayNumber,
+                'action_id' => 4,
+                'created_by' => Auth::id(),
+            ]);
+
+            DB::commit();
+            return response()->json(['code' => 1, 'message' => 'AMC deleted successfully.']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['code' => 0, 'message' => 'Failed to delete AMC.']);
+        }
     }
 
     public function getAmcPackageMaster(Request $request)
