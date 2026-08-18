@@ -185,6 +185,26 @@
             </div>
         </div>
     </div>
+    <div class="modal fade" id="amcDeleteModal" tabindex="-1" aria-labelledby="amcDeleteModalLabel" aria-hidden="true"
+        data-bs-backdrop="static">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="amcDeleteModalLabel">Delete AMC</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="deleteAmcId">
+                    <p class="mb-0">Are you sure you want to permanently delete this AMC and all related services?</p>
+                    <p class="text-danger mb-0 mt-2">This cannot be undone.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteAmcBtn">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="modal fade" id="amcViewModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true"
         data-bs-backdrop="static">
         <div class="modal-dialog modal-xl">
@@ -410,7 +430,13 @@
 
         $(document).on('click', '.amc-delete', function() {
             let amcId = $(this).data('id');
-            if (!confirm('Are you sure you want to permanently delete this AMC and all related services? This cannot be undone.')) {
+            $('#deleteAmcId').val(amcId);
+            $('#amcDeleteModal').modal('show');
+        });
+
+        $(document).on('click', '#confirmDeleteAmcBtn', function() {
+            let amcId = $('#deleteAmcId').val();
+            if (!amcId) {
                 return false;
             }
             $.ajax({
@@ -420,8 +446,16 @@
                     _token: '{{ csrf_token() }}',
                     _method: 'DELETE'
                 },
+                beforeSend: function() {
+                    loaderButton('confirmDeleteAmcBtn', true);
+                },
+                complete: function() {
+                    loaderButton('confirmDeleteAmcBtn', false);
+                },
                 success: async function(response) {
                     if (response.code == '1') {
+                        $('#amcDeleteModal').modal('hide');
+                        $('#deleteAmcId').val('');
                         await amcMasterList();
                         showToast('success', response.message);
                     } else {

@@ -157,6 +157,15 @@ class ServiceController extends Controller
         $updateData['service_km'] = $service_km;
         $updateData['modified_by'] = Auth::id();
 
+        $pendingServiceCount = ServiceDetail::where('amc_id', $amc_id)
+            ->where('status', '1')
+            ->count();
+
+        // Last pending service: always save service date as current date
+        if ($pendingServiceCount == 1) {
+            $updateData['service_date'] = Carbon::now()->format('Y-m-d H:i:s');
+        }
+
 
         if ($request->hasFile('filename')) {
             $extension = $fileData->getClientOriginalExtension();
