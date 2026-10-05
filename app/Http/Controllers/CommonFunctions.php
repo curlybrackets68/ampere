@@ -19,7 +19,8 @@ trait CommonFunctions
     protected $WHATSAPP_LICENSE_NUMBER = '94601679459';
 
     // protected $WHATSAPP_API_KEY = '3CvztP4HIDFU5hOKjEfTV9Jaw';
-    protected $WHATSAPP_API_KEY = 'k3TVNMXdcgrs19mPW0xKhRUBa';
+    // protected $WHATSAPP_API_KEY = 'k3TVNMXdcgrs19mPW0xKhRUBa';
+    protected $WHATSAPP_API_KEY = 'wza_live_cdbe1c1c05eab10efc1f165d37e179bc';
 
     protected $WHATSAPP_URL = 'https://app.ampala.in/api/sendtemplate.php';
 
