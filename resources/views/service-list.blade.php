@@ -283,7 +283,7 @@
 
         function serviceList(filter = []) {
             $('#serviceListTable').DataTable({
-                serverSide: false,
+                serverSide: true,
                 processing: true,
                 destroy: true,
                 responsive: true,
@@ -294,18 +294,22 @@
                 columns: [{
                         data: 'DT_RowIndex',
                         name: 'id',
-                        searchable: false
+                        searchable: false,
+                        orderable: false
                     },
                     {
                         data: 'contract_details',
-                        name: 'contract_details'
+                        name: 'contract_details',
+                        orderable: false
                     },
                     {
                         data: 'customer_details',
-                        name: 'customer_details'
+                        name: 'customer_details',
+                        orderable: false
                     }, {
                         data: 'vehicle_details',
-                        name: 'vehicle_details'
+                        name: 'vehicle_details',
+                        orderable: false
                     },
                     {
                         data: 'service_details',
@@ -313,15 +317,18 @@
                     },
                     {
                         data: 'service_by',
-                        name: 'service_by'
+                        name: 'service_by',
+                        orderable: false
                     },
                     {
                         data: 'action',
-                        name: 'action'
+                        name: 'action',
+                        searchable: false,
+                        orderable: false
                     }
                 ],
                 order: [
-                    [0, 'asc']
+                    [4, 'asc']
                 ],
                 createdRow: function(row, data, index) {
                     $('td', row).eq(0).css('text-align', 'left');

@@ -71,6 +71,11 @@ class AmcMaster extends Model
         return $this->hasMany(ServiceDetail::class, 'amc_id', 'id');
     }
 
+    function vehicle()
+    {
+        return $this->belongsTo(Vehicle::class, 'vehicle_master_id', 'id');
+    }
+
     function getDisplayAmcStartDateAttribute()
     {
         return Carbon::parse($this->amc_start_date)->format('d-M-Y');

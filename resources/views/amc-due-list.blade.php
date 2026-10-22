@@ -326,40 +326,54 @@
                 columns: [{
                         data: 'DT_RowIndex',
                         name: 'id',
-                        searchable: false
+                        searchable: false,
+                        orderable: false
                     },
                     {
                         data: 'amc_display_number',
-                        name: 'amc_display_number'
+                        name: 'amc_display_number',
+                        searchable: true
                     },
                     {
                         data: 'customer_details',
-                        name: 'customer_details'
+                        name: 'customer_details',
+                        searchable: true,
+                        orderable: false
                     },
                     {
                         data: 'contact_date',
-                        name: 'contact_date'
+                        name: 'contact_date',
+                        searchable: true,
+                        orderable: false
                     },
                     {
                         data: 'vehicle_model',
-                        name: 'vehicle_model'
+                        name: 'vehicle_model',
+                        searchable: true,
+                        orderable: false
                     },
                     {
                         data: 'vehicle_data',
-                        name: 'vehicle_data'
+                        name: 'vehicle_data',
+                        searchable: true,
+                        orderable: false
                     },
                     {
                         data: 'display_status',
-                        name: 'display_status'
+                        name: 'display_status',
+                        searchable: false,
+                        orderable: false
                     },
                     {
                         data: 'action',
-                        name: 'action'
+                        name: 'action',
+                        searchable: false,
+                        orderable: false
                     }
                 ],
-                // order: [
-                //     [0, 'asc']
-                // ],
+                order: [
+                    [3, 'asc']
+                ],
                 createdRow: function(row, data, index) {
                     $('td', row).eq(0).css('text-align', 'left');
                     $('td', row).eq(1).css('text-align', 'left');

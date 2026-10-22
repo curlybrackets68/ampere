@@ -28,6 +28,16 @@ class ServiceDetail extends Model
 
     protected $appends = ['display_service_date', 'status_name', 'amc_master_details', 'attachment_url', 'service_by', 'service_type_text'];
 
+    public function amcMaster()
+    {
+        return $this->belongsTo(AmcMaster::class, 'amc_id', 'id');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'modified_by', 'id');
+    }
+
     function getDisplayServiceDateAttribute()
     {
         return Carbon::parse($this->service_date)->format('d-M-Y');
@@ -49,14 +59,13 @@ class ServiceDetail extends Model
     }
     function getServiceByAttribute()
     {
-        return User::find($this->modified_by)->user_name ?? '';
+        return $this->user->user_name ?? (User::find($this->modified_by)->user_name ?? '');
     }
-
 
     //amc_master_details
     public function getAmcMasterDetailsAttribute()
     {
-        return AmcMaster::find($this->amc_id);
+        return $this->amcMaster ?? AmcMaster::find($this->amc_id);
     }
 
     //service_type_text

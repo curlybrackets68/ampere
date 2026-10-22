@@ -27,7 +27,7 @@ class AmcMasterController extends Controller
     {
 
         if ($request->ajax()) {
-            $amcMasterList = AmcMaster::query()->orderBy('amc_end_date');
+            $amcMasterList = AmcMaster::with('vehicle')->select('amc_masters.*')->orderBy('amc_end_date');
 
             if ($request->action_type != 'report') {
                 //default list
@@ -60,7 +60,83 @@ class AmcMasterController extends Controller
 
             return DataTables::of($amcMasterList)
                 ->addIndexColumn()
+                ->filter(function ($query) use ($request) {
+                    if ($request->filled('search.value')) {
+                        $keyword = $request->input('search.value');
+                        $vehicleIds = Vehicle::where('name', 'like', "%{$keyword}%")->pluck('id')->toArray();
+                        $vehicleTypeKeys = [];
+                        foreach ($this->vehicleTypeArray as $key => $val) {
+                            if (stripos($val, $keyword) !== false) {
+                                $vehicleTypeKeys[] = $key;
+                            }
+                        }
 
+                        $query->where(function ($q) use ($keyword, $vehicleIds, $vehicleTypeKeys) {
+                            $q->where('amc_masters.amc_display_number', 'like', "%{$keyword}%")
+                                ->orWhere('amc_masters.customer_name', 'like', "%{$keyword}%")
+                                ->orWhere('amc_masters.contact_number', 'like', "%{$keyword}%")
+                                ->orWhere('amc_masters.chassis_number', 'like', "%{$keyword}%")
+                                ->orWhere('amc_masters.vehicle_number', 'like', "%{$keyword}%")
+                                ->orWhereRaw("DATE_FORMAT(amc_masters.amc_start_date, '%d-%m-%Y') LIKE ?", ["%{$keyword}%"])
+                                ->orWhereRaw("DATE_FORMAT(amc_masters.amc_end_date, '%d-%m-%Y') LIKE ?", ["%{$keyword}%"]);
+
+                            if (!empty($vehicleIds)) {
+                                $q->orWhereIn('amc_masters.vehicle_master_id', $vehicleIds);
+                            }
+                            if (!empty($vehicleTypeKeys)) {
+                                $q->orWhereIn('amc_masters.vehicle_type', $vehicleTypeKeys);
+                            }
+                        });
+                    }
+                })
+                ->filterColumn('customer_details', function ($query, $keyword) {
+                    $query->where(function ($q) use ($keyword) {
+                        $q->where('customer_name', 'like', "%{$keyword}%")
+                            ->orWhere('contact_number', 'like', "%{$keyword}%");
+                    });
+                })
+                ->filterColumn('contact_date', function ($query, $keyword) {
+                    $query->where(function ($q) use ($keyword) {
+                        $q->whereRaw("DATE_FORMAT(amc_start_date, '%d-%m-%Y') LIKE ?", ["%{$keyword}%"])
+                            ->orWhereRaw("DATE_FORMAT(amc_end_date, '%d-%m-%Y') LIKE ?", ["%{$keyword}%"]);
+                    });
+                })
+                ->filterColumn('vehicle_model', function ($query, $keyword) {
+                    $vehicleIds = Vehicle::where('name', 'like', "%{$keyword}%")->pluck('id')->toArray();
+                    $vehicleTypeKeys = [];
+                    foreach ($this->vehicleTypeArray as $key => $val) {
+                        if (stripos($val, $keyword) !== false) {
+                            $vehicleTypeKeys[] = $key;
+                        }
+                    }
+
+                    $query->where(function ($q) use ($vehicleIds, $vehicleTypeKeys) {
+                        if (!empty($vehicleIds)) {
+                            $q->orWhereIn('vehicle_master_id', $vehicleIds);
+                        }
+                        if (!empty($vehicleTypeKeys)) {
+                            $q->orWhereIn('vehicle_type', $vehicleTypeKeys);
+                        }
+                        if (empty($vehicleIds) && empty($vehicleTypeKeys)) {
+                            $q->whereRaw('1 = 0');
+                        }
+                    });
+                })
+                ->filterColumn('vehicle_data', function ($query, $keyword) {
+                    $query->where(function ($q) use ($keyword) {
+                        $q->where('chassis_number', 'like', "%{$keyword}%")
+                            ->orWhere('vehicle_number', 'like', "%{$keyword}%");
+                    });
+                })
+                ->orderColumn('contact_date', function ($query, $order) {
+                    $query->orderBy('amc_end_date', $order);
+                })
+                ->orderColumn('vehicle_data', function ($query, $order) {
+                    $query->orderBy('vehicle_number', $order);
+                })
+                ->orderColumn('customer_details', function ($query, $order) {
+                    $query->orderBy('customer_name', $order);
+                })
                 ->addColumn('customer_details', function ($row) {
                     return $row->customer_name . "<br>" . $row->contact_number;
                 })
@@ -74,12 +150,7 @@ class AmcMasterController extends Controller
                     return $amcEndDate <= $today ? 'light-red' : '';
                 })
                 ->addColumn('vehicle_model', function ($row) {
-                    $vehicleName  = '';
-                    $query = Vehicle::find($row->vehicle_master_id);
-                    if ($query) {
-                        $vehicleName =  $query->name ?? '';
-                    }
-
+                    $vehicleName = $row->vehicle->name ?? '';
                     return $this->getArrayNameById($this->vehicleTypeArray, $row->vehicle_type) . '<br>' . $vehicleName;
                 })->addColumn('vehicle_data', function ($row) {
                     return $row->chassis_number . "<br>" . $row->vehicle_number;
@@ -954,7 +1025,83 @@ class AmcMasterController extends Controller
 
             return DataTables::of($amcMasterList)
                 ->addIndexColumn()
+                ->filter(function ($query) use ($request) {
+                    if ($request->filled('search.value')) {
+                        $keyword = $request->input('search.value');
+                        $vehicleIds = Vehicle::where('name', 'like', "%{$keyword}%")->pluck('id')->toArray();
+                        $vehicleTypeKeys = [];
+                        foreach ($this->vehicleTypeArray as $key => $val) {
+                            if (stripos($val, $keyword) !== false) {
+                                $vehicleTypeKeys[] = $key;
+                            }
+                        }
 
+                        $query->where(function ($q) use ($keyword, $vehicleIds, $vehicleTypeKeys) {
+                            $q->where('amc_masters.amc_display_number', 'like', "%{$keyword}%")
+                                ->orWhere('amc_masters.customer_name', 'like', "%{$keyword}%")
+                                ->orWhere('amc_masters.contact_number', 'like', "%{$keyword}%")
+                                ->orWhere('amc_masters.chassis_number', 'like', "%{$keyword}%")
+                                ->orWhere('amc_masters.vehicle_number', 'like', "%{$keyword}%")
+                                ->orWhereRaw("DATE_FORMAT(amc_masters.amc_start_date, '%d-%m-%Y') LIKE ?", ["%{$keyword}%"])
+                                ->orWhereRaw("DATE_FORMAT(amc_masters.amc_end_date, '%d-%m-%Y') LIKE ?", ["%{$keyword}%"]);
+
+                            if (!empty($vehicleIds)) {
+                                $q->orWhereIn('amc_masters.vehicle_master_id', $vehicleIds);
+                            }
+                            if (!empty($vehicleTypeKeys)) {
+                                $q->orWhereIn('amc_masters.vehicle_type', $vehicleTypeKeys);
+                            }
+                        });
+                    }
+                })
+                ->filterColumn('customer_details', function ($query, $keyword) {
+                    $query->where(function ($q) use ($keyword) {
+                        $q->where('customer_name', 'like', "%{$keyword}%")
+                            ->orWhere('contact_number', 'like', "%{$keyword}%");
+                    });
+                })
+                ->filterColumn('contact_date', function ($query, $keyword) {
+                    $query->where(function ($q) use ($keyword) {
+                        $q->whereRaw("DATE_FORMAT(amc_start_date, '%d-%m-%Y') LIKE ?", ["%{$keyword}%"])
+                            ->orWhereRaw("DATE_FORMAT(amc_end_date, '%d-%m-%Y') LIKE ?", ["%{$keyword}%"]);
+                    });
+                })
+                ->filterColumn('vehicle_model', function ($query, $keyword) {
+                    $vehicleIds = Vehicle::where('name', 'like', "%{$keyword}%")->pluck('id')->toArray();
+                    $vehicleTypeKeys = [];
+                    foreach ($this->vehicleTypeArray as $key => $val) {
+                        if (stripos($val, $keyword) !== false) {
+                            $vehicleTypeKeys[] = $key;
+                        }
+                    }
+
+                    $query->where(function ($q) use ($vehicleIds, $vehicleTypeKeys) {
+                        if (!empty($vehicleIds)) {
+                            $q->orWhereIn('vehicle_master_id', $vehicleIds);
+                        }
+                        if (!empty($vehicleTypeKeys)) {
+                            $q->orWhereIn('vehicle_type', $vehicleTypeKeys);
+                        }
+                        if (empty($vehicleIds) && empty($vehicleTypeKeys)) {
+                            $q->whereRaw('1 = 0');
+                        }
+                    });
+                })
+                ->filterColumn('vehicle_data', function ($query, $keyword) {
+                    $query->where(function ($q) use ($keyword) {
+                        $q->where('chassis_number', 'like', "%{$keyword}%")
+                            ->orWhere('vehicle_number', 'like', "%{$keyword}%");
+                    });
+                })
+                ->orderColumn('contact_date', function ($query, $order) {
+                    $query->orderBy('amc_end_date', $order);
+                })
+                ->orderColumn('vehicle_data', function ($query, $order) {
+                    $query->orderBy('vehicle_number', $order);
+                })
+                ->orderColumn('customer_details', function ($query, $order) {
+                    $query->orderBy('customer_name', $order);
+                })
                 ->addColumn('customer_details', function ($row) {
                     return $row->customer_name . "<br>" . $row->contact_number;
                 })
@@ -965,12 +1112,7 @@ class AmcMasterController extends Controller
                     return 'light-red';
                 })
                 ->addColumn('vehicle_model', function ($row) {
-                    $vehicleName  = '';
-                    $query = Vehicle::find($row->vehicle_master_id);
-                    if ($query) {
-                        $vehicleName =  $query->name ?? '';
-                    }
-
+                    $vehicleName = $row->vehicle->name ?? '';
                     return $this->getArrayNameById($this->vehicleTypeArray, $row->vehicle_type) . '<br>' . $vehicleName;
                 })->addColumn('vehicle_data', function ($row) {
                     return $row->chassis_number . "<br>" . $row->vehicle_number;
