@@ -183,7 +183,7 @@ class ServiceCronJob extends Command
                         $service->display_service_date ?? 'N/A',
                     ];
 
-                    $sent = $this->sendMetaWhatsappMessage($amcQueryServiceDue->contact_number, 'amc_service_overdue_final_v2', $metaData, $pdfUrl['public_url'], 'AMC_FILE');
+                    $sent = $this->sendMetaWhatsappMessage($amcQueryServiceDue->contact_number, 'amc_service_overdue_final', $metaData, $pdfUrl['public_url'], 'AMC_FILE');
 
                     if ($sent && File::exists($pdfUrl['public_url'])) {
                         File::delete($pdfUrl['public_url']);
@@ -205,6 +205,7 @@ class ServiceCronJob extends Command
             ->get();
 
         foreach ($vehicleServiceRecords as $amc) {
+            // $amcDate = Carbon::parse($amc->amc_start_date);
 
             $services = ServiceDetail::where('amc_id', $amc->id)
                 ->orderBy('service_no', 'asc')
@@ -212,7 +213,6 @@ class ServiceCronJob extends Command
 
             foreach ($services as $service) {
                 $serviceDate = Carbon::parse($service->service_date);
-
                 $reminderStartDay = (int) $service->reminder_days;
 
                 if (!$reminderStartDay) {

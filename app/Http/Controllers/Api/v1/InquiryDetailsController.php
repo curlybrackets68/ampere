@@ -107,6 +107,7 @@ class InquiryDetailsController extends Controller
         }
     }
 
+
     public function checkInquiry(Request $request)
     {
         $today = Carbon::today()->toDateString();
@@ -119,6 +120,108 @@ class InquiryDetailsController extends Controller
         } else {
             return $this->successResponse([], "");
         }
+    }
+
+    public function addInquiryWebHookdd(Request $request)
+    {
+
+        $data = $request->all();
+
+        Log::info('$data: ' . json_encode($data));
+        // Check if message & interactive reply exist
+        if (
+            isset($data['messages'][0]['interactive']['nfm_reply']['response_json'])
+        ) {
+            $responseJsonString =
+                $data['messages'][0]['interactive']['nfm_reply']['response_json'];
+
+            // Decode JSON string into array
+            $responseData = json_decode($responseJsonString, true);
+
+            // Log decoded data
+            Log::info('Decoded Flow Response:', $responseData);
+
+            // Example: Access fields
+            $name          = $responseData['name'] ?? '';
+            $mobileNo      = $responseData['mobile_no'] ?? '';
+            $vehicleNumber = $responseData['vehicle_number'] ?? '';
+            $visit         = $responseData['visit'] ?? '';
+            $branch        = $responseData['branch'] ?? '';
+            $serviceType   = $responseData['service_type'] ?? '';
+            $flowToken     = $responseData['flow_token'] ?? '';
+            $orderName     = $responseData['part_name'] ?? '';
+            $metaTemplateName = 'add_part_order';
+            $metaData = [];
+            $typeText = '';
+            $latestNumber = 0;
+            if ($visit == 'Part Order') {
+                $typeText = 'Order';
+                $lastOrderId = Order::orderBy('id', 'desc')->first()->id ?? 0;
+                $data['created_by'] = 1;
+                $data['customer_name'] = $name;
+                $data['branch_id'] = $this->getArrayIdByName($this->branchArray, $branch);
+                $data['customer_vehicle_no'] = strtoupper($vehicleNumber);
+                $data['order_name'] = $orderName;
+                $data['customer_mobile'] = $mobileNo;
+                $data['order_no'] = 'ORD-' . ($lastOrderId + 1);
+                $data['order_date'] = now()->format('Y-m-d H:i:s');
+            } else {
+                $typeText = 'Inquiry';
+                $data = $request->all();
+                $data['created_by'] = 1;
+                $data['vehicle_no'] = strtoupper($vehicleNumber);
+                $data['name'] = $name;
+                $data['mobile'] = $mobileNo;
+                $data['branch_id'] = $this->getArrayIdByName($this->branchArray, $branch);
+                $data['service_type_id'] = $this->getArrayIdByName($this->serviceTypeArray, $serviceType);
+                $lastInquiryId = InquiryDetails::orderBy('id', 'desc')->first()->id ?? 0;
+                $data['inquiry_no'] = 'INQ-' . ($lastInquiryId + 1);
+            }
+
+
+            // Save the inquiry
+            if ($visit == 'Part Order') {
+                $orderSave = Order::create($data);
+                $latestNumber = $orderSave->order_no;
+                SystemLogs::create([
+                    'inquiry_id' => 0,
+                    'type' => '2', // for Order
+                    'type_id' => $orderSave->id, // for Order
+                    'remark'     => 'Part Order Created # ' . $latestNumber,
+                    'action_id'  => 1,
+                    'created_by' => 1,
+                ]);
+            } else {
+                $inquirySave = InquiryDetails::create($data);
+                $latestNumber = $inquirySave->inquiry_no;
+                SystemLogs::create([
+                    'inquiry_id' => $inquirySave->id,
+                    'type' => '1', // for Order
+                    'type_id' => $inquirySave->id, // for Order
+                    'remark'     => 'Inquiry Created # ' . $latestNumber,
+                    'action_id'  => 1,
+                    'created_by' => 1,
+                ]);
+            }
+
+            $metaData = [
+                $typeText,
+                $latestNumber
+            ];
+
+            $this->sendMetaWhatsappMessage($mobileNo, $metaTemplateName, $metaData);
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Inquiry received successfully',
+                'data' => $responseData
+            ]);
+        }
+
+        return response()->json([
+            'status' => false,
+            'message' => 'No flow response found'
+        ]);
     }
 
     public function addInquiryWebHook(Request $request)

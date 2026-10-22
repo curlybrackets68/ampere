@@ -68,7 +68,7 @@ class Lead extends Model
     {
         return Carbon::parse($this->created_at)->format('d-M-Y');
     }
-
+    
     function getDisplayCreatedTimeAttribute()
     {
         return Carbon::parse($this->created_at)->format('h:i A');
@@ -78,7 +78,7 @@ class Lead extends Model
     {
         if (!empty($this->location_type)) {
             $locationTypeIds = is_array($this->location_type) ? $this->location_type : json_decode($this->location_type, true);
-            
+
             $locationNames = [];
             foreach ($locationTypeIds as $id) {
                 if ($id == 1) {

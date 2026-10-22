@@ -18,11 +18,11 @@ trait CommonFunctions
 
     protected $WHATSAPP_LICENSE_NUMBER = '94601679459';
 
-    // protected $WHATSAPP_API_KEY = '3CvztP4HIDFU5hOKjEfTV9Jaw';
     // protected $WHATSAPP_API_KEY = 'k3TVNMXdcgrs19mPW0xKhRUBa';
-    protected $WHATSAPP_API_KEY = 'wza_live_cdbe1c1c05eab10efc1f165d37e179bc';
+    
+    protected $WHATSAPP_API_KEY = "wza_live_cdbe1c1c05eab10efc1f165d37e179bc";
 
-    protected $WHATSAPP_URL = 'https://app.ampala.in/api/sendtemplate.php';
+    protected $WHATSAPP_URL = 'https://wp.msgx.in/api/v1/api/sendtemplate.php';
 
     protected $serviceTypeArray = [
         "1" => 'Regular service',
@@ -582,78 +582,89 @@ trait CommonFunctions
 
         return $message;
     }
-
+    
     function sendMetaWhatsappMessage($mobile, $template, $param = [], $fileUrl = '', $fileName = '')
     {
         $returnData = null;
-
-        $url = $this->WHATSAPP_URL
-            . '?LicenseNumber=' . $this->WHATSAPP_LICENSE_NUMBER
-            . '&APIKey=' . $this->WHATSAPP_API_KEY
-            . '&Contact=91' . $mobile
-            . '&Template=' . $template;
-        if (!empty($param)) {
-            $safeParams = array_map(function ($value) {
-                if (!is_string($value)) {
-                    return $value;
-                }
-                return str_replace(',', ' ', trim($value));
-            }, $param);
-
-            $textParam = implode(',', $safeParams);
-            $url .= '&Param=' . $textParam;
+        
+        $url = 'https://wp.msgx.in/api/v1/api/sendtemplate.php';
+    
+        // Remove commas from individual params, then join with comma
+        $safeParams = array_map(function ($value) {
+            if (!is_string($value)) {
+                return $value;
+            }
+    
+            return str_replace(',', ' ', trim($value));
+        }, $param);
+    
+        $data = [
+            'APIKey'   => $this->WHATSAPP_API_KEY,
+            'Contact'  => '91' . $mobile,
+            'Template' => $template,
+        ];
+    
+        if (!empty($safeParams)) {
+            $data['Param'] = implode(',', $safeParams);
         }
-
+    
         if (!empty($fileUrl)) {
-            $url .= '&Fileurl=' . $fileUrl;
+            $data['Fileurl'] = $fileUrl;
         }
-
+    
         if (!empty($fileName)) {
-            $url .= '&PDFName=' . $fileName;
+            $data['PDFName'] = $fileName;
         }
-        // dd($url);
-
+        
+        // dd($data);
+    
         try {
-            $response = Http::withOptions(['verify' => false])->get($url);
-
+    
+            $response = Http::withOptions([
+                'verify' => false,
+            ])
+            ->withToken($this->WHATSAPP_API_KEY)
+            ->acceptJson()
+            ->post($url, $data);
+    
             if (!$response->successful()) {
-                $returnData = [
-                    'status' => false,
-                    'message' => 'HTTP request failed',
+                return [
+                    'status'   => false,
+                    'message'  => 'HTTP request failed',
+                    'http_code' => $response->status(),
                     'response' => $response->body(),
                 ];
             }
-
-            $data = $response->json();
-
-            // dd($data);
+    
+            $responseData = $response->json();
+    
             if (
-                isset($data['ApiResponse']) &&
-                $data['ApiResponse'] === 'Success' &&
-                isset($data['ApiMessage']['messages'][0]['id'])
+                isset($responseData['ApiResponse']) &&
+                $responseData['ApiResponse'] === 'Success' &&
+                isset($responseData['ApiMessage']['messages'][0]['id'])
             ) {
-                $returnData = [
-                    'status' => true,
-                    'message' => 'WhatsApp message accepted',
-                    'message_id' => $data['ApiMessage']['messages'][0]['id'],
-                    'wa_id' => $data['ApiMessage']['contacts'][0]['wa_id'] ?? null,
-                    'raw' => $data,
+                return [
+                    'status'     => true,
+                    'message'    => 'WhatsApp message accepted',
+                    'message_id' => $responseData['ApiMessage']['messages'][0]['id'],
+                    'wa_id'      => $responseData['ApiMessage']['contacts'][0]['wa_id'] ?? null,
+                    'raw'        => $responseData,
                 ];
             }
-
-            $returnData = [
-                'status' => false,
+    
+            return [
+                'status'  => false,
                 'message' => 'WhatsApp API error',
-                'raw' => $data,
+                'raw'     => $responseData,
             ];
+    
         } catch (\Exception $e) {
-            $returnData = [
-                'status' => false,
+    
+            return [
+                'status'  => false,
                 'message' => $e->getMessage(),
             ];
         }
-        // dd($returnData);
-        return $returnData;
     }
 
     function sendMetaMediaMessage($contact, $fileUrl, $type = 'audio')

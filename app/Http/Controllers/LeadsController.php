@@ -7,8 +7,8 @@ use App\Models\Lead;
 use App\Models\LeadSource;
 use App\Models\Salesman;
 use App\Models\SystemLogs;
-use App\Models\User;
 use App\Models\Vehicle;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -30,27 +30,28 @@ class LeadsController extends Controller
                 ->leftJoin('lead_sources', 'lead_sources.id', '=', 'leads.lead_source')
                 ->leftJoin('users', 'users.id', '=', 'leads.salesman');
 
-            if (! empty($request->startDate) && ! empty($request->endDate)) {
+            if (!empty($request->startDate) && !empty($request->endDate)) {
                 $inquiry = $inquiry->whereBetween(DB::raw('DATE(leads.created_at)'), [$request->startDate, $request->endDate]);
             }
 
-            if (! empty($request->salesmanId)) {
+            if (!empty($request->salesmanId)) {
                 $inquiry = $inquiry->where('users.id', $request->salesmanId);
             }
 
-            if (! empty($request->leadSourceId)) {
+            if (!empty($request->leadSourceId)) {
                 $inquiry = $inquiry->where('lead_sources.id', $request->leadSourceId);
             }
 
-            if (! empty($request->mobileNumber)) {
-                $inquiry = $inquiry->where('leads.mobile', 'like', '%'.$request->mobileNumber.'%');
+            if (!empty($request->mobileNumber)) {
+                $inquiry = $inquiry->where('leads.mobile', 'like', '%' . $request->mobileNumber . '%');
             }
 
-            if (! empty($request->customerName)) {
-                $inquiry = $inquiry->where('leads.name', 'like', '%'.$request->customerName.'%');
+            if (!empty($request->customerName)) {
+                $inquiry = $inquiry->where('leads.name', 'like', '%' . $request->customerName . '%');
             }
 
-            if (checkRights('USER_LEAD_ROLE_VIEW') && ! checkRights('USER_LEAD_ROLE_VIEW_ALL')) {
+
+            if (checkRights('USER_LEAD_ROLE_VIEW') && !checkRights('USER_LEAD_ROLE_VIEW_ALL')) {
                 $inquiry = $inquiry->where('created_by', Auth::id());
             }
 
@@ -88,7 +89,6 @@ class LeadsController extends Controller
                 ->rawColumns(['display_date_time', 'action'])
                 ->make(true);
         }
-
         return view('leads-list')->with(compact('leadSource', 'salesman'));
     }
 
@@ -101,13 +101,13 @@ class LeadsController extends Controller
         $salesman = User::pluck('user_name', 'id');
         $leadSource = LeadSource::pluck('name', 'id');
         $authId = auth()->id();
-
         return view('add-update-leads')->with(compact('leadSource', 'vehicle', 'salesman', 'authId'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
+
     public function store(Request $request)
     {
         $salesmanName = '';
@@ -116,17 +116,17 @@ class LeadsController extends Controller
         if ($request->salesman) {
             $salesman = User::find($request->salesman);
             if ($salesman) {
-                $salesmanName = $salesman->user_name;
+                $salesmanName   = $salesman->user_name;
                 $salesmanMobile = $salesman->mobile;
             }
         }
 
-        $languageType = $request->language_type;
-        $vehicleIds = array_map('intval', $request->input('vehicle', []));
+        $languageType  = $request->language_type;
+        $vehicleIds    = array_map('intval', $request->input('vehicle', []));
         $locationTypes = array_map('intval', $request->input('location_type', []));
 
         $data = $request->all();
-        $data['vehicle'] = $vehicleIds;
+        $data['vehicle']       = $vehicleIds;
         $data['location_type'] = $locationTypes;
 
         $lead = Lead::create($data);
@@ -149,14 +149,14 @@ class LeadsController extends Controller
 
         $secondParam = 'N/A';
 
-        if (! empty($vehicleIds)) {
+        if (!empty($vehicleIds)) {
             if (count($vehicleIds) === 1) {
                 $vehicleInfo = $this->getVehicleInfo($vehicleIds[0]);
                 $vehicleName = $vehicleInfo['name'] ?? '';
 
                 $secondParam = $languageType == '1'
                     ? $vehicleName
-                    : 'તમારો '.$vehicleName.' માં';
+                    : 'તમારો ' . $vehicleName . ' માં';
             } else {
                 $secondParam = $languageType == '1'
                     ? 'our electric vehicles.'
@@ -173,8 +173,8 @@ class LeadsController extends Controller
 
         if ($lead && $template) {
             if (count($vehicleIds) > 1) {
-                // Multiple vehicles
-                $fileUrl = 'https://chiragautomotive.com/amper/assets/pdf/Ampere_All_Vehicle.pdf';
+                // Multiple vehicles 
+                $fileUrl = 'https://chiragautomotive.com/amper/assets/pdf/Ampere_All_Vehicle.pdf'; 
                 $fileName = 'All Vehicles.pdf';
 
                 $this->sendMetaWhatsappMessage(
@@ -185,34 +185,33 @@ class LeadsController extends Controller
                     $fileName
                 );
             } else {
-                // Single vehicle
+                // Single vehicle 
                 foreach ($vehicleIds as $vehicleId) {
                     $vehicleInfo = $this->getVehicleInfo($vehicleId);
 
                     $fileUrl = $vehicleInfo['pdf'];
                     $fileName = $vehicleInfo['name'];
 
-                    $this->sendMetaWhatsappMessage(
+                    $message = $this->sendMetaWhatsappMessage(
                         $request->mobile,
                         $template,
                         $params,
                         $fileUrl,
                         $fileName
                     );
-
-                    sleep(3);
+                    // dd($message);
                 }
             }
 
             SystemLogs::create([
                 'inquiry_id' => 0,
-                'type' => '3',
-                'type_id' => $lead->id,
-                'remark' => 'Add Lead',
-                'action_id' => 1,
+                'type'       => '3',
+                'type_id'    => $lead->id,
+                'remark'     => 'Add Lead',
+                'action_id'  => 1,
                 'created_by' => auth()->id(),
             ]);
-
+            
             $leadData = [
                 'name' => $request->name ?? '',
                 'mobile' => $request->mobile ?? '',
@@ -233,15 +232,14 @@ class LeadsController extends Controller
     private function getVehicleInfo($vehicleId)
     {
         $vehicles = [
-            1 => ['name' => 'Ampere Nexus', 'pdf' => 'https://chiragautomotive.com/amper/assets/pdf/Ampere_Nexus.pdf'],
-            2 => ['name' => 'Ampere Magnus Neo', 'pdf' => 'https://chiragautomotive.com/amper/assets/pdf/Ampere_Magnus_Neo.pdf'],
+            1 => ['name' => 'Ampere Nexus', 'pdf' => 'https://chiragautomotive.com/amper/assets/pdf/Magnus_Nexus.pdf'],
+            2 => ['name' => 'Ampere Magnus Neo', 'pdf' => 'https://chiragautomotive.com/amper/assets/pdf/Magnus_Nexus.pdf'],
             3 => ['name' => 'Ampere Reo', 'pdf' => 'https://chiragautomotive.com/amper/assets/pdf/REO_80_KV.pdf'],
             4 => ['name' => 'TVS King EV Max', 'pdf' => 'https://chiragautomotive.com/amper/assets/pdf/King_EV_MAX_English.pdf'],
             5 => ['name' => 'TVS King Duramax Plus', 'pdf' => 'https://chiragautomotive.com/amper/assets/pdf/King_Duramax_Plus_Petrol_English.pdf'],
             6 => ['name' => 'TVS King Deluxe', 'pdf' => 'https://chiragautomotive.com/amper/assets/pdf/King_Deluxe_Petrol_English.pdf'],
             7 => ['name' => 'TVS King Kargo HD EV', 'pdf' => 'https://chiragautomotive.com/amper/assets/pdf/King_Kargo_EV_HD_English.pdf'],
         ];
-
         return $vehicles[$vehicleId] ?? ['name' => '', 'pdf' => ''];
     }
 
@@ -311,7 +309,6 @@ class LeadsController extends Controller
         $salesman = User::pluck('user_name', 'id');
         $leadSource = LeadSource::pluck('name', 'id');
         $authId = auth()->id();
-
         return view('add-update-leads')->with(compact('lead', 'leadSource', 'vehicle', 'salesman', 'authId'));
     }
 
@@ -329,11 +326,10 @@ class LeadsController extends Controller
             'inquiry_id' => 0,
             'type' => '3',
             'type_id' => $lead->id,
-            'remark' => 'Edit Lead ',
-            'action_id' => 2,
+            'remark'     => 'Edit Lead ',
+            'action_id'  => 2,
             'created_by' => auth()->id(),
         ]);
-
         return redirect()->route('leads.index')->with('success', 'Lead updated successfully!');
     }
 
@@ -349,7 +345,6 @@ class LeadsController extends Controller
     {
         $name = $request->name;
         Vehicle::create(['name' => $name]);
-
         return response()->json(['success' => 'Vehicle added successfully!']);
     }
 
@@ -362,7 +357,6 @@ class LeadsController extends Controller
                 'mobile' => $request->mobile,
             ]
         );
-
         return response()->json(['success' => true, 'message' => 'Salesman saved successfully.']);
     }
 
@@ -370,43 +364,25 @@ class LeadsController extends Controller
     {
         $name = $request->name;
         LeadSource::create(['name' => $name]);
-
         return response()->json(['success' => 'Lead Source added successfully!']);
     }
 
     public function vehicleDetails()
     {
         $vehicles = Vehicle::all();
-
         return response()->json($vehicles);
     }
 
     public function salesmanDetails($id = null)
     {
         $salesmen = $id ? Salesman::find($id) : Salesman::all();
-
         return response()->json($salesmen);
     }
 
     public function leadSourceDetails()
     {
         $data = LeadSource::all();
-
         return response()->json($data);
-    }
-
-    public function checkLeadMobile(Request $request)
-    {
-        $query = Lead::where('mobile', $request->mobile)
-            ->where('created_at', '>=', now()->subDays(10));
-
-        if ($request->filled('lead_id')) {
-            $query->where('id', '!=', $request->lead_id);
-        }
-
-        return response()->json([
-            'exists' => $query->exists(),
-        ]);
     }
 
     public function export(Request $request)
@@ -452,12 +428,25 @@ class LeadsController extends Controller
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
-                    return '<button type="button" class="btn btn-sm btn-primary edit-salesman" data-id="'.$row->id.'">Edit</a>';
+                    return '<button type="button" class="btn btn-sm btn-primary edit-salesman" data-id="' . $row->id . '">Edit</a>';
                 })
                 ->rawColumns(['action'])
                 ->make(true);
         }
-
         return view('salesman');
+    }
+    
+    public function checkLeadMobile(Request $request)
+    {
+        $query = Lead::where('mobile', $request->mobile)
+            ->where('created_at', '>=', now()->subDays(10));
+
+        if ($request->filled('lead_id')) {
+            $query->where('id', '!=', $request->lead_id);
+        }
+
+        return response()->json([
+            'exists' => $query->exists(),
+        ]);
     }
 }
