@@ -28,14 +28,14 @@
                                 <a href="javascript:void(0);" class="btn btn-primary btn-sm me-2 d-none" id="exportExcel">
                                     <form action="{{ route('user.amc.excel.export') }}" method="POST" id="exportExcelForm">
                                         @csrf
-                                        {{ Form::hidden('exportStartDate', null, ['id' => 'exportStartDate']) }}
-                                        {{ Form::hidden('exportEndDate', null, ['id' => 'exportEndDate']) }}
-                                        {{ Form::hidden('exportChassisNumber', null, ['id' => 'exportChassisNumber']) }}
-                                        {{ Form::hidden('exportVehicleNumber', null, ['id' => 'exportVehicleNumber']) }}
-                                        {{ Form::hidden('exportContactNumber', null, ['id' => 'exportContactNumber']) }}
-                                        {{ Form::hidden('exportVehicleType', null, ['id' => 'exportVehicleType']) }}
-                                        {{ Form::hidden('exportVehicleMasterId', null, ['id' => 'exportVehicleMasterId']) }}
-                                        {{ Form::hidden('exportAmcStatusId', null, ['id' => 'exportAmcStatusId']) }}
+                                        <input type="hidden" name="exportStartDate" id="exportStartDate">
+                                        <input type="hidden" name="exportEndDate" id="exportEndDate">
+                                        <input type="hidden" name="exportChassisNumber" id="exportChassisNumber">
+                                        <input type="hidden" name="exportVehicleNumber" id="exportVehicleNumber">
+                                        <input type="hidden" name="exportContactNumber" id="exportContactNumber">
+                                        <input type="hidden" name="exportVehicleType" id="exportVehicleType">
+                                        <input type="hidden" name="exportVehicleMasterId" id="exportVehicleMasterId">
+                                        <input type="hidden" name="exportAmcStatusId" id="exportAmcStatusId">
 
                                         <i class="bi bi-cloud-download me-1 align-middle me-1"></i> Export
                                     </form>

@@ -21,13 +21,12 @@
                                 <a href="javascript:void(0);" class="btn btn-primary btn-sm me-2 d-none" id="exportExcel">
                                     <form action="{{ route('user.leads.excel.export') }}" method="POST"
                                         id="exportExcelForm">
-                                        @csrf
-                                        {{ Form::hidden('exportStartDate', null, ['id' => 'exportStartDate']) }}
-                                        {{ Form::hidden('exportEndDate', null, ['id' => 'exportEndDate']) }}
-                                        {{ Form::hidden('exportSalesmanId', null, ['id' => 'exportSalesmanId']) }}
-                                        {{ Form::hidden('exportLeadSourceId', null, ['id' => 'exportLeadSourceId']) }}
-                                        {{ Form::hidden('exportMobileNumber', null, ['id' => 'exportMobileNumber']) }}
-                                        {{ Form::hidden('exportCustomerName', null, ['id' => 'exportCustomerName']) }}
+                                        <input type="hidden" name="exportStartDate" id="exportStartDate">
+                                        <input type="hidden" name="exportEndDate" id="exportEndDate">
+                                        <input type="hidden" name="exportSalesmanId" id="exportSalesmanId">
+                                        <input type="hidden" name="exportLeadSourceId" id="exportLeadSourceId">
+                                        <input type="hidden" name="exportMobileNumber" id="exportMobileNumber">
+                                        <input type="hidden" name="exportCustomerName" id="exportCustomerName">
 
                                         <i class="bi bi-cloud-download me-1 align-middle me-1"></i> Export
                                     </form>
@@ -40,12 +39,12 @@
                                 <form action="{{ route('user.leads.excel.export') }}" method="POST" id="exportExcelForm"
                                     style="display: none;">
                                     @csrf
-                                    {{ Form::hidden('exportStartDate', null, ['id' => 'exportStartDate', 'name' => 'exportStartDate']) }}
-                                    {{ Form::hidden('exportEndDate', null, ['id' => 'exportEndDate', 'name' => 'exportEndDate']) }}
-                                    {{ Form::hidden('exportSalesmanId', null, ['id' => 'exportSalesmanId', 'name' => 'exportSalesmanId']) }}
-                                    {{ Form::hidden('exportLeadSourceId', null, ['id' => 'exportLeadSourceId', 'name' => 'exportLeadSourceId']) }}
-                                    {{ Form::hidden('exportMobileNumber', null, ['id' => 'exportMobileNumber', 'name' => 'exportMobileNumber']) }}
-                                    {{ Form::hidden('exportCustomerName', null, ['id' => 'exportCustomerName', 'name' => 'exportCustomerName']) }}
+                                    <input type="hidden" name="exportStartDate" id="exportStartDate">
+                                    <input type="hidden" name="exportEndDate" id="exportEndDate">
+                                    <input type="hidden" name="exportSalesmanId" id="exportSalesmanId">
+                                    <input type="hidden" name="exportLeadSourceId" id="exportLeadSourceId">
+                                    <input type="hidden" name="exportMobileNumber" id="exportMobileNumber">
+                                    <input type="hidden" name="exportCustomerName" id="exportCustomerName">
                                 </form> --}}
                                 @if(checkRights('USER_LEAD_ROLE_CREATE'))
                                     <a class="btn btn-info btn-sm" href="{{ route('leads.create') }}">

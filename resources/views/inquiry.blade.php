@@ -26,10 +26,10 @@
                                     <form action="{{ route('user.inquiry.excel.export') }}" method="POST"
                                         id="exportExcelForm">
                                         @csrf
-                                        {{ Form::hidden('exportStartDate', null, ['id' => 'exportStartDate']) }}
-                                        {{ Form::hidden('exportEndDate', null, ['id' => 'exportEndDate']) }}
-                                        {{ Form::hidden('exportStatusId', 0, ['id' => 'exportStatusId']) }}
-                                        {{ Form::hidden('exportBranchId', 0, ['id' => 'exportBranchId']) }}
+                                        <input type="hidden" name="exportStartDate" id="exportStartDate">
+                                        <input type="hidden" name="exportEndDate" id="exportEndDate">
+                                        <input type="hidden" name="exportStatusId" id="exportStatusId" value="0">
+                                        <input type="hidden" name="exportBranchId" id="exportBranchId" value="0">
                                         <i class="bi bi-cloud-download me-1 align-middle me-1"></i> Export
                                     </form>
                                 </a>

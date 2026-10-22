@@ -21,16 +21,15 @@
                                 <a href="javascript:void(0);" class="btn btn-primary btn-sm me-2 d-none" id="exportExcel">
                                     <form action="{{ route('amc-master-service.excel.export') }}" method="POST"
                                         id="exportExcelForm">
-                                        @csrf
-                                        {{ Form::hidden('exportStartDate', null, ['id' => 'exportStartDate']) }}
-                                        {{ Form::hidden('exportEndDate', null, ['id' => 'exportEndDate']) }}
-                                        {{ Form::hidden('exportChassisNumber', null, ['id' => 'exportChassisNumber']) }}
-                                        {{ Form::hidden('exportVehicleNumber', null, ['id' => 'exportVehicleNumber']) }}
-                                        {{ Form::hidden('exportContactNumber', null, ['id' => 'exportContactNumber']) }}
-                                        {{ Form::hidden('exportVehicleType', null, ['id' => 'exportVehicleType']) }}
-                                        {{ Form::hidden('exportvehicleMasterId', null, ['id' => 'exportvehicleMasterId']) }}
-                                        {{ Form::hidden('exportActionType', null, ['id' => 'exportActionType']) }}
-                                        {{ Form::hidden('exportStatusId', null, ['id' => 'exportStatusId']) }}
+                                        <input type="hidden" name="exportStartDate" id="exportStartDate">
+                                        <input type="hidden" name="exportEndDate" id="exportEndDate">
+                                        <input type="hidden" name="exportChassisNumber" id="exportChassisNumber">
+                                        <input type="hidden" name="exportVehicleNumber" id="exportVehicleNumber">
+                                        <input type="hidden" name="exportContactNumber" id="exportContactNumber">
+                                        <input type="hidden" name="exportVehicleType" id="exportVehicleType">
+                                        <input type="hidden" name="exportvehicleMasterId" id="exportvehicleMasterId">
+                                        <input type="hidden" name="exportActionType" id="exportActionType">
+                                        <input type="hidden" name="exportStatusId" id="exportStatusId">
 
                                         <i class="bi bi-cloud-download me-1 align-middle me-1"></i> Export
                                     </form>
