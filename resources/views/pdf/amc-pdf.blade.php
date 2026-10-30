@@ -56,10 +56,10 @@
                 <td>
                     @if ($amc->vehicle_master_id == '4' || $amc->vehicle_master_id == '5' || $amc->vehicle_master_id == '6')
                         @if (env('SERVER_MODE') == 'live' || env('SERVER_MODE') == 'test')
-                            <img src="{{ url('assets/img/new.png') }}"
+                            <img src="{{ url('assets/img/new_1.png') }}"
                                 style="width: 100% !important; margin-top: -30px;">
                         @else
-                            <img src="{{ public_path('assets/img/new.png') }}"
+                            <img src="{{ public_path('assets/img/new_1.png') }}"
                                 style="width: 100% !important; margin-top: -30px;">
                         @endif
                     @else
