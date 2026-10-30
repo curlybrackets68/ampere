@@ -19,7 +19,7 @@ trait CommonFunctions
     protected $WHATSAPP_LICENSE_NUMBER = '94601679459';
 
     // protected $WHATSAPP_API_KEY = 'k3TVNMXdcgrs19mPW0xKhRUBa';
-    
+
     protected $WHATSAPP_API_KEY = "wza_live_cdbe1c1c05eab10efc1f165d37e179bc";
 
     protected $WHATSAPP_URL = 'https://wp.msgx.in/api/v1/api/sendtemplate.php';
@@ -582,51 +582,51 @@ trait CommonFunctions
 
         return $message;
     }
-    
+
     function sendMetaWhatsappMessage($mobile, $template, $param = [], $fileUrl = '', $fileName = '')
     {
         $returnData = null;
-        
+
         $url = 'https://wp.msgx.in/api/v1/api/sendtemplate.php';
-    
+
         // Remove commas from individual params, then join with comma
         $safeParams = array_map(function ($value) {
             if (!is_string($value)) {
                 return $value;
             }
-    
+
             return str_replace(',', ' ', trim($value));
         }, $param);
-    
+
         $data = [
             'APIKey'   => $this->WHATSAPP_API_KEY,
             'Contact'  => '91' . $mobile,
             'Template' => $template,
         ];
-    
+
         if (!empty($safeParams)) {
             $data['Param'] = implode(',', $safeParams);
         }
-    
+
         if (!empty($fileUrl)) {
             $data['Fileurl'] = $fileUrl;
         }
-    
+
         if (!empty($fileName)) {
             $data['PDFName'] = $fileName;
         }
-        
+
         // dd($data);
-    
+
         try {
-    
+
             $response = Http::withOptions([
                 'verify' => false,
             ])
-            ->withToken($this->WHATSAPP_API_KEY)
-            ->acceptJson()
-            ->post($url, $data);
-    
+                ->withToken($this->WHATSAPP_API_KEY)
+                ->acceptJson()
+                ->post($url, $data);
+
             if (!$response->successful()) {
                 return [
                     'status'   => false,
@@ -635,9 +635,9 @@ trait CommonFunctions
                     'response' => $response->body(),
                 ];
             }
-    
+
             $responseData = $response->json();
-    
+
             if (
                 isset($responseData['ApiResponse']) &&
                 $responseData['ApiResponse'] === 'Success' &&
@@ -651,15 +651,14 @@ trait CommonFunctions
                     'raw'        => $responseData,
                 ];
             }
-    
+
             return [
                 'status'  => false,
                 'message' => 'WhatsApp API error',
                 'raw'     => $responseData,
             ];
-    
         } catch (\Exception $e) {
-    
+
             return [
                 'status'  => false,
                 'message' => $e->getMessage(),

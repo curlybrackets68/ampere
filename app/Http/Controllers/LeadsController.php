@@ -58,18 +58,18 @@ class LeadsController extends Controller
             return DataTables::of($inquiry)
                 ->addIndexColumn()
                 ->addColumn('display_date_time', function ($row) {
-                    return $row->display_created_date.'<br><span>'.$row->display_created_time.'</span>';
+                    return $row->display_created_date . '<br><span>' . $row->display_created_time . '</span>';
                 })
                 ->addColumn('action', function ($row) {
                     $html = '';
                     if (checkRights('USER_LEAD_ROLE_EDIT')) {
-                        $html .= '<a href="'.route('leads.edit', $row->id).'" class="btn btn-sm btn-primary">Edit</a>';
+                        $html .= '<a href="' . route('leads.edit', $row->id) . '" class="btn btn-sm btn-primary">Edit</a>';
                     }
 
                     return $html;
                 })
                 ->filterColumn('vehicle_details', function ($query, $keyword) {
-                    $vehicleIds = Vehicle::where('name', 'like', '%'.$keyword.'%')->pluck('id');
+                    $vehicleIds = Vehicle::where('name', 'like', '%' . $keyword . '%')->pluck('id');
 
                     if ($vehicleIds->isEmpty()) {
                         $query->whereRaw('1 = 0');
@@ -81,7 +81,7 @@ class LeadsController extends Controller
                         foreach ($vehicleIds as $vehicleId) {
                             $query->orWhereRaw(
                                 'leads.vehicle REGEXP ?',
-                                ['(^|\\[|,)[[:space:]]*"?'.(int) $vehicleId.'"?[[:space:]]*(,|\\]|$)']
+                                ['(^|\\[|,)[[:space:]]*"?' . (int) $vehicleId . '"?[[:space:]]*(,|\\]|$)']
                             );
                         }
                     });
@@ -172,52 +172,63 @@ class LeadsController extends Controller
         ];
 
         if ($lead && $template) {
-            if (count($vehicleIds) > 1) {
-                // Multiple vehicles 
-                $fileUrl = 'https://chiragautomotive.com/amper/assets/pdf/Ampere_All_Vehicle.pdf'; 
-                $fileName = 'All Vehicles.pdf';
+            // if (count($vehicleIds) > 1) {
+            //     // Multiple vehicles 
+            //     $fileUrl = 'https://chiragautomotive.com/amper/assets/pdf/Ampere_All_Vehicle.pdf'; 
+            //     $fileName = 'All Vehicles.pdf';
 
-                $this->sendMetaWhatsappMessage(
-                    $request->mobile,
-                    $template,
-                    $params,
-                    $fileUrl,
-                    $fileName
-                );
-            } else {
-                // Single vehicle 
-                foreach ($vehicleIds as $vehicleId) {
-                    $vehicleInfo = $this->getVehicleInfo($vehicleId);
+            //     $this->sendMetaWhatsappMessage(
+            //         $request->mobile,
+            //         $template,
+            //         $params,
+            //         $fileUrl,
+            //         $fileName
+            //     );
+            // } else {
+            //     // Single vehicle 
+            //     foreach ($vehicleIds as $vehicleId) {
+            //         $vehicleInfo = $this->getVehicleInfo($vehicleId);
 
-                    $fileUrl = $vehicleInfo['pdf'];
-                    $fileName = $vehicleInfo['name'];
+            //         $fileUrl = $vehicleInfo['pdf'];
+            //         $fileName = $vehicleInfo['name'];
 
-                    $message = $this->sendMetaWhatsappMessage(
-                        $request->mobile,
-                        $template,
-                        $params,
-                        $fileUrl,
-                        $fileName
-                    );
-                    // dd($message);
-                }
-            }
+            //         $message = $this->sendMetaWhatsappMessage(
+            //             $request->mobile,
+            //             $template,
+            //             $params,
+            //             $fileUrl,
+            //             $fileName
+            //         );
+            //         // dd($message);
+            //     }
+            // }
+
+            $fileUrl = 'https://chiragautomotive.com/amper/assets/pdf/Ampere_Range_Leaflet_Digital.pdf';
+            $fileName = 'Ampere electric scooters';
+
+            $this->sendMetaWhatsappMessage(
+                $request->mobile,
+                'lead_inquiry_ampere',
+                [],
+                $fileUrl,
+                $fileName
+            );
 
             SystemLogs::create([
                 'inquiry_id' => 0,
-                'type'       => '3',
-                'type_id'    => $lead->id,
-                'remark'     => 'Add Lead',
-                'action_id'  => 1,
+                'type' => '3',
+                'type_id' => $lead->id,
+                'remark' => 'Add Lead',
+                'action_id' => 1,
                 'created_by' => auth()->id(),
             ]);
-            
+
             $leadData = [
                 'name' => $request->name ?? '',
                 'mobile' => $request->mobile ?? '',
                 'email' => $request->email ?? '',
                 'detail1' => $salesmanName,
-                'detail2' => $request->notes ?? ''.', '.($lead->vehicle_details ?: 'N/A'),
+                'detail2' => $request->notes ?? '' . ', ' . ($lead->vehicle_details ?: 'N/A'),
             ];
             $this->addLeadByThirdPartyAPI($leadData);
         }
@@ -435,7 +446,7 @@ class LeadsController extends Controller
         }
         return view('salesman');
     }
-    
+
     public function checkLeadMobile(Request $request)
     {
         $query = Lead::where('mobile', $request->mobile)
