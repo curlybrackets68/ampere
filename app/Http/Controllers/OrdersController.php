@@ -137,6 +137,7 @@ class OrdersController extends Controller
                 $metaTemplateData = [
                     $orderDetails->order_no,
                     $orderDetails->customer_name,
+                    $orderDetails->customer_mobile,
                     $orderDetails->customer_vehicle_no,
                     $orderDetails->order_name,
                     $remark
@@ -144,7 +145,7 @@ class OrdersController extends Controller
             }
 
             // $this->sendWhatsAppMessage($orderDetails->customer_mobile, $message);
-            $this->sendMetaWhatsappMessage($orderDetails->mobile, $metaTemplateName, $metaTemplateData);
+            $this->sendMetaWhatsappMessage($orderDetails->customer_mobile, $metaTemplateName, $metaTemplateData);
             SystemLogs::create([
                 'inquiry_id' => 0,
                 'type' => '2', // for Order
