@@ -45,7 +45,7 @@ class AMCCronJob extends Command
 
         if ($amcRecords->isNotEmpty()) {
             foreach ($amcRecords as $amc) {
-                $daysLeft = now()->diffInDays(Carbon::parse($amc->amc_end_date), false);
+                $daysLeft = (int) round(now()->startOfDay()->diffInDays(Carbon::parse($amc->amc_end_date)->startOfDay(), false));
                 $pdfUrl = $this->generateAndStorePdf('pdf.amc-pdf', ['amc' => $amc], 'amc_pdfs');
                 if (in_array($daysLeft, [7, 5, 3, 1, 0])) {
                     // $message = $daysLeft === 0

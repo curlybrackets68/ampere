@@ -49,7 +49,7 @@ class ServiceCronJob extends Command
                     ->first();
 
                 if ($amcQuery) {
-                    $daysLeft = now()->diffInDays(Carbon::parse($service->service_date), false);
+                    $daysLeft = (int) round(now()->startOfDay()->diffInDays(Carbon::parse($service->service_date)->startOfDay(), false));
 
                     $pdfUrl = $this->generateAndStorePdf('pdf.amc-pdf', ['amc' => $amcQuery], 'amc_pdfs');
 
@@ -108,7 +108,7 @@ class ServiceCronJob extends Command
                     ->first();
 
                 if ($amcQueryDue) {
-                    $daysLeft = now()->diffInDays(Carbon::parse($service->service_date), false);
+                    $daysLeft = (int) round(now()->startOfDay()->diffInDays(Carbon::parse($service->service_date)->startOfDay(), false));
 
                     $pdfUrl = $this->generateAndStorePdf('pdf.amc-pdf', ['amc' => $amcQueryDue], 'amc_pdfs');
 
